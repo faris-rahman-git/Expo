@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css"
+    />
+    <link rel="stylesheet" href="css/loginAndSignup.css" />
+    <title>Login Page</title>
+  </head>
+
+  <body>
+    <div class="container" id="container">
+      <div class="form-container sign-in">
+        <form action="/login" method="post" onsubmit="return validateLogin()">
+          <h1>Login</h1>
+          <div class="social-icons">
+            <a href="/auth/google" class="icon"
+              ><i class="fa-brands fa-google-plus-g"></i
+            ></a>
+            <a href="/auth/facebook" class="icon"><i class="fa-brands fa-facebook-f"></i></a>
+            <a href="/auth/github" class="icon"><i class="fa-brands fa-github"></i></a>
+            <a href="/auth/microsoft" class="icon"
+              ><i class="fa-brands fa-microsoft"></i>
+            </a>
+          </div>
+          <span id="logErrorMessage"><%= message %></span>
+          <input type="email" placeholder="Email" id="email" name="email" />
+          <input
+            type="password"
+            placeholder="Password"
+            id="password"
+            name="password"
+          />
+          <a href="/login/forgotPasswordEmail">Forget Your Password?</a>
+          <button type="submit">LogIn</button>
+        </form>
+      </div>
+      <form action="/signUp" method="get">
+        <div class="toggle-container toggle-right">
+          <div class="toggle">
+            <div class="toggle-panel">
+              <h1>Hello, Friend!</h1>
+              <p>
+                Register with your personal details to use all of site features
+              </p>
+              <button type="submit" class="hidden" id="register">
+                Sign Up
+              </button>
+            </div>
+          </div>
+        </div>
+      </form>
+    </div>
+
+    <script>
+      function validateLogin() {
+        var email = document.getElementById("email").value.trim();
+        var password = document.getElementById("password").value.trim();
+        if (!email || !password) {
+          document.getElementById("logErrorMessage").textContent ="All fields are required";
+          return false;
+        }
+        return true;
+      }
+    </script> 
+  </body>
+</html>
