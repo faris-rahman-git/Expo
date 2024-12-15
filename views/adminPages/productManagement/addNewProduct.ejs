@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html lang="en">
+  <!-- basic-form.html  21 Nov 2019 03:54:41 GMT -->
+  <head>
+    <meta charset="UTF-8" />
+    <meta
+      content="width=device-width, initial-scale=1, maximum-scale=1, shrink-to-fit=no"
+      name="viewport"
+    />
+    <title>Xpo - Add New Product</title>
+    <!-- General CSS Files -->
+    <link rel="stylesheet" href="/assets/css/app.min.css" />
+    <!-- Template CSS -->
+    <link rel="stylesheet" href="/assets/css/style.css" />
+    <link rel="stylesheet" href="/assets/css/components.css" />
+    <link
+      rel="shortcut icon"
+      type="image/x-icon"
+      href="/assets/img/favicon.ico"
+    />
+  </head>
+
+  <body>
+    <div class="loader"></div>
+    <div id="app">
+      <div class="main-wrapper main-wrapper-1">
+        <%- include('../partials/navbar') %> <%- include('../partials/sidebar')
+        %>
+
+        <!-- Main Content start-->
+        <div class="main-content">
+          <section class="section">
+            <form>
+              <div class="section-body">
+                <div class="row justify-content-center">
+                  <div class="col-12 col-lg-6">
+                    <div class="card">
+                      <div class="card-header">
+                        <h4>Add New Product</h4>
+                      </div>
+                      <div class="card-body">
+                        <div class="text-center text-danger">
+                          <label id="logErrorMessage"
+                            >Enter New product details</label
+                          >
+                        </div>
+                        <div class="form-row">
+                          <div class="form-group col-md-8">
+                            <label for="productName">Product Name</label>
+                            <input
+                              type="text"
+                              class="form-control"
+                              id="productName"
+                              placeholder="Product Name"
+                              name="productName"
+                            />
+                          </div>
+                          <div class="form-group col-md-4">
+                            <label for="inputStatus">Status</label>
+                            <select
+                              id="inputStatus"
+                              class="form-control"
+                              name="status"
+                            >
+                              <option selected>Active</option>
+                              <option>Inactive</option>
+                            </select>
+                          </div>
+                          <div class="form-group col-md-6">
+                            <label for="productCategory"
+                              >Product Category</label
+                            >
+                            <select
+                              id="productCategory"
+                              class="form-control"
+                              name="productCategory"
+                            >
+                              <option selected>Select Product Category</option>
+                              <% categories.forEach(category => { %>
+                              <option value="<%= category._id %>">
+                                <%= category.categoryName %>
+                              </option>
+                              <% }) %>
+                            </select>
+                          </div>
+                          <div class="form-group col-md-6">
+                            <label for="productSubCategory"
+                              >Product SubCategory</label
+                            >
+                            <select
+                              id="productSubCategory"
+                              class="form-control"
+                              name="productSubCategory"
+                            >
+                              <option selected>--Select SubCategory--</option>
+                            </select>
+                          </div>
+                          <div class="form-group col-md-6">
+                            <label for="inputOfferStatus">Offer Status</label>
+                            <select
+                              id="inputOfferStatus"
+                              class="form-control"
+                              name="offerStatus"
+                            >
+                              <option selected>Inactive</option>
+                              <option>Active</option>
+                            </select>
+                          </div>
+                          <div class="form-group col-md-6">
+                            <label for="offerPercentage"
+                              >Offer Percentage (Empty/0)</label
+                            >
+                            <input
+                              type="number"
+                              class="form-control"
+                              id="offerPercentage"
+                              placeholder="Offer Percentage"
+                              name="offerPercentage"
+                            />
+                          </div>
+                          <div class="form-group col-md-6">
+                            <label for="price">Start Date</label>
+                            <input
+                              type="date"
+                              class="form-control"
+                              id="startDate"
+                              placeholder="Start Date"
+                              name="startDate"
+                            />
+                          </div>
+                          <div class="form-group col-md-6">
+                            <label for="price">Expiry Date</label>
+                            <input
+                              type="date"
+                              class="form-control"
+                              id="expiryDate"
+                              placeholder="Expiry Date"
+                              name="expiryDate"
+                            />
+                          </div>
+                        </div>
+                      </div>
+                      <div class="card-footer align-center">
+                        <button class="btn btn-primary" id="addProductBtn">
+                          <i data-feather="plus-square" class="mr-2"></i>Add New
+                          Product
+                        </button>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </form>
+          </section>
+        </div>
+        <!-- Main Content end-->
+      </div>
+    </div>
+
+    <script src="/js/adminPages/productManagement/addNewProduct.js"></script>
+    <script src="/js/adminPages/productManagement/common/addEditProduct.js"></script>
+
+    <!-- General JS Scripts -->
+    <script src="/assets/js/app.min.js"></script>
+    <!-- Template JS File -->
+    <script src="/assets/js/scripts.js"></script>
+  </body>
+</html>

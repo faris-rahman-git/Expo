@@ -34,6 +34,10 @@ body {
   margin: 20px 0;
 }
 
+h1 {
+  text-wrap: nowrap;
+}
+
 .container span {
   font-size: 12px;
 }
@@ -112,11 +116,11 @@ body {
 .form-container {
   position: absolute;
   top: 0;
+  width: 50%;
   height: 100%;
 }
 
 .sign-in {
-  left: 0;
   width: 50%;
   z-index: 2;
 }
@@ -194,6 +198,14 @@ body {
   align-items: center;
 }
 
+.text-dark {
+  color: black;
+}
+
+.text-danger {
+  color: red;
+}
+
 #countryCode {
   width: 55px;
   text-align: center;
@@ -218,7 +230,6 @@ body {
   align-self: center;
 }
 
-
 #passwordWrapper button {
   width: auto !important;
   padding: 10px 40px;
@@ -231,8 +242,9 @@ body {
   align-self: center;
 }
 
-#detailsWrapper,#otpWrapper,
-#passwordWrapper{
+#detailsWrapper,
+#otpWrapper,
+#passwordWrapper {
   display: flex;
   flex-direction: column;
   width: 100%;
@@ -240,8 +252,62 @@ body {
 
 #resendOtpButton:disabled {
   background-color: #cccccc;
-  border-color: #cccccc;      
-  color: #666666;          
-  cursor: not-allowed;      
-  opacity: 0.7;              
+  border-color: #cccccc;
+  color: #666666;
+  cursor: not-allowed;
+  opacity: 0.7;
+}
+
+@media (min-width: 670px) {
+  center a {
+    display: none;
+  }
+}
+
+@media (max-width: 850px) {
+  .container {
+    width: 650px;
+  }
+}
+
+@media (max-width: 670px) {
+  /* Hide the left section */
+  .toggle-container {
+    display: none;
+  }
+
+  /* Center the form horizontally and vertically */
+    .container {
+      display: flex; /* Enable flexbox */
+      flex-direction: column; /* Stack items vertically */
+      justify-content: center; /* Center vertically */
+      align-items: center; /* Center horizontally */
+      width: 460px; /* Adjust width for smaller screens */
+      padding: 20px; /* Add padding */
+      box-shadow: none; /* Optional: remove box-shadow for cleaner look */
+    }
+
+  .form-container {
+    position: relative; /* Reset the absolute positioning */
+    width: 100%; /* Make it take full width */
+    left: 0;
+    transform: translateX(0); /* Center horizontally */
+  }
+  .sign-up {
+    top: -50px; /* Reset translations */
+  }
+  .sign-in{
+    top: 40px; /* Reset translations */
+  }
+  
+  .forgotPasswordEmail{
+    top: 80px; /* Reset translations */
+  }
+
+}
+
+@media (max-width: 425px) {
+  .container form {
+    padding: 0;
+  }
 }

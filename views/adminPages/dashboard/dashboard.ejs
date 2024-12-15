@@ -1,0 +1,608 @@
+<!DOCTYPE html>
+<html lang="en">
+  <!-- index.html  21 Nov 2019 03:44:50 GMT -->
+  <head>
+    <meta charset="UTF-8" />
+    <meta
+      content="width=device-width, initial-scale=1, maximum-scale=1, shrink-to-fit=no"
+      name="viewport"
+    />
+    <title>Admin Dashboard</title>
+    <!-- General CSS Files -->
+    <link rel="stylesheet" href="/assets/css/app.min.css" />
+    <!-- Template CSS -->
+    <link rel="stylesheet" href="/assets/css/style.css" />
+    <link rel="stylesheet" href="/assets/css/components.css" />
+    <!-- Custom style CSS -->
+    <link rel="stylesheet" href="/assets/css/custom.css" />
+    <link
+      rel="shortcut icon"
+      type="image/x-icon"
+      href="/assets/img/favicon.ico"
+    />
+  </head>
+
+  <body>
+    <div class="loader"></div>
+    <div id="app">
+      <div class="main-wrapper main-wrapper-1">
+        <div class="navbar-bg"></div>
+
+        <%- include('../partials/navbar') %> <%- include('../partials/sidebar')
+        %>
+
+        <!-- Main Content -->
+        <div class="main-content">
+          <section class="section">
+            <div class="row">
+              <!-- top card section start -->
+              <div class="col-xl-3 col-lg-6 col-md-6 col-sm-6 col-xs-12">
+                <div class="card">
+                  <div class="card-statistic-4">
+                    <div class="align-items-center justify-content-between">
+                      <div class="row">
+                        <div
+                          class="col-lg-6 col-md-6 col-sm-6 col-xs-6 pr-0 pt-3"
+                        >
+                          <div class="card-content">
+                            <h5 class="font-15">Total Users</h5>
+                            <h2 class="mb-3 font-18"><%= userCount %></h2>
+                            <h5 class="font-15">Active Users</h5>
+                            <h2 class="font-18"><%= activeuserCount %></h2>
+                          </div>
+                        </div>
+                        <div class="col-lg-6 col-md-6 col-sm-6 col-xs-6 pl-0">
+                          <div class="banner-img">
+                            <img src="/assets/img/banner/2.png" alt="" />
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div class="col-xl-3 col-lg-6 col-md-6 col-sm-6 col-xs-12">
+                <div class="card">
+                  <div class="card-statistic-4">
+                    <div class="align-items-center justify-content-between">
+                      <div class="row">
+                        <div
+                          class="col-lg-6 col-md-6 col-sm-6 col-xs-6 pr-0 pt-3"
+                        >
+                          <div class="card-content">
+                            <h5 class="font-15">Total Sales</h5>
+                            <h2 class="mb-3 font-18"><%= totalSales %></h2>
+                            <h5 class="font-15 text-nowrap">
+                              Completed / Pending
+                            </h5>
+                            <h2 class="font-18 d-flex justify-content-around">
+                              <span><%= completedOrders %></span><span>/</span
+                              ><span><%= pendingOrders %></span>
+                            </h2>
+                          </div>
+                        </div>
+                        <div class="col-lg-6 col-md-6 col-sm-6 col-xs-6 pl-0">
+                          <div class="banner-img">
+                            <img src="/assets/img/banner/1.png" alt="" />
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div class="col-xl-3 col-lg-6 col-md-6 col-sm-6 col-xs-12">
+                <div class="card">
+                  <div class="card-statistic-4">
+                    <div class="align-items-center justify-content-between">
+                      <div class="row">
+                        <div
+                          class="col-lg-6 col-md-6 col-sm-6 col-xs-6 pr-0 pt-3"
+                        >
+                          <div class="card-content">
+                            <h5 class="font-15">Return Progress</h5>
+                            <h2 class="mb-3 font-18"><%= returnProgress %></h2>
+                            <h5 class="font-15 text-nowrap">
+                              Returned / Cancelled
+                            </h5>
+                            <h2 class="font-18 d-flex justify-content-around">
+                              <span><%= returnedOrders %></span><span>/</span
+                              ><span><%= cancelledOrders %></span>
+                            </h2>
+                          </div>
+                        </div>
+                        <div class="col-lg-6 col-md-6 col-sm-6 col-xs-6 pl-0">
+                          <div class="banner-img">
+                            <img src="/assets/img/banner/3.png" alt="" />
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div class="col-xl-3 col-lg-6 col-md-6 col-sm-6 col-xs-12">
+                <div class="card">
+                  <div class="card-statistic-4">
+                    <div class="align-items-center justify-content-between">
+                      <div class="row">
+                        <div
+                          class="col-lg-6 col-md-6 col-sm-6 col-xs-6 pr-0 pt-3"
+                        >
+                          <div class="card-content">
+                            <h5 class="font-15">Revenue</h5>
+                            <h2 class="mb-3 font-18 text-nowrap">
+                              ₹ <%= revenue %>.00
+                            </h2>
+                            <h5 class="font-15">Completed Orders</h5>
+                            <h2 class="font-18 text-nowrap">
+                              ₹ <%= completedOrdersRevenue %>.00
+                            </h2>
+                          </div>
+                        </div>
+                        <div class="col-lg-6 col-md-6 col-sm-6 col-xs-6 pl-0">
+                          <div class="banner-img">
+                            <img src="/assets/img/banner/4.png" alt="" />
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <!-- top card section end -->
+            </div>
+            <div class="row">
+              <div class="col-12 col-sm-12 col-lg-12">
+                <div class="card">
+                  <div class="card-header">
+                    <h4>User Chart</h4>
+                    <div class="card-header-action">
+                      <div class="mr-3 d-flex flex-row">
+                        <label for="" class="mr-2 mt-2">Filters : </label>
+                        <form id="userFilter">
+                          <select
+                            name="userFilter"
+                            class="form-control"
+                            onchange="userFilterFunction()"
+                            style="border-radius: 0"
+                            id="custom"
+                          >
+                            <option>Daily</option>
+                            <option>Weekly</option>
+                            <option>Monthly</option>
+                            <option>Yearly</option>
+                            <option>Custom</option>
+                          </select>
+                        </form>
+                        <button
+                          class="btn btn-outline-primary ml-3 py-0 mt-0"
+                          id="customBtn"
+                          style="display: none"
+                          data-toggle="modal"
+                          data-target="#customModal"
+                        >
+                          Custom
+                        </button>
+                        <!-- change status start -->
+                        <div
+                          class="modal fade"
+                          id="customModal"
+                          tabindex="-1"
+                          role="dialog"
+                        >
+                          <div
+                            class="modal-dialog modal-dialog-centered"
+                            role="document"
+                          >
+                            <div class="modal-content">
+                              <div class="modal-header">
+                                <h5
+                                  class="modal-title text-danger"
+                                  id="exampleModalCenterTitle"
+                                >
+                                  Custom Date
+                                </h5>
+                                <button
+                                  type="button"
+                                  class="close"
+                                  data-dismiss="modal"
+                                >
+                                  <span>&times;</span>
+                                </button>
+                              </div>
+                              <div
+                                class="row modal-body text-dark d-flex justify-content-center"
+                              >
+                                <span
+                                  class="text-center col-12 text-danger"
+                                  id="logErrorMessage"
+                                ></span>
+                                <div class="form-group col-8">
+                                  <label for="offerPercentage">
+                                    From Date
+                                  </label>
+                                  <input
+                                    type="date"
+                                    class="form-control rounded-0"
+                                    id="customUserFromDate"
+                                  />
+                                </div>
+                                <div class="form-group col-8">
+                                  <label for="offerPercentage">To Date</label>
+                                  <input
+                                    type="date"
+                                    class="form-control rounded-0"
+                                    id="customUserToDate"
+                                  />
+                                </div>
+                              </div>
+                              <div class="modal-footer bg-whitesmoke br">
+                                <button
+                                  type="button"
+                                  class="btn btn-primary"
+                                  data-dismiss="modal"
+                                >
+                                  Cancel
+                                </button>
+                                <button
+                                  type="button"
+                                  onclick="customUserBtn()"
+                                  class="btn btn-success"
+                                  id="customUserBtnId"
+                                >
+                                  Confirm
+                                </button>
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                        <!-- change status end -->
+                      </div>
+                    </div>
+                  </div>
+                  <div class="card-body">
+                    <div class="row">
+                      <div class="col-lg-9">
+                        <div id="chart1"></div>
+                        <input type="hidden" id="userCount" value="" />
+                        <input type="hidden" id="filter" value="daily" />
+                        <input type="hidden" id="date" value="" />
+                        <input type="hidden" id="data1" value="" />
+                        <input type="hidden" id="data2" value="" />
+                      </div>
+                      <div class="col-lg-3">
+                        <div class="row mt-5">
+                          <div class="col-7 col-xl-7 mb-3">Total Users</div>
+                          <div class="col-5 col-xl-5 mb-3">
+                            <span class="text-big" id="totalUser"
+                              ><%= userCount %></span
+                            >
+                          </div>
+                          <div class="col-7 col-xl-7 mb-3">New Users</div>
+                          <div class="col-5 col-xl-5 mb-3">
+                            <span class="text-big" id="newUser"></span>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="row">
+              <div class="col-12 col-sm-12 col-lg-12">
+                <div class="card">
+                  <div class="card-header">
+                    <h4>Sales Chart</h4>
+                    <div class="card-header-action">
+                      <div class="mr-3 d-flex flex-row">
+                        <label class="mr-2 mt-2">Filters : </label>
+                        <form id="salesFilter">
+                          <select
+                            name="salesFilter"
+                            class="form-control"
+                            onchange="salesFilterFunction()"
+                            style="border-radius: 0"
+                            id="customSalesFilter"
+                          >
+                            <option>Daily</option>
+                            <option>Weekly</option>
+                            <option>Monthly</option>
+                            <option>Yearly</option>
+                            <option>Custom</option>
+                          </select>
+                        </form>
+                        <button
+                          class="btn btn-outline-primary ml-3 py-0 mt-0"
+                          id="customSalesFilterBtn"
+                          style="display: none"
+                          data-toggle="modal"
+                          data-target="#customSalesModal"
+                        >
+                          Custom
+                        </button>
+                        <!-- change status start -->
+                        <div
+                          class="modal fade"
+                          id="customSalesModal"
+                          tabindex="-1"
+                          role="dialog"
+                        >
+                          <div
+                            class="modal-dialog modal-dialog-centered"
+                            role="document"
+                          >
+                            <div class="modal-content">
+                              <div class="modal-header">
+                                <h5
+                                  class="modal-title text-danger"
+                                  id="exampleModalCenterTitle"
+                                >
+                                  Custom Date
+                                </h5>
+                                <button
+                                  type="button"
+                                  class="close"
+                                  data-dismiss="modal"
+                                >
+                                  <span>&times;</span>
+                                </button>
+                              </div>
+                              <div
+                                class="row modal-body text-dark d-flex justify-content-center"
+                              >
+                                <span
+                                  class="text-center col-12 text-danger"
+                                  id="logErrorMessageSales"
+                                ></span>
+                                <div class="form-group col-8">
+                                  <label for="offerPercentage">
+                                    From Date
+                                  </label>
+                                  <input
+                                    type="date"
+                                    class="form-control rounded-0"
+                                    id="customSalesFromDate"
+                                  />
+                                </div>
+                                <div class="form-group col-8">
+                                  <label for="offerPercentage">To Date</label>
+                                  <input
+                                    type="date"
+                                    class="form-control rounded-0"
+                                    id="customSalesToDate"
+                                  />
+                                </div>
+                              </div>
+                              <div class="modal-footer bg-whitesmoke br">
+                                <button
+                                  type="button"
+                                  class="btn btn-primary"
+                                  data-dismiss="modal"
+                                >
+                                  Cancel
+                                </button>
+                                <button
+                                  type="button"
+                                  onclick="customSalesBtn()"
+                                  id="customSalesBtnId"
+                                  class="btn btn-success"
+                                >
+                                  Confirm
+                                </button>
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                        <!-- change status end -->
+                      </div>
+                    </div>
+                  </div>
+                  <div class="card-body">
+                    <div class="row">
+                      <div class="col-lg-9">
+                        <div id="chart4"></div>
+                        <input type="hidden" id="userCount" value="" />
+                        <input type="hidden" id="filter" value="daily" />
+                        <input type="hidden" id="date" value="" />
+                        <input type="hidden" id="data1" value="" />
+                        <input type="hidden" id="data2" value="" />
+                      </div>
+                      <div class="col-lg-3">
+                        <div class="row mt-5">
+                          <div class="col-7 col-xl-7 mb-3">Total Orders</div>
+                          <div class="col-5 col-xl-5 mb-3">
+                            <span class="text-big" id="totalOrders"></span>
+                          </div>
+                          <div class="col-7 col-xl-7 mb-3">Total Sales</div>
+                          <div class="col-5 col-xl-5 mb-3">
+                            <span class="text-big" id="totalSales"></span>
+                          </div>
+                          <div class="col-7 col-xl-7 mb-3">Digital Orders</div>
+                          <div class="col-5 col-xl-5 mb-3">
+                            <span class="text-big" id="digitalOrders"></span>
+                          </div>
+                          <div class="col-7 col-xl-7 mb-3">Digital Sales</div>
+                          <div class="col-5 col-xl-5 mb-3">
+                            <span class="text-big" id="digitalSales"></span>
+                          </div>
+                          <div class="col-7 col-xl-7 mb-3">COD Orders</div>
+                          <div class="col-5 col-xl-5 mb-3">
+                            <span class="text-big" id="CODOrders"></span>
+                          </div>
+                          <div class="col-7 col-xl-7 mb-3">COD Sales</div>
+                          <div class="col-5 col-xl-5 mb-3">
+                            <span class="text-big" id="CODSales"></span>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!--Top 10 category start -->
+            <div class="row">
+              <div class="col-12">
+                <div class="card">
+                  <div class="card-header d-flex justify-content-between">
+                    <h4>Top 10 Category</h4>
+                  </div>
+                  <div class="card-body">
+                    <div class="table-responsive">
+                      <table class="table table-striped" id="table-3">
+                        <thead>
+                          <tr>
+                            <th>#</th>
+                            <th>Category Name</th>
+                            <th>No.of SubCategories</th>
+                            <th>Total Sales</th>
+                            <th>Status</th>
+                            <th>Created At</th>
+                          </tr>
+                        </thead>
+
+                        <tbody>
+                          <% top10Category.forEach((category , index)=>{%>
+                          <tr>
+                            <td><%= index+1 %></td>
+                            <td><%= category.categoryName %></td>
+                            <td><%= category.noOfSubCategory %></td>
+                            <td><%= category.salesCount %></td>
+                            <td>
+                              <div
+                                class="badge <%= category.isInactive ? 'badge-danger' : 'badge-success' %> badge-shadow"
+                              >
+                                <%= category.isInactive ? "Inactive" : "Active"
+                                %>
+                              </div>
+                            </td>
+                            <td>
+                              <%= new
+                              Date(category.createdAt).toLocaleDateString("en-GB"
+                              , {day :"numeric" , month:"short" ,
+                              year:"numeric"}) %>
+                            </td>
+                          </tr>
+                          <% }) %>
+                        </tbody>
+                      </table>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <!-- Top 10 category end -->
+
+            <!--Top 10 Brand start -->
+            <div class="row">
+              <div class="col-12">
+                <div class="card">
+                  <div class="card-header d-flex justify-content-between">
+                    <h4>Top 10 Brand</h4>
+                  </div>
+                  <div class="card-body">
+                    <div class="table-responsive">
+                      <table class="table table-striped" id="table-3">
+                        <thead>
+                          <tr>
+                            <th>#</th>
+                            <th>Brand Name</th>
+                            <th>No.of Products</th>
+                            <th>Total Sales</th>
+                            <th>Created At</th>
+                          </tr>
+                        </thead>
+
+                        <tbody>
+                          <% top10Brand.forEach((brand , index)=>{%>
+                          <tr>
+                            <td><%= index+1 %></td>
+                            <td><%= brand.subCategoryName %></td>
+                            <td><%= brand.totalProducts %></td>
+                            <td><%= brand.totalSales %></td>
+                            <td>
+                              <%= new
+                              Date(brand.firstCreatedAt).toLocaleDateString("en-GB"
+                              , {day :"numeric" , month:"short" ,
+                              year:"numeric"}) %>
+                            </td>
+                          </tr>
+                          <% }) %>
+                        </tbody>
+                      </table>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <!-- Top 10 Brand end -->
+
+            <!--Top 10 Product start -->
+            <div class="row">
+              <div class="col-12">
+                <div class="card">
+                  <div class="card-header d-flex justify-content-between">
+                    <h4>Top 10 Product</h4>
+                  </div>
+                  <div class="card-body">
+                    <div class="table-responsive">
+                      <table class="table table-striped" id="table-3">
+                        <thead>
+                          <tr>
+                            <th>#</th>
+                            <th>Product Name</th>
+                            <th>Category</th>
+                            <th>Brand</th>
+                            <th>No.of Variants</th>
+                            <th>Total Sales</th>
+                            <th>Created At</th>
+                          </tr>
+                        </thead>
+
+                        <tbody>
+                          <% top10Product.forEach((product , index)=>{%>
+                          <tr>
+                            <td><%= index+1 %></td>
+                            <td><%= product.productName %></td>
+                            <td><%= product.categoryId.categoryName %></td>
+                            <td>
+                              <%= product.subCategoryId.subCategoryName %>
+                            </td>
+                            <td><%= product.noOfVariants %></td>
+                            <td><%= product.salesCount %></td>
+                            <td>
+                              <%= new
+                              Date(product.createdAt).toLocaleDateString("en-GB"
+                              , {day :"numeric" , month:"short" ,
+                              year:"numeric"}) %>
+                            </td>
+                          </tr>
+                          <% }) %>
+                        </tbody>
+                      </table>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <!-- Top 10 Product end -->
+          </section>
+        </div>
+      </div>
+    </div>
+
+    <script src="/js/adminPages/dashboard/dashboard.js"></script>
+
+    <!-- General JS Scripts -->
+    <script src="/assets/js/app.min.js"></script>
+    <!-- JS Libraies -->
+    <script src="/assets/bundles/apexcharts/apexcharts.min.js"></script>
+    <!-- Template JS File -->
+    <script src="/assets/js/scripts.js"></script>
+  </body>
+
+  <!-- index.html  21 Nov 2019 03:47:04 GMT -->
+</html>

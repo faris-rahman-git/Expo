@@ -300,7 +300,7 @@
      *  Product Gallery - Horizontal View
      **********************************/
     var galleryThumbsHorizontal = new Swiper('.product-image-thumb-horizontal.swiper-container', {
-        loop: true,
+        loop: false,
         speed: 1000,
         spaceBetween: 25,
         slidesPerView: 4,
@@ -420,7 +420,10 @@
     /********************************
      *  Product Gallery - Image Zoom
      **********************************/
-    $('.zoom-image-hover').zoom();
+    // $('.zoom-image-hover').zoom(100);
+    $('.zoom-image-hover').zoom({
+        magnify: 2 // Change this to increase zoom (e.g., 2 = 2x zoom, 3 = 3x zoom)
+      });
 
 
     /************************************************

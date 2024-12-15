@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Wallet</title>
+
+    <link rel="stylesheet" href="/css/style.min.css" />
+    <link rel="stylesheet" href="/css/customBreadCrumb.css" />
+
+    <!-- FontAwesome CDN for version 4.7.0 -->
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/simple-line-icons/2.4.1/css/simple-line-icons.min.css"
+    />
+  </head>
+
+  <body>
+    <%- include('../../partials/navbar.ejs') %>
+
+    <!-- breadcrumb start -->
+    <br />
+    <div>
+      <ul class="breadcrumb">
+        <li><a href="/home">Home</a></li>
+        <li><a href="/myAccount">My Account</a></li>
+        <li class="active">Wallet</li>
+      </ul>
+    </div>
+    <br />
+    <!-- breadcrumb end -->
+
+    <!-- ...:::: Start cart Section:::... -->
+
+    <!-- cart section Start -->
+    <div class="container">
+      <div class="row justify-content-center">
+        <div class="col-md-10">
+          <h3 class="pb-4"><strong>Wallet</strong></h3>
+
+          <!-- main section start -->
+          <div
+            class="pt-3 pb-3"
+            style="background-color: #fef5ef; border-radius: 20px"
+          >
+            <!-- top part start -->
+            <div
+              class="card-body row m-2 mb-10 justify-content-evenly text-white text-uppercase"
+            >
+              <div
+                class="col-md-3"
+                style="background-color: #393634; border-radius: 20px"
+              >
+                <p class="m-0 mt-3" style="font-size: 20px">Balance</p>
+                <p style="font-size: 40px">₹<%= wallet.balance %>.00</p>
+              </div>
+              <div
+                class="col-md-3"
+                style="background-color: #393634; border-radius: 20px"
+              >
+                <p class="m-0 mt-3">Credit</p>
+                <p style="font-size: 40px">₹<%= wallet.income %>.00</p>
+              </div>
+              <div
+                class="col-md-3"
+                style="background-color: #393634; border-radius: 20px"
+              >
+                <p class="m-0 mt-3">debit</p>
+                <p style="font-size: 40px">₹<%= wallet.expense %>.00</p>
+              </div>
+            </div>
+            <!-- top part end -->
+
+            <!-- last part start -->
+            <div class="ml-10 mr-10 text-black">
+              <div>
+                <p class="text-uppercase ml-5">transections</p>
+              </div>
+              <div>
+                <table class="table table-borderless">
+                  <tbody>
+                    <% pageTransactions.forEach((item , index) => { %>
+                    <tr
+                      style="
+                        border-top: #393634 1px solid;
+                        border-bottom: #393634 1px solid;
+                      "
+                    >
+                      <td><%= skip+index+1 %></td>
+                      <th
+                        style="width: 7%; font-size: 25px"
+                        class="text-center"
+                      >
+                        <div class="">
+                          <% if(item.type == "Credit"){ %>
+                          <i class="icon-arrow-up-circle text-success"></i>
+                          <% }if(item.type == "Debit"){ %>
+                          <i class="icon-arrow-down-circle text-danger"></i>
+                          <% } %>
+                        </div>
+                      </th>
+                      <td style="width: 63%">
+                        <p class="m-0 text-black text-capitalize">
+                          <strong><%= item.description %></strong>
+                        </p>
+                        <p class="m-0">
+                          <%= new
+                          Date(item.createdAt).toLocaleDateString("en-GB" , {day
+                          :"numeric" , month:"short" , year:"numeric"}) %>
+                        </p>
+                      </td>
+                      <td style="width: 30%" class="text-right pr-5">
+                        <% if(item.type == "Credit"){ %>
+                        <strong class="text-success">
+                          + ₹ <%= item.amount %>.00
+                        </strong>
+                        <% }if(item.type == "Debit"){ %>
+                        <strong class="text-danger">
+                          - ₹ <%= item.amount %>.00
+                        </strong>
+                        <% } %>
+                      </td>
+                    </tr>
+                    <% }) %>
+                  </tbody>
+                </table>
+              </div>
+            </div>
+            <!-- last part end -->
+
+            <!--  last (Pagination) section start -->
+            <div
+            class="page-pagination text-center"
+            data-aos="fade-up"
+            data-aos-delay="0"
+          >
+            <ul>
+              <% if(currentPage != 1){ %>
+              <li><a href="/wallet?currentPage=<%= currentPage-1 %>"><i class="icon-control-start"></i></a></li>
+              <% } %>
+              <% var dotFlagLeft = 0 %>
+              <% var dotFlagRight = 0 %>
+              <% for(let i = 1 ; i<=totalPage ; i++ ){ %>
+                <% if( i == 1 || i == totalPage || i == currentPage || i == currentPage+1 || i == currentPage-1 ){ %>
+                  <li><a class="<%= i == currentPage ? 'active' : '' %>" 
+                    href="/wallet?currentPage=<%= i %>"><%= i %></a></li>
+                <% }else {if(dotFlagLeft == 0 && currentPage > i ){ %>
+                  <% dotFlagLeft = 1 %>
+                  <li><a href="" style="pointer-events: none;">.....</a></li>
+                <% }if(dotFlagRight == 0 && currentPage < i ){ %>
+                  <% dotFlagRight = 1 %>
+                  <li><a href="" style="pointer-events: none;">.....</a></li>
+                <% }} %>
+              <% } %>
+              <% if(currentPage != totalPage){ %>
+              <li><a href="/wallet?currentPage=<%= currentPage+1 %>"><i class="icon-control-end"></i></a></li>
+              <% } %>
+            </ul>
+          </div>
+            <!-- last (Pagination) section end -->
+          </div>
+          <!-- main section end -->
+        </div>
+      </div>
+      <!-- ...:::: End Account Dashboard Section:::... -->
+    </div>
+    <!-- cart section end -->
+    <%- include('../../partials/footer.ejs') %>
+
+    <!-- material-scrolltop button -->
+    <button class="material-scrolltop" type="button"></button>
+
+    <!-- minified version files -->
+    <script src="/js/vendor/vendor.min.js"></script>
+    <script src="/js/plugins/plugins.min.js"></script>
+
+    <!-- Main JS -->
+    <script src="/js/main.js"></script>
+  </body>
+</html>

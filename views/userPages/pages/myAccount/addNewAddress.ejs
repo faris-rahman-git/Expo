@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html lang="zxx">
+  <meta http-equiv="content-type" content="text/html;charset=UTF-8" />
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="content-type" content="text/html;charset=UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+    <title>Add New Address</title>
+
+    <!-- ::::::::::::::Favicon icon::::::::::::::-->
+    <link rel="shortcut icon" href="" type="image/png" />
+
+    <!-- minified version files -->
+    <link rel="stylesheet" href="/css/plugins/plugins.min.css" />
+    <link rel="stylesheet" href="/css/style.min.css" />
+    <link rel="stylesheet" href="/css/customBreadCrumb.css" />
+    <!-- FontAwesome CDN for version 4.7.0 -->
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/simple-line-icons/2.4.1/css/simple-line-icons.min.css"
+    />
+  </head>
+
+  <body>
+    <%- include('../../partials/navbar.ejs') %>
+
+    <!-- breadcrumb start -->
+    <br />
+    <div>
+      <ul class="breadcrumb">
+        <li><a href="/home">Home</a></li>
+        <li><a href="/myAccount">My Account</a></li>
+        <li class="active">New Address</li>
+      </ul>
+    </div>
+    <br />
+    <!-- breadcrumb end -->
+
+    <!-- ...:::: add new address start :::... -->
+    <div class="container">
+      <div class="row justify-content-center">
+        <div class="col-sm-12 col-md-8 col-lg-7">
+          <div class="tab-pane" id="account-details">
+            <h3>Add a New Address</h3>
+            <span class="text-danger"><%= message %></span>
+            <div class="login">
+              <div class="login_form_container">
+                <div class="account_login_form">
+                  <form
+                    action="/myAccount/addNewAddress/<%= id %>"
+                    method="post"
+                    onsubmit="return validateForm()"
+                  >
+                    <br />
+                    <div class="default-form-box mb-20">
+                      <label>Full Name (First and Last Name)</label>
+                      <input type="text" name="name" id="name" />
+                      <span
+                        id="logMassageName"
+                        class="text-danger text-center"
+                      ></span>
+                    </div>
+                    <div class="default-form-box mb-20">
+                      <label>Mobile Number</label>
+                      <input type="text" name="phoneNumber" id="phoneNumber" />
+                      <p style="font-size: 11px">
+                        May be used to assist delivery
+                      </p>
+                      <span
+                        id="logMassagePhone"
+                        class="text-danger text-center"
+                      ></span>
+                    </div>
+                    <div class="default-form-box mb-20">
+                      <label>Pincode</label>
+                      <input
+                        type="text"
+                        name="pincode"
+                        id="pincode"
+                        placeholder="6 digits [0-9] PIN code"
+                      />
+                      <span
+                        id="logMassagePin"
+                        class="text-danger text-center"
+                      ></span>
+                    </div>
+                    <div class="default-form-box mb-20">
+                      <label
+                        >Flat, House no., Building, Company, Apartment</label
+                      >
+                      <input type="text" name="house" id="house" />
+                      <span
+                        id="logMassageHouse"
+                        class="text-danger text-center"
+                      ></span>
+                    </div>
+                    <div class="default-form-box mb-20">
+                      <label>Area, Street, Sector, Village (Optional)</label>
+                      <input type="text" name="street" id="Street" />
+                    </div>
+                    <div class="default-form-box mb-20">
+                      <label>Landmark (Optional)</label>
+                      <input
+                        type="text"
+                        name="landmark"
+                        id="landmark"
+                        placeholder="E.g. Near metro hospital"
+                      />
+                    </div>
+                    <div class="default-form-box mb-20">
+                      <label>Town/City </label>
+                      <input type="text" name="city" id="city" />
+                      <span
+                        id="logMassageCity"
+                        class="text-danger text-center"
+                      ></span>
+                    </div>
+                    <label
+                      class="checkbox-default checkbox-default-more-text"
+                      for="default"
+                    >
+                      <input type="checkbox" name="defaultAddress" />
+                      <span>Make this my default address</span>
+                    </label>
+                    <div class="save_button mt-3">
+                      <button
+                        class="btn btn-md btn-black-default-hover"
+                        type="submit"
+                      >
+                        Add Address
+                      </button>
+                    </div>
+                  </form>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <!-- ...:::: add new address end:::... -->
+
+    <%- include('../../partials/footer.ejs') %>
+
+    <!-- material-scrolltop button -->
+    <button class="material-scrolltop" type="button"></button>
+    
+    <script src="/js/pages/mainPages/myAccount/addNewAddress.js"></script>
+    <!-- minified version files -->
+    <script src="/js/vendor/vendor.min.js"></script>
+    <script src="/js/plugins/plugins.min.js"></script>
+
+    <!-- Main JS -->
+    <script src="/js/main.js"></script>
+  </body>
+</html>

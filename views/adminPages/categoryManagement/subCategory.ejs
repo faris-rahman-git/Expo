@@ -1,0 +1,236 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta
+      content="width=device-width, initial-scale=1, maximum-scale=1, shrink-to-fit=no"
+      name="viewport"
+    />
+    <title>Xpo - All SubCategory Details</title>
+    <!-- General CSS Files -->
+    <link rel="stylesheet" href="/assets/css/app.min.css" />
+    <link
+      rel="stylesheet"
+      href="/assets/bundles/datatables/datatables.min.css"
+    />
+    <link
+      rel="stylesheet"
+      href="/assets/bundles/datatables/DataTables-1.10.16/css/dataTables.bootstrap4.min.css"
+    />
+    <!-- Template CSS -->
+    <link rel="stylesheet" href="/assets/css/style.css" />
+    <link rel="stylesheet" href="/assets/css/components.css" />
+    <link
+      rel="shortcut icon"
+      type="image/x-icon"
+      href="/assets/img/favicon.ico"
+    />
+  </head>
+
+  <body>
+    <div class="loader"></div>
+    <div id="app">
+      <div class="main-wrapper main-wrapper-1">
+        <%- include('../partials/navbar') %> <%- include('../partials/sidebar')
+        %>
+
+        <!-- Main Content start-->
+        <div class="main-content">
+          <section class="section">
+            <div class="section-body">
+              <!-- table start -->
+              <div class="row">
+                <div class="col-12">
+                  <div class="card">
+                    <div class="card-header justify-content-between">
+                      <h4>
+                        <%= subcategoriesList[0]?.categoryId.categoryName %>
+                        SubCategories List
+                      </h4>
+                      <div>
+                        <a
+                          href="/admin/allCategory"
+                          class="btn btn-dark text-white"
+                        >
+                          <i data-feather="chevrons-left"> </i> Back to
+                          Categories Page
+                        </a>
+                        <a
+                          href="/admin/deletedSubCategories/<%= categoryId %>"
+                          class="btn btn-danger text-white"
+                        >
+                          <i data-feather="trash"> </i> Deleted SubCategories
+                        </a>
+                        <a
+                          href="/admin/addNewSubCategory/<%= categoryId %>"
+                          class="btn btn-primary text-white"
+                        >
+                          <i data-feather="plus-square"> </i> Add New
+                          SubCategory
+                        </a>
+                      </div>
+                    </div>
+                    <div class="card-body">
+                      <div class="table-responsive">
+                        <table class="table table-striped" id="table-3">
+                          <thead>
+                            <tr>
+                              <th>#</th>
+                              <th>SubCategory</th>
+                              <th>Offer %</th>
+                              <th class="text-center">Offer Status</th>
+                              <th>Offer Start</th>
+                              <th>Offer Expiry</th>
+                              <th>Products</th>
+                              <th class="text-center">Status</th>
+                              <th class="text-center">Action</th>
+                            </tr>
+                          </thead>
+
+                          <tbody>
+                            <% subcategoriesList.forEach((item,index)=>{%>
+                            <tr>
+                              <td><%= index+1 %></td>
+                              <td><%= item.subCategoryName %></td>
+                              <td><%= item.offerPercentage %></td>
+                              <td class="text-center">
+                                <div
+                                  class="badge <%= !item.offerStatus ? 'badge-danger' : 'badge-success' %> badge-shadow"
+                                >
+                                  <%= !item.offerStatus ? 'Inactive' : 'Active'
+                                  %>
+                                </div>
+                              </td>
+                              <td>
+                                <%= new
+                                Date(item.offerStartDate).toLocaleDateString("en-GB"
+                                , {day :"numeric" , month:"short" ,
+                                year:"numeric"}) %>
+                              </td>
+                              <td>
+                                <%= !item.offerEndDate ? "No Expiry" : new
+                                Date(item.offerEndDate).toLocaleDateString("en-GB"
+                                , {day :"numeric" , month:"short" ,
+                                year:"numeric"}) %>
+                              </td>
+                              <td><%= item.noOfProducts%></td>
+                              <td class="text-center">
+                                <div
+                                  class="badge <%= item.isInactive ? 'badge-danger' : 'badge-success' %> badge-shadow"
+                                >
+                                  <%= item.isInactive ? 'Inactive' : 'Active' %>
+                                </div>
+                              </td>
+                              <td class="text-center" style="min-width: 175px">
+                                <a
+                                  href="/admin/editSubCategory/<%= categoryId %>/<%= item._id %>"
+                                  class="btn btn-primary"
+                                  >edit</a
+                                >
+                                <button
+                                  type="button"
+                                  class="btn btn-danger text-white"
+                                  data-toggle="modal"
+                                  data-target="#delete<%= index %>"
+                                >
+                                  Delete
+                                </button>
+                                <!-- <a
+                                href="/admin/allProducts"
+                                  type="button"
+                                  class="btn btn-success text-white"
+                                >
+                                  View
+                              </a> -->
+                              </td>
+                            </tr>
+
+                            <!-- modal start -->
+                            <div
+                              class="modal fade"
+                              id="delete<%= index %>"
+                              tabindex="-1"
+                              role="dialog"
+                              aria-labelledby="exampleModalCenterTitle"
+                              aria-hidden="true"
+                            >
+                              <div
+                                class="modal-dialog modal-dialog-centered"
+                                role="document"
+                              >
+                                <div class="modal-content">
+                                  <div class="modal-header">
+                                    <h5
+                                      class="modal-title text-danger"
+                                      id="exampleModalCenterTitle"
+                                    >
+                                      Delete Warning
+                                    </h5>
+                                    <button
+                                      type="button"
+                                      class="close"
+                                      data-dismiss="modal"
+                                      aria-label="Close"
+                                    >
+                                      <span aria-hidden="true">&times;</span>
+                                    </button>
+                                  </div>
+                                  <div class="modal-body text-dark">
+                                    Are you sure you want to delete SubCategory
+                                    :
+                                    <strong><%= item.subCategoryName %></strong
+                                    ><br />
+                                    (All Produtcs also delete. This action can
+                                    be undone.)
+                                  </div>
+                                  <div class="modal-footer bg-whitesmoke br">
+                                    <button
+                                      type="button"
+                                      class="btn btn-primary"
+                                      data-dismiss="modal"
+                                    >
+                                      Cancel
+                                    </button>
+                                    <form
+                                      action="/admin/softDeleteSubCategory/<%= categoryId %>/<%= item._id %>?_method=patch"
+                                      method="post"
+                                    >
+                                      <button
+                                        type="submit"
+                                        class="btn btn-danger"
+                                      >
+                                        Delete SubCategory
+                                      </button>
+                                    </form>
+                                  </div>
+                                </div>
+                              </div>
+                            </div>
+                            <!-- modal end -->
+                            <% }) %>
+                          </tbody>
+                        </table>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <!-- table end -->
+            </div>
+          </section>
+        </div>
+        <!-- Main Content end-->
+      </div>
+    </div>
+    <!-- General JS Scripts -->
+    <script src="/assets/js/app.min.js"></script>
+    <!-- JS Libraies -->
+    <script src="/assets/bundles/datatables/datatables.min.js"></script>
+    <script src="/assets/bundles/datatables/DataTables-1.10.16/js/dataTables.bootstrap4.min.js"></script>
+    <script src="/assets/bundles/jquery-ui/jquery-ui.min.js"></script>
+    <!-- Page Specific JS File -->
+    <script src="/assets/js/page/datatables.js"></script>
+    <!-- Template JS File -->
+    <script src="/assets/js/scripts.js"></script>
+  </body>
+</html>

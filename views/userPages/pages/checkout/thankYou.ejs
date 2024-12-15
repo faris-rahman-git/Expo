@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="zxx">
+  <meta http-equiv="content-type" content="text/html;charset=UTF-8" />
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="content-type" content="text/html;charset=UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+    <title>Thank You</title>
+
+    <!-- ::::::::::::::Favicon icon::::::::::::::-->
+    <link rel="shortcut icon" href="" type="image/png" />
+
+    <!-- minified version files -->
+    <link rel="stylesheet" href="/css/plugins/plugins.min.css" />
+    <link rel="stylesheet" href="/css/style.min.css" />
+
+    <!-- FontAwesome CDN for version 4.7.0 -->
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/simple-line-icons/2.4.1/css/simple-line-icons.min.css"
+    />
+  </head>
+
+  <body>
+    <%- include('../../partials/navbar.ejs') %> <%-
+    include('../../partials/alert.ejs') %>
+
+    <!-- ...::::Start thank you section:::... -->
+    <div class="empty-cart-section section-fluid">
+      <div class="emptycart-wrapper">
+        <div class="container">
+          <div class="row">
+            <div class="col-12 col-md-10 offset-md-1 col-xl-6 offset-xl-3">
+              <div class="emptycart-content text-center pos-relitive">
+                <div class="image">
+                  <img
+                    class="img-fluid"
+                    src="/images/thankyou/Thank You!.jpg"
+                    alt=""
+                  />
+                </div>
+                <div class="pos-absolute" style="bottom: 70px">
+                  <h6
+                    class="sub-title text-black"
+                    style="
+                      font-size: 18px;
+                      font-family: 'Lobster', cursive !important;
+                    "
+                  >
+                    We couldn't be more grateful to those who've supported us,
+                    given critiques, reviews and more. We love you all!
+                  </h6>
+                  <a href="/home" class="btn btn-lg btn-golden"
+                    >Continue Shopping</a
+                  >
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <!-- ...::::End  thank you section:::... -->
+
+    <%- include('../../partials/footer.ejs') %>
+
+    <!-- material-scrolltop button -->
+    <button class="material-scrolltop" type="button"></button>
+
+    <script src="/js/pages/mainPages/checkout/thankYou.js"></script>
+
+    <!-- minified version files -->
+    <script src="/js/vendor/vendor.min.js"></script>
+    <script src="/js/plugins/plugins.min.js"></script>
+
+    <!-- Main JS -->
+    <script src="/js/main.js"></script>
+  </body>
+</html>

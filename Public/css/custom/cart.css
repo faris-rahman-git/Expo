@@ -1,0 +1,67 @@
+.quantity {
+    position: relative;
+    display: flex;
+    align-items: center; /* Vertically center the content */
+    font-weight: bolder;
+    font-size: 20px;
+  }
+  
+  input[type="number"]::-webkit-inner-spin-button,
+  input[type="number"]::-webkit-outer-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+  }
+  
+  input[type="number"] {
+    -moz-appearance: textfield;
+  }
+  
+  .quantity input {
+    width: 75px;
+    height: 30px;
+    line-height: 1.65;
+    text-align: center;
+    margin-left: 10px;
+    padding-left: 15px;
+    border-top: 3px solid black;
+    border-bottom: 3px solid black;
+  }
+  
+  .quantity-nav {
+    display: flex;
+    align-items: center;
+  }
+  
+  .quantity-button {
+    cursor: pointer;
+    border-bottom: 3px solid black;
+    border-top: 3px solid black;
+    width: 25px;
+    height: 30px;
+    line-height: 30px;
+    text-align: center;
+    align-self: center;
+    color: #333;
+    font-family: "Trebuchet MS", Helvetica, sans-serif !important;
+    user-select: none;
+    font-size: 35px;
+
+  }
+  
+  .quantity-button.quantity-down {
+    position: absolute;
+    left: 0;
+    border-radius: 14px 0 0 14px;
+    border-left: 3px solid black;
+
+  }
+  
+  .quantity-button.quantity-up {
+    position: absolute;
+    border-radius: 0 14px 14px 0;
+    border-right: 3px solid black;
+  }
+  
+  .quantity-button p{
+    margin-top: -4px;   
+  }

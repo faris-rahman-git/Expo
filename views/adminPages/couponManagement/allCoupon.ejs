@@ -1,0 +1,208 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta
+      content="width=device-width, initial-scale=1, maximum-scale=1, shrink-to-fit=no"
+      name="viewport"
+    />
+    <title>Xpo - All Product Details</title>
+    <!-- General CSS Files -->
+    <link rel="stylesheet" href="/assets/css/app.min.css" />
+    <link
+      rel="stylesheet"
+      href="/assets/bundles/datatables/DataTables-1.10.16/css/dataTables.bootstrap4.min.css"
+    />
+    <link
+      rel="stylesheet"
+      href="/assets/bundles/datatables/datatables.min.css"
+    />
+
+    <!-- Template CSS -->
+    <link rel="stylesheet" href="/assets/css/style.css" />
+    <link rel="stylesheet" href="/assets/css/components.css" />
+    <link
+      rel="shortcut icon"
+      type="image/x-icon"
+      href="/assets/img/favicon.ico"
+    />
+  </head>
+
+  <body>
+    <div class="loader"></div>
+    <div id="app">
+      <div class="main-wrapper main-wrapper-1">
+        <%- include('../partials/navbar') %> <%- include('../partials/sidebar')
+        %>
+
+        <!-- Main Content start-->
+        <div class="main-content">
+          <section class="section">
+            <div class="section-body">
+              <!-- table start -->
+              <div class="row">
+                <div class="col-12">
+                  <div class="card">
+                    <div class="card-header d-flex justify-content-between">
+                      <h4>All Coupon's List</h4>
+                    </div>
+                    <div class="card-body">
+                      <div class="table-responsive">
+                        <table class="table table-striped" id="table-3">
+                          <thead>
+                            <tr>
+                              <th>#</th>
+                              <th>Coupon Code</th>
+                              <th>Coupon Name</th>
+                              <th>Discount Type</th>
+                              <th>Value</th>
+                              <th>Limit</th>
+                              <th>Used Count</th>
+                              <th>Start Date</th>
+                              <th>Expiry Date</th>
+                              <th>Status</th>
+                              <th class="text-center">Action</th>
+                            </tr>
+                          </thead>
+
+                          <tbody>
+                            <% allCoupons.forEach((coupon , index)=>{%>
+                            <tr>
+                              <td><%= index+1 %></td>
+                              <td><%= coupon.couponCode %></td>
+                              <td><%= coupon.couponName %></td>
+                              <td><%= coupon.discountType %></td>
+                              <td class="text-center">
+                                <%= coupon.discountValue %> <%=
+                                coupon.discountType == "Percentage" ? "%" : "₹"
+                                %>
+                              </td>
+                              <td class="text-center">
+                                <%= coupon.totalUsageLimit == null ? "Unlimited"
+                                : coupon.totalUsageLimit %>
+                              </td>
+                              <td><%= coupon.currectUsageCount %></td>
+                              <td>
+                                <%= new
+                                Date(coupon.startDate).toLocaleDateString("en-GB"
+                                , {day :"numeric" , month:"short" ,
+                                year:"numeric"}) %>
+                              </td>
+                              <td>
+                                <%= !coupon.expiryDate ? "No Expiry" : new
+                                Date(coupon.expiryDate).toLocaleDateString("en-GB"
+                                , {day :"numeric" , month:"short" ,
+                                year:"numeric"}) %>
+                              </td>
+                              <td class="text-center">
+                                <div
+                                  class="badge <%= coupon.isActive ? 'badge-success' : 'badge-danger' %> badge-shadow"
+                                >
+                                  <%= coupon.isActive ? "Active" : "Inactive" %>
+                                </div>
+                              </td>
+                              <td class="text-center">
+                                <a
+                                  href="/admin/editCoupon/<%= coupon._id %>"
+                                  class="btn btn-primary text-white mt-1 mb-1"
+                                >
+                                  Edit/Details
+                                </a>
+                                <button
+                                  type="button"
+                                  class="btn btn-danger text-white"
+                                  data-toggle="modal"
+                                  data-target="#delete<%= index %>"
+                                >
+                                  Delete
+                                </button>
+                              </td>
+                            </tr>
+                            <!-- modal start -->
+                            <div
+                              class="modal fade"
+                              id="delete<%= index %>"
+                              tabindex="-1"
+                              role="dialog"
+                              aria-labelledby="exampleModalCenterTitle"
+                              aria-hidden="true"
+                            >
+                              <div
+                                class="modal-dialog modal-dialog-centered"
+                                role="document"
+                              >
+                                <div class="modal-content">
+                                  <div class="modal-header">
+                                    <h5
+                                      class="modal-title text-danger"
+                                      id="exampleModalCenterTitle"
+                                    >
+                                      Delete Warning
+                                    </h5>
+                                    <button
+                                      type="button"
+                                      class="close"
+                                      data-dismiss="modal"
+                                      aria-label="Close"
+                                    >
+                                      <span aria-hidden="true">&times;</span>
+                                    </button>
+                                  </div>
+                                  <div class="modal-body text-dark">
+                                    Are you sure you want to delete Category :
+                                    <strong><%= coupon.couponCode %></strong
+                                    ><br />
+                                    (This action can be undone.)
+                                  </div>
+                                  <div class="modal-footer bg-whitesmoke br">
+                                    <button
+                                      type="button"
+                                      class="btn btn-primary"
+                                      data-dismiss="modal"
+                                    >
+                                      Cancel
+                                    </button>
+                                    <form
+                                      action="/admin/softDeleteCoupon/<%= coupon._id %>?_method=patch"
+                                      method="post"
+                                    >
+                                      <button
+                                        type="submit"
+                                        class="btn btn-danger"
+                                      >
+                                        Delete Coupon
+                                      </button>
+                                    </form>
+                                  </div>
+                                </div>
+                              </div>
+                            </div>
+                            <!-- modal end -->
+                            <% }) %>
+                          </tbody>
+                        </table>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <!-- table end -->
+            </div>
+          </section>
+        </div>
+        <!-- Main Content end-->
+      </div>
+    </div>
+    <!-- General JS Scripts -->
+
+    <script src="/assets/js/app.min.js"></script>
+    <!-- JS Libraies -->
+    <script src="/assets/bundles/datatables/datatables.min.js"></script>
+    <script src="/assets/bundles/datatables/DataTables-1.10.16/js/dataTables.bootstrap4.min.js"></script>
+    <script src="/assets/bundles/jquery-ui/jquery-ui.min.js"></script>
+    <!-- Page Specific JS File -->
+    <script src="/assets/js/page/datatables.js"></script>
+    <!-- Template JS File -->
+    <script src="/assets/js/scripts.js"></script>
+  </body>
+</html>

@@ -1,0 +1,222 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta
+      content="width=device-width, initial-scale=1, maximum-scale=1, shrink-to-fit=no"
+      name="viewport"
+    />
+    <title>Xpo -- Variants Details</title>
+    <!-- General CSS Files -->
+    <link rel="stylesheet" href="/assets/css/app.min.css" />
+    <link
+      rel="stylesheet"
+      href="/assets/bundles/datatables/datatables.min.css"
+    />
+    <link
+      rel="stylesheet"
+      href="/assets/bundles/datatables/DataTables-1.10.16/css/dataTables.bootstrap4.min.css"
+    />
+    <!-- Template CSS -->
+    <link rel="stylesheet" href="/assets/css/style.css" />
+    <link rel="stylesheet" href="/assets/css/components.css" />
+    <link
+      rel="shortcut icon"
+      type="image/x-icon"
+      href="/assets/img/favicon.ico"
+    />
+  </head>
+
+  <body>
+    <div class="loader"></div>
+    <div id="app">
+      <div class="main-wrapper main-wrapper-1">
+        <%- include('../partials/navbar') %> <%- include('../partials/sidebar')
+        %>
+
+        <!-- Main Content start-->
+        <div class="main-content">
+          <section class="section">
+            <div class="section-body">
+              <!-- table start -->
+              <div class="row">
+                <div class="col-12">
+                  <div class="card">
+                    <div class="card-header justify-content-between">
+                      <h4><%= product.productName %> Variants List</h4>
+                      <div>
+                        <a
+                          href="/admin/allProducts"
+                          class="btn btn-dark text-white"
+                        >
+                          <i data-feather="chevrons-left" class="mr-2"></i>Back
+                          to Product Page
+                        </a>
+                        <a
+                          href="/admin/deletedProductVariants/<%= product._id %>"
+                          class="btn btn-danger text-white"
+                        >
+                          <i data-feather="trash" class="mr-2"></i>Deleted
+                          Variants
+                        </a>
+                        <a
+                          href="/admin/addNewProductVariant/<%= product._id %>"
+                          class="btn btn-primary text-white"
+                        >
+                          <i data-feather="plus-square" class="mr-2"></i>Add New
+                          Variant
+                        </a>
+                      </div>
+                    </div>
+
+                    <div class="card-body">
+                      <div class="table-responsive">
+                        <table class="table table-striped" id="table-4">
+                          <thead>
+                            <tr>
+                              <th>#</th>
+                              <th class="mw-20">Variant Name</th>
+                              <th>Product Description</th>
+                              <th>Images</th>
+                              <th>Color</th>
+                              <th>Stock</th>
+                              <th>Price</th>
+                              <th>Final Discount</th>
+                              <th>Final Price</th>
+                              <th class="text-center">Status</th>
+                              <th class="text-center">Action</th>
+                            </tr>
+                          </thead>
+
+                          <tbody>
+                            <% activeVariants.forEach((item,index)=>{%>
+                            <tr>
+                              <td><%= index+1 %></td>
+                              <td style="max-width: 150px">
+                                <%= item.variantName %>
+                              </td>
+                              <td style="max-width: 200px">
+                                <%= item.variantDescription %>
+                              </td>
+                              <td>
+                                <% item.images.forEach(image =>{ %>
+                                <img src="<%= image.path %>" width="35" />
+                                <% }) %>
+                              </td>
+                              <td><%= item.color %></td>
+                              <td><%= item.stock %></td>
+                              <td>₹<%= item.price %></td>
+                              <td><%= item.offerPercentage %>%</td>
+                              <td>₹<%= item.finalPrice %></td>
+                              <td class="text-center">
+                                <div
+                                  class="badge <%= item.isInactive ? 'badge-danger' : 'badge-success' %> badge-shadow"
+                                >
+                                  <%= item.isInactive ? 'Inactive' : 'Active' %>
+                                </div>
+                              </td>
+                              <td class="text-center">
+                                <a
+                                  href="/admin/editProductVariant/<%= product._id %>/<%= item._id %>"
+                                  class="btn btn-primary mb-2"
+                                  >Edit/Details</a
+                                >
+                                <button
+                                  type="button"
+                                  class="btn btn-danger text-white"
+                                  data-toggle="modal"
+                                  data-target="#delete<%= index %>"
+                                >
+                                  Delete
+                                </button>
+                              </td>
+                            </tr>
+
+                            <!-- modal start -->
+                            <div
+                              class="modal fade"
+                              id="delete<%= index %>"
+                              tabindex="-1"
+                              role="dialog"
+                              aria-labelledby="exampleModalCenterTitle"
+                              aria-hidden="true"
+                            >
+                              <div
+                                class="modal-dialog modal-dialog-centered"
+                                role="document"
+                              >
+                                <div class="modal-content">
+                                  <div class="modal-header">
+                                    <h5
+                                      class="modal-title text-danger"
+                                      id="exampleModalCenterTitle"
+                                    >
+                                      Delete Warning
+                                    </h5>
+                                    <button
+                                      type="button"
+                                      class="close"
+                                      data-dismiss="modal"
+                                      aria-label="Close"
+                                    >
+                                      <span aria-hidden="true">&times;</span>
+                                    </button>
+                                  </div>
+                                  <div class="modal-body text-dark">
+                                    Are you sure you want to delete Product
+                                    Variant :
+                                    <strong><%= item.variantName %></strong
+                                    ><br />
+                                    (This action can be undone.)
+                                  </div>
+                                  <div class="modal-footer bg-whitesmoke br">
+                                    <button
+                                      type="button"
+                                      class="btn btn-primary"
+                                      data-dismiss="modal"
+                                    >
+                                      Cancel
+                                    </button>
+                                    <form
+                                      action="/admin/softDeleteProductVariant/<%= product._id %>/<%= item._id %>?_method=patch"
+                                      method="post"
+                                    >
+                                      <button
+                                        type="submit"
+                                        class="btn btn-danger"
+                                      >
+                                        Delete Variant
+                                      </button>
+                                    </form>
+                                  </div>
+                                </div>
+                              </div>
+                            </div>
+                            <!-- modal end -->
+                            <% }) %>
+                          </tbody>
+                        </table>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <!-- table end -->
+            </div>
+          </section>
+        </div>
+        <!-- Main Content end-->
+      </div>
+    </div>
+    <!-- General JS Scripts -->
+    <script src="/assets/js/app.min.js"></script>
+    <!-- JS Libraies -->
+    <script src="/assets/bundles/datatables/datatables.min.js"></script>
+    <script src="/assets/bundles/datatables/DataTables-1.10.16/js/dataTables.bootstrap4.min.js"></script>
+    <script src="/assets/bundles/jquery-ui/jquery-ui.min.js"></script>
+    <!-- Page Specific JS File -->
+    <script src="/assets/js/page/datatables.js"></script>
+    <!-- Template JS File -->
+    <script src="/assets/js/scripts.js"></script>
+  </body>
+</html>

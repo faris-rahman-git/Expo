@@ -1,0 +1,350 @@
+F<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta
+      content="width=device-width, initial-scale=1, maximum-scale=1, shrink-to-fit=no"
+      name="viewport"
+    />
+    <title>Xpo - Add New Product Variant</title>
+    <!-- General CSS Files -->
+    <link rel="stylesheet" href="/assets/css/app.min.css" />
+    <!-- Template CSS -->
+    <link rel="stylesheet" href="/assets/css/style.css" />
+    <link
+      rel="shortcut icon"
+      type="image/x-icon"
+      href="/assets/img/favicon.ico"
+    />
+  </head>
+
+  <body>
+    <div class="loader"></div>
+    <div id="app">
+      <div class="main-wrapper main-wrapper-1">
+        <%- include('../partials/navbar') %> <%- include('../partials/sidebar')
+        %>
+
+        <!-- Main Content start -->
+        <div class="main-content">
+          <section class="section">
+            <form>
+              <div class="section-body">
+                <div class="row justify-content-center">
+                  <div class="col-12 col-lg-9">
+                    <div class="card">
+                      <div class="card-header justify-content-between">
+                        <h4>Add New Coupon</h4>
+                      </div>
+                      <div class="card-body">
+                        <div class="text-center text-danger">
+                          <label id="logErrorMessage">Enter New Coupon Details</label>
+                        </div>
+                        <div class="form-row">
+                          <div class="form-group col-md-4">
+                            <label for="productVariantName">Coupon Name</label>
+                            <input
+                              type="text"
+                              class="form-control"
+                              id="couponName"
+                              placeholder="Coupon Name"
+                              name="couponName"
+                            />
+                          </div>
+                          <div class="form-group col-md-4">
+                            <label for="productVariantDescription"
+                              >Coupon Code
+                            </label>
+                            <input
+                              type="text"
+                              class="form-control text-uppercase"
+                              id="couponCode"
+                              placeholder="Coupon Code"
+                              name="couponCode"
+                            />
+                          </div>
+                          <div class="form-group col-md-4">
+                            <label for="productVariantDescription"
+                              >Coupon Color (Use Light Color's)
+                            </label>
+                            <input
+                              type="color"
+                              class="form-control text-uppercase"
+                              id="couponColor"
+                              placeholder="Coupon Color"
+                              name="couponColor"
+                              value="#FF0000"
+                            />
+                          </div>
+                          <div class="form-group col-md-6">
+                            <label for="productVariantDescription"
+                              >Coupon Description
+                            </label>
+                            <textarea
+                              class="form-control"
+                              id="description"
+                              placeholder="Coupon Description"
+                              name="description"
+                            ></textarea>
+                          </div>
+                          <div class="form-group col-md-3">
+                            <label for="price">Start Date</label>
+                            <input
+                              type="date"
+                              class="form-control"
+                              id="startDate"
+                              placeholder="Start Date"
+                              name="startDate"
+                            />
+                          </div>
+                          <div class="form-group col-md-3">
+                            <label for="price">Expiry Date</label>
+                            <input
+                              type="date"
+                              class="form-control"
+                              id="expiryDate"
+                              placeholder="Expiry Date"
+                              name="expiryDate"
+                            />
+                          </div>
+                          <div class="form-group col-md-4">
+                            <label for="status">Discount Type</label>
+                            <select
+                              id="discountType"
+                              class="form-control"
+                              name="discountType"
+                            >
+                              <option value="Percentage" selected>
+                                Percentage
+                              </option>
+                              <option value="Fixed">Fixed Amount</option>
+                            </select>
+                          </div>
+                          <div class="form-group col-md-4">
+                            <label for="color">Discount Value</label>
+                            <input
+                              type="number"
+                              class="form-control"
+                              id="discountValue"
+                              placeholder="Discount Value In %"
+                              name="discountValue"
+                            />
+                          </div>
+                          <div class="form-group col-md-4">
+                            <label for="stock"
+                              >Maximum Discount ₹(Empty/0 - No Limit)</label
+                            >
+                            <input
+                              type="number"
+                              class="form-control"
+                              id="maxDiscount"
+                              placeholder="Maximum Discount (For Percentage)"
+                              name="maxDiscount"
+                            />
+                          </div>
+                          <div class="form-group col-md-4">
+                            <label for="stock"
+                              >Total Usage Limit (Empty/0 - Unlimited)</label
+                            >
+                            <input
+                              type="number"
+                              class="form-control"
+                              id="totalUsageLimit"
+                              placeholder="Total Usage Limit (Optional)"
+                              name="totalUsageLimit"
+                            />
+                          </div>
+                          <div class="form-group col-md-4">
+                            <label for="stock">Minimum Purchase Amount</label>
+                            <input
+                              type="number"
+                              class="form-control"
+                              id="minPurchase"
+                              placeholder="Minimum Purchase Amount"
+                              name="minPurchase"
+                            />
+                          </div>
+                          <div class="form-group col-md-4">
+                            <label for="status">Coupon Status</label>
+                            <select
+                              id="couponStatus"
+                              class="form-control"
+                              name="couponStatus"
+                            >
+                              <option selected>Active</option>
+                              <option>Inactive</option>
+                            </select>
+                          </div>
+                          <div class="form-group col-md-6">
+                            <label for="status">Assigned Users</label>
+                            <div class="d-flex">
+                              <select
+                                id="assignedUsers"
+                                class="form-control"
+                                name="assignedUsers"
+                              >
+                              <option value="selectedUsers" selected>Selected Users</option>
+                                <option value="allUsers" >
+                                  All User's
+                                </option>
+                              </select>
+                              <input type="hidden" name="selectedUsersId" id="selectedUsersId">
+                              <button
+                                id="selectUserBtn"
+                                class="btn btn-outline-success text-dark ml-3 text-nowrap"
+                                type="button"
+                                data-toggle="modal"
+                                data-target="#users"
+                              >
+                                Select Users
+                              </button>
+
+                              <!-- modal start -->
+                              <div
+                                class="modal fade bd-example-modal-lg"
+                                id="users"
+                                tabindex="-1"
+                                role="dialog"
+                                aria-labelledby="myLargeModalLabel"
+                                aria-hidden="true"
+                              >
+                                <div
+                                  class="modal-dialog modal-xl modal-dialog-centered modal-dialog-scrollable"
+                                >
+                                  <div class="modal-content">
+                                    <div class="modal-header">
+                                      <h5
+                                        class="modal-title"
+                                        id="myLargeModalLabel"
+                                      >
+                                        Modal title
+                                      </h5>
+                                      <button
+                                        type="button"
+                                        class="close"
+                                        data-dismiss="modal"
+                                        aria-label="Close"
+                                      >
+                                        <span aria-hidden="true">&times;</span>
+                                      </button>
+                                    </div>
+                                    <div class="modal-body">
+                                      <div class="table-responsive">
+                                        <table
+                                          class="table table-striped"
+                                          id="table-2"
+                                        >
+                                          <thead>
+                                            <tr>
+                                              <th class="text-center pt-3">
+                                                <div
+                                                  class="custom-checkbox custom-checkbox-table custom-control"
+                                                >
+                                                  <input
+                                                    type="checkbox"
+                                                    data-checkboxes="mygroup"
+                                                    data-checkbox-role="dad"
+                                                    class="custom-control-input"
+                                                    id="checkbox-all"
+                                                  />
+                                                  <label
+                                                    for="checkbox-all"
+                                                    class="custom-control-label"
+                                                    >&nbsp;</label
+                                                  >
+                                                </div>
+                                              </th>
+                                              <th>#</th>
+                                              <th>User Name</th>
+                                              <th>Email</th>
+                                              <th>Phone Number</th>
+                                              <th>Created At</th>
+                                              <th>Status</th>
+                                            </tr>
+                                          </thead>
+                                          <tbody>
+                                            <% users.forEach((item,index)=>{%>
+                                            <tr>
+                                              <td class="text-center pt-2">
+                                                <div
+                                                  class="custom-checkbox custom-control"
+                                                >
+                                                  <input
+                                                    type="checkbox"
+                                                    data-checkboxes="mygroup"
+                                                    class="custom-control-input user-checkbox"
+                                                    id="checkbox-<%= index+1 %>"
+                                                    value="<%= item._id %>"
+                                                  />
+                                                  <label
+                                                    for="checkbox-<%= index+1 %>"
+                                                    class="custom-control-label"
+                                                    >&nbsp;</label
+                                                  >
+                                                </div>
+                                              </td>
+                                              <td><%= index+1 %></td>
+                                              <td><%= item.userName %></td>
+                                              <td><%= item.email %></td>
+                                              <td>
+                                                <%= item.phoneNumber ?? "Not Available" %>
+                                              </td>
+                                              <td>
+                                                <%= new
+                                                Date(item.createdAt).toLocaleDateString('en-GB')
+                                                %>
+                                              </td>
+                                              <td>
+                                                <div
+                                                  class="badge <%= item.isBlock ? 'badge-danger' : 'badge-success' %> badge-shadow"
+                                                >
+                                                  <%= item.isBlock ? 'Blocked' : 'Active' %>
+                                                </div>
+                                              </td>
+                                            </tr>
+                                            <% }) %>
+                                          </tbody>
+                                        </table>
+                                      </div>
+                                    </div>
+                                    <p id="userSelectMessage" class="text-center text-capitalize text-danger" > </p>
+                                    <button type="button" class="btn btn-primary mb-3 mx-5" id="selectUsersBtn">Select Users</button>
+                                  </div>
+                                </div>
+                              </div>
+                              <!-- modal end -->
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                      <div class="card-footer align-center">
+                        <button class="btn btn-primary" id="addNewCouponBtn">
+                          <i data-feather="plus-square" class="mr-2"></i>Save
+                          New Coupon
+                        </button>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </form>
+          </section>
+        </div>
+        <!-- Main Content end -->
+      </div>
+    </div>
+
+    <script src="/js/adminPages/couponManagement/addNewCoupon.js"></script>
+
+    <!-- General JS Scripts -->
+    <script src="/assets/js/app.min.js"></script>
+
+    <script src="/assets/bundles/datatables/datatables.min.js"></script>
+    <script src="/assets/bundles/datatables/DataTables-1.10.16/js/dataTables.bootstrap4.min.js"></script>
+    <script src="/assets/bundles/jquery-ui/jquery-ui.min.js"></script>
+    <!-- Page Specific JS File -->
+    <script src="/assets/js/page/datatables.js"></script>
+    <!-- Template JS File -->
+    <script src="/assets/js/scripts.js"></script>
+  </body>
+</html>

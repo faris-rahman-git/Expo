@@ -1,0 +1,545 @@
+<!DOCTYPE html>
+<html lang="zxx">
+  <meta http-equiv="content-type" content="text/html;charset=UTF-8" />
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="content-type" content="text/html;charset=UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+    <title>Order Details</title>
+
+    <!-- ::::::::::::::Favicon icon::::::::::::::-->
+    <link rel="shortcut icon" href="" type="image/png" />
+
+    <!-- minified version files -->
+    <link rel="stylesheet" href="/css/plugins/plugins.min.css" />
+    <link rel="stylesheet" href="/css/style.min.css" />
+    <link rel="stylesheet" href="/css/customBreadCrumb.css" />
+
+    <!-- FontAwesome CDN for version 4.7.0 -->
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/simple-line-icons/2.4.1/css/simple-line-icons.min.css"
+    />
+  </head>
+
+  <body>
+    <%- include('../../partials/navbar.ejs') %>
+
+    <!-- breadcrumb start -->
+    <br />
+    <div>
+      <ul class="breadcrumb">
+        <li><a href="/home">Home</a></li>
+        <li><a href="/myAccount">My Account</a></li>
+        <li class="active">Orders - Order Details</li>
+      </ul>
+    </div>
+    <!-- breadcrumb end -->
+
+    <!-- ...:::: Start order details Section:::... -->
+    <div class="container">
+      <div class="row justify-content-center">
+        <div class="col-md-10">
+          <% for(let item of order.products){ %> <% if(item._id.toString() ==
+          orderId.toString() ){ %>
+
+          <!-- top section start-->
+          <h3><strong>Order Details</strong></h3>
+          <div class="d-flex justify-content-between mb-3">
+            <span class="text-black">
+              Ordered on <%= new
+              Date(order.orderDate).toLocaleDateString('en-GB', { day:
+              'numeric', month: 'long', year: 'numeric' }) %> | ORDER# ORD-<%=
+              orderId %>
+            </span>
+            <% if(item.status === 'Delivered' || item.status === 'Return' ||
+            item.status === 'Refunded') { %>
+            <a
+              href="/orderInvoice/<%= order._id %>/<%= item._id %>"
+              target="_blank"
+            >
+              <button class="text-primary txhover" style="font-size: 20px">
+                Invoice
+              </button>
+            </a>
+            <% } %>
+          </div>
+          <!-- top section end-->
+
+          <!-- middle section start-->
+          <div class="card">
+            <div class="card-body row m-2">
+              <div class="col-md-4" style="color: black">
+                <h6><strong>Shipping Address</strong></h6>
+                <p class="m-0"><%= order.shippingAddress.fullName %></p>
+                <p class="m-0"><%= order.shippingAddress.house %></p>
+                <p class="m-0"><%= order.shippingAddress.landmark %></p>
+                <p class="m-0"><%= order.shippingAddress.street %></p>
+                <p class="m-0">
+                  <%= order.shippingAddress.city %>, KERALA ,<%=
+                  order.shippingAddress.pinCode %>
+                </p>
+                <p class="m-0">India</p>
+              </div>
+              <div class="col-md-4" style="color: black">
+                <h6><strong>Payment Methods </strong></h6>
+                <p class="m-0"><%= order.paymentDetails.method %></p>
+                <h6 class="mt-3"><strong>Payment Status </strong></h6>
+                <p class="m-0"><%= item.paymentStatus %></p>
+              </div>
+              <div class="col-md-4" style="color: black">
+                <h6><strong>Order Summary </strong></h6>
+                <div class="row">
+                  <div class="col-md-8">
+                    <p class="m-0">Price:</p>
+                    <p class="m-0">quantity:</p>
+                    <p class="m-0">Item(s) Subtotal:</p>
+                    <p class="m-0">Shipping:</p>
+                    <p class="m-0">Total:</p>
+                    <p class="m-0">Discounts:</p>
+                    <p class="m-0"><strong>Grand Total:</strong></p>
+                  </div>
+                  <div class="col-md-4 text-right">
+                    <p class="m-0">₹<%= item.price %>.00</p>
+                    <p class="m-0"><%= item.quantity %></p>
+                    <p class="m-0">₹<%= (item.price*item.quantity) %>.00</p>
+                    <p class="m-0">₹<%= item.shippingCost %>.00</p>
+                    <p class="m-0">
+                      ₹<%= (item.price*item.quantity) + item.shippingCost %>.00
+                    </p>
+                    <p class="m-0">
+                      ₹<%= (item.offerDiscount + item.couponDiscount) %>.00
+                    </p>
+                    <p class="m-0">
+                      <strong
+                        >₹<%= (item.price*item.quantity)-(item.offerDiscount +
+                        item.couponDiscount)+ item.shippingCost %>.00</strong
+                      >
+                    </p>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <!-- middle section end-->
+
+          <!-- last section start-->
+          <% item.productId.variants.forEach(variant => { %> <%
+          if(variant._id.toString() == item.variantId.toString()){ %>
+          <br />
+          <div class="card">
+            <div class="card-body row m-2">
+              <div class="col-md-9" style="color: black">
+                <div class="row">
+                  <div class="col-12 mb-2">
+                    <h4>
+                      <strong>
+                        <% if(item.status == 'OutForDelivery'){ %> Out Of
+                        Delivery <% }else if(item.returnStatus == "Cancelled" ||
+                        item.status == "Delivered"){ %> Delivered <%= new
+                        Date(item.deliveredAt).toLocaleDateString('en-GB', {
+                        day: 'numeric', month: 'long', year: 'numeric' }) %> <%
+                        }else if(item.returnStatus == "Completed"){ %> Returned
+                        At <%= new
+                        Date(item.returnedAt).toLocaleDateString('en-GB', { day:
+                        'numeric', month: 'long', year: 'numeric' }) %> <%
+                        }else{ %> <%= item.status %> <%= item.returnStatus %> <%
+                        } %>
+                      </strong>
+                    </h4>
+                  </div>
+                  <div class="col-12">
+                    <div class="row">
+                      <div class="col-md-3 pr-0">
+                        <p class="card-text">
+                          <a
+                            href="/productDetails/<%= item.productId._id %>/<%= variant._id %>"
+                          >
+                            <img
+                              src="<%= variant.images[0].path %>"
+                              alt="product image"
+                              class="img-fluid2"
+                          /></a>
+                        </p>
+                      </div>
+                      <div class="col-md-9 pl-0">
+                        <h5>
+                          <strong>
+                            <%= item.productId.productName %> - <%=
+                            variant.variantName %>
+                          </strong>
+                        </h5>
+                        <p class="m-0">
+                          <strong>Color: <%= variant.color %></strong>
+                        </p>
+                        <p class="m-0">
+                          <strong
+                            >Total Price: ₹<%=
+                            (item.price*item.quantity)-(item.offerDiscount +
+                            item.couponDiscount) + item.shippingCost
+                            %>.00</strong
+                          >
+                        </p>
+                        <% if(item.deliveredAt){ %>
+                        <p class="m-0 mt-3">
+                          Return window closed on <%= new Date(new
+                          Date(item.deliveredAt).setDate(new
+                          Date(item.deliveredAt).getDate() + 7))
+                          .toLocaleDateString('en-GB', { day: 'numeric', month:
+                          'long', year: 'numeric' }) %>
+                        </p>
+                        <% } %> <% if(item.returnStatus){ %>
+                        <p class="m-0">
+                          <strong
+                            >Return Status: <%= item.returnStatus %></strong
+                          >
+                        </p>
+                        <% } %>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div
+                class="col-md-3 align-self-center text-center"
+                style="color: black"
+              >
+                <a
+                  href="/productDetails/<%= item.productId._id %>/<%= item.variantId %>"
+                  class="btn btn-outline-secondary mb-2"
+                  >View Item</a
+                ><br />
+                <% if(item.status === 'Delivered' || item.status === 'Return' ||
+                item.status === 'Refunded') { %>
+                <a href="" class="btn btn-outline-success"
+                  >Write a Product Review</a
+                >
+
+                <!-- cancel order start -->
+                <% } %> <% if(item.status === 'Pending' || item.status ===
+                'Confirmed' || item.status === 'Shipped') { %>
+                <!-- Start Cancel card -->
+                <a
+                  href="#"
+                  data-bs-toggle="modal"
+                  class="btn btn-outline-danger mt-3"
+                  data-bs-target="#cancelModel<%= item._id %>"
+                  >cancel order</a
+                >
+                <div class="modal fade" id="cancelModel<%= item._id %>">
+                  <div
+                    class="modal-dialog modal-dialog-centered"
+                    role="document"
+                    style="width: 500px"
+                  >
+                    <div class="modal-content">
+                      <div class="modal-body">
+                        <div class="container-fluid">
+                          <div
+                            class="row justify-content-between align-items-center mb-3"
+                          >
+                            <div class="col-md-10 text-left">
+                              <h2 class="m-0 text-danger text-capitalize">
+                                <strong>cancel order alert</strong>
+                              </h2>
+                            </div>
+                            <div class="col-md-2 text-right">
+                              <button
+                                type="button"
+                                class="close modal-close border-0"
+                                data-bs-dismiss="modal"
+                                aria-label="Close"
+                              >
+                                <span aria-hidden="true">
+                                  <i
+                                    class="icon-close"
+                                    style="font-size: 24px"
+                                  ></i
+                                ></span>
+                              </button>
+                            </div>
+                          </div>
+                          <form
+                          action="/cancelOrder/<%= order._id %>/<%= item._id %>?_method=patch"
+                          method="post"
+                          onsubmit="return cancelOrder()"
+                          >
+                          <div class="row">
+                            <div class="col text-left">
+                              <p>
+                                Are you sure you want to cancel the order
+                                with
+                                <strong>ID: ORD- <%= item._id %></strong>
+                                . This action cannot be undone.
+                              </p>
+                              <hr>
+                              <div class="default-form-box mb-20">
+                                <label id="cancelReasonLabel" class="text-danger text-center text-capitalize">Canellation Reason (at least 20 characters long)</label>
+                                <textarea name="cancelReason" id="cancelReason"></textarea>
+                              </div>                                  
+                            </div>
+                          </div>
+                          <div class="row justify-content-end">
+                            <div class="col-md-5">
+                                <input
+                                  type="hidden"
+                                  value="<%= item.productId._id %>"
+                                  name="productId"
+                                />
+                                <input
+                                  type="hidden"
+                                  value="<%= item.variantId %>"
+                                  name="variantId"
+                                />
+                                <input
+                                  type="hidden"
+                                  value="<%= item.quantity %>"
+                                  name="quantity"
+                                />
+                                <input
+                                  type="hidden"
+                                  value="<%= item.price %>"
+                                  name="price"
+                                />
+                                <input
+                                type="hidden"
+                                value="<%= item.offerDiscount + item.couponDiscount %>"
+                                name="discount"
+                              />
+                                <button
+                                  type="button"
+                                  class="btn btn-outline-success mt-3"
+                                  data-bs-dismiss="modal"
+                                  aria-label="Close"
+                                >
+                                  Close
+                                </button>
+                                <button
+                                  type="submit"
+                                  class="btn btn-outline-danger mt-3"
+                                >
+                                  Confirm
+                                </button>
+                            </div>
+                          </div>
+                          </form>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                <!-- End Cancel card -->
+                <% } %>
+                <!-- cancel order end -->
+
+                <!-- return order start-->
+                <% var deliveredAt = new Date() - item.deliveredAt ?? 0 %> <%
+                if(item.status === 'Delivered' || item.returnStatus ==
+                'Cancelled' && Math.floor(deliveredAt / (1000 * 60 * 60 * 24))
+                <= 7 ) { %>
+
+                <!-- Start return order modal -->
+                <a
+                  href="#"
+                  data-bs-toggle="modal"
+                  class="btn btn-outline-danger mt-3"
+                  data-bs-target="#returnModel<%= item._id %>"
+                  >Return Request</a
+                >
+                <div class="modal fade" id="returnModel<%= item._id %>">
+                  <div
+                    class="modal-dialog modal-dialog-centered"
+                    role="document"
+                    style="width: 500px"
+                  >
+                    <div class="modal-content">
+                      <div class="modal-body">
+                        <div class="container-fluid">
+                          <div
+                            class="row justify-content-between align-items-center mb-3"
+                          >
+                            <div class="col-md-10 text-left">
+                              <h2 class="m-0 text-danger text-capitalize">
+                                <strong>Return order alert</strong>
+                              </h2>
+                            </div>
+                            <div class="col-md-2 text-right">
+                              <button
+                                type="button"
+                                class="close modal-close border-0"
+                                data-bs-dismiss="modal"
+                                aria-label="Close"
+                              >
+                                <span aria-hidden="true">
+                                  <i
+                                    class="icon-close"
+                                    style="font-size: 24px"
+                                  ></i
+                                ></span>
+                              </button>
+                            </div>
+                          </div>
+                          <form
+                            action="/returnProduct/<%= item._id %>?_method=patch"
+                            method="post"
+                            onsubmit="return returnOrder()">
+                            <div class="row">
+                            <div class="col text-left">
+                              <p>
+                                Are you sure you want to initiate a return
+                                for the product with
+                                <strong>ID: ORD- <%= item._id %></strong>?
+                                . This action cannot be undone.
+                              </p>
+                              <hr>
+                              <div class="default-form-box mb-20">
+                                <label id="returnReasonLabel" class="text-danger text-center text-capitalize">return Reason Reason (at least 20 characters long)</label>
+                                <textarea name="returnReason" id="returnReason"></textarea>
+                              </div>        
+                            </div>
+                            </div>
+                            <div class="row justify-content-end">
+                            <div class="col-md-5">
+                                <button
+                                  type="button"
+                                  class="btn btn-outline-success mt-3"
+                                  data-bs-dismiss="modal"
+                                  aria-label="Close"
+                                >
+                                  Close
+                                </button>
+                                <button
+                                  type="submit"
+                                  class="btn btn-outline-danger mt-3"
+                                >
+                                  Confirm
+                                </button>
+                            </div>
+                            </div>
+                          </form>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                <!-- End return order modal -->
+                <% } %>
+                <!-- return order end-->
+
+                <!--cancel return  start-->
+                <% if(item.returnStatus == 'Processing' && item.status ==
+                "Return") { %>
+
+                <!-- Start cancel return modal -->
+                <a
+                  href="#"
+                  data-bs-toggle="modal"
+                  class="btn btn-outline-danger mt-3"
+                  data-bs-target="#cancelReturnModel<%= item._id %>"
+                  >Cancel Return Request</a
+                >
+                <div class="modal fade" id="cancelReturnModel<%= item._id %>">
+                  <div
+                    class="modal-dialog modal-dialog-centered"
+                    role="document"
+                    style="width: 500px"
+                  >
+                    <div class="modal-content">
+                      <div class="modal-body">
+                        <div class="container-fluid">
+                          <div
+                            class="row justify-content-between align-items-center mb-3"
+                          >
+                            <div class="col-md-10 text-left">
+                              <h2 class="m-0 text-danger text-capitalize">
+                                <strong>Cancel Return Request</strong>
+                              </h2>
+                            </div>
+                            <div class="col-md-2 text-right">
+                              <button
+                                type="button"
+                                class="close modal-close border-0"
+                                data-bs-dismiss="modal"
+                                aria-label="Close"
+                              >
+                                <span aria-hidden="true">
+                                  <i
+                                    class="icon-close"
+                                    style="font-size: 24px"
+                                  ></i
+                                ></span>
+                              </button>
+                            </div>
+                          </div>
+                          <div class="row">
+                            <div class="col text-left">
+                              <p>
+                                Are you sure you want to cancel the return
+                                request for the product with
+                                <strong>ID: ORD- <%= item._id %></strong>? .
+                                This action cannot be undone.
+                              </p>
+                            </div>
+                          </div>
+                          <div class="row justify-content-end">
+                            <div class="col-md-5">
+                              <form
+                                action="/cancelReturn/<%= item._id %>?_method=patch"
+                                method="post"
+                              >
+                                <input
+                                  type="hidden"
+                                  name="fromPage"
+                                  value="orderDetails"
+                                />
+                                <button
+                                  type="button"
+                                  class="btn btn-outline-success mt-3"
+                                  data-bs-dismiss="modal"
+                                  aria-label="Close"
+                                >
+                                  Close
+                                </button>
+                                <button
+                                  type="submit"
+                                  class="btn btn-outline-danger mt-3"
+                                >
+                                  Confirm
+                                </button>
+                              </form>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                <!-- End cancel return modal -->
+                <% } %>
+                <!-- cancel return  end-->
+              </div>
+            </div>
+          </div>
+          <% } %> <% }) %>
+          <!-- last section end-->
+
+          <% } %> <% } %>
+        </div>
+      </div>
+    </div>
+    <!-- ...:::: End order details Section:::... -->
+
+    <%- include('../../partials/footer.ejs') %>
+    <script src="/js/pages/mainPages/myAccount/myAccount.js"></script>
+
+    <!-- material-scrolltop button -->
+    <button class="material-scrolltop" type="button"></button>
+
+    <!-- minified version files -->
+    <script src="/js/vendor/vendor.min.js"></script>
+    <script src="/js/plugins/plugins.min.js"></script>
+    <!-- Main JS -->
+    <script src="/js/main.js"></script>
+  </body>
+</html>

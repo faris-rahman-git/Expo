@@ -1,0 +1,115 @@
+<!-- sidebar start -->
+<div class="main-sidebar sidebar-style-2">
+  <aside id="sidebar-wrapper">
+    <div class="sidebar-brand">
+      <a href="index.html">
+        <img alt="image" src="/assets/img/logo.png" class="header-logo" />
+        <span class="logo-name">Xpo</span>
+      </a>
+    </div>
+    <ul class="sidebar-menu">
+      <li class="menu-header">Main</li>
+      <li class="dropdown <%= activeSidebar.main == "dashboard" ? 'active' : '' %>">
+        <a href="/admin/dashboard" class="nav-link">
+          <i data-feather="monitor"></i>
+          <span>Dashboard</span></a
+        >
+      </li>
+      <li class="dropdown <%= activeSidebar.main == "userManagement" ? 'active' : '' %>">
+        <a href="#" class="menu-toggle nav-link has-dropdown"
+          ><i data-feather="user"></i><span>User Management</span></a
+        >
+        <ul class="dropdown-menu">
+          <li class="<%= activeSidebar.sub == "allUsers" ? 'active' : '' %>">
+            <a class="nav-link" href="/admin/allUsers">All Users</a>
+          </li>
+          <li class="<%= activeSidebar.sub == "addNewUser" ? 'active' : '' %>">
+            <a class="nav-link" href="/admin/addNewUser">Add New User</a>
+          </li>
+          <li class="<%= activeSidebar.sub == "blockedUsers" ? 'active' : '' %>">
+            <a class="nav-link" href="/admin/blockedUsers">Blocked Users</a>
+          </li>
+          <li class="<%= activeSidebar.sub == "deletedUsers" ? 'active' : '' %>">
+            <a class="nav-link" href="/admin/deletedUsers">Deleted Users</a>
+          </li>
+        </ul>
+      </li>
+      <li class="dropdown <%= activeSidebar.main == "categoryManagement" ? 'active' : '' %>">
+        <a href="#" class="menu-toggle nav-link has-dropdown"
+          ><i data-feather="server"></i><span>Category Management</span></a
+        >
+        <ul class="dropdown-menu">
+            <li class="<%= activeSidebar.sub == "allCategory" ? 'active' : '' %>">
+                <a class="nav-link" href="/admin/allCategory">All Category</a>
+          </li>
+          <li class="<%= activeSidebar.sub == "addNewCategory" ? 'active' : '' %>">
+            <a class="nav-link" href="/admin/addNewCategory"
+              >Add New Category</a
+            >
+          </li>
+          <li class="<%= activeSidebar.sub == "deletedCategory" ? 'active' : '' %>">
+            <a class="nav-link" href="/admin/deletedCategory"
+              >Deleted Category</a
+            >
+          </li>
+        </ul>
+      </li>
+      <li class="dropdown <%= activeSidebar.main == "productManagement" ? 'active' : '' %>">
+        <a href="#" class="menu-toggle nav-link has-dropdown"
+          ><i data-feather="shopping-bag"></i><span>Product Management</span></a
+        >
+        <ul class="dropdown-menu">
+            <li class="<%= activeSidebar.sub == "allProducts" ? 'active' : '' %>">
+                <a class="nav-link" href="/admin/allProducts">All Products</a>
+          </li>
+          <li class="<%= activeSidebar.sub == "addNewProducts" ? 'active' : '' %>">
+            <a class="nav-link" href="/admin/addNewProduct">Add New Products</a>
+          </li>
+          <li class="<%= activeSidebar.sub == "deletedProducts" ? 'active' : '' %>">
+            <a class="nav-link" href="/admin/deletedProducts"
+              >Deleted Products</a
+            >
+          </li>
+        </ul>
+      </li>
+      <li class="dropdown <%= activeSidebar.main == "salesReport" ? 'active' : '' %>">
+        <a href="/admin/salesReport" class="nav-link">
+          <i data-feather="clipboard"></i>
+          <span>Sales Report</span></a
+        >
+      </li>
+      <li class="dropdown <%= activeSidebar.main == "couponManagement" ? 'active' : '' %>">
+        <a href="#" class="menu-toggle nav-link has-dropdown"
+          ><i data-feather="credit-card"></i><span>Coupon Management</span></a
+        >
+        <ul class="dropdown-menu">
+            <li class="<%= activeSidebar.sub == "allCoupon" ? 'active' : '' %>">
+                <a class="nav-link" href="/admin/allCoupon">All Coupon's</a>
+          </li>
+          <li class="<%= activeSidebar.sub == "addNewCoupon" ? 'active' : '' %>">
+            <a class="nav-link" href="/admin/addNewCoupon"
+              >Add New Coupon</a
+            >
+          </li>
+          <li class="<%= activeSidebar.sub == "deletedCoupons" ? 'active' : '' %>">
+            <a class="nav-link" href="/admin/deletedCoupon"
+              >Deleted Coupon's</a
+            >
+          </li>
+        </ul>
+      </li>
+      <li class="dropdown <%= activeSidebar.main == "orderManagement" ? 'active' : '' %>">
+        <a href="/admin/allOrders" class="nav-link">
+          <i data-feather="shopping-cart"></i>
+          <span>Order Management</span></a
+        >
+      </li>
+      <li class="dropdown">
+        <a href="/logout" class="nav-link"
+          ><i data-feather="log-out"></i><span>Logout</span></a
+        >
+      </li>
+    </ul>
+  </aside>
+</div>
+<!-- sidebar end -->

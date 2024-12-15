@@ -1,4 +1,4 @@
-const { transporter } = require("../utils/emailVerification");
+const { transporter } = require("./emailVerification");
 
 const otpGenerator = async (email)=>{
     //generate otp

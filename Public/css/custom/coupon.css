@@ -1,0 +1,82 @@
+/* body{
+    background:#eee;
+} */
+
+.couponCard {
+  width: 330px;
+  padding: 10px;
+  border-radius: 20px;
+  background: orange;
+  border: none;
+  color: #fff;
+  height: 330px;
+  display: flex;
+  position: relative;
+  align-items: center;
+  justify-content: center;
+}
+
+/* .container {
+  height: 100vh;
+} */
+
+.couponCard .couponHead {
+  font-size: 48px;
+  margin-bottom: 0px;
+}
+
+.couponCard span {
+  font-size: 28px;
+}
+
+.dicountImage {
+  position: absolute;
+  opacity: 0.25;
+  left: 0;
+  top: 0;
+}
+
+.dicountImage2 {
+  position: absolute;
+  bottom: 0;
+  right: 0;
+  opacity: 0.25;
+}
+
+
+.spCouponCard {
+  position: relative;
+  overflow: hidden;
+}
+
+.usedCouponCard::before{
+  width: 350px; /* Increased size */
+  height: 350px; /* Increased size */
+  background-image: url("/images/myAccount/soldout.png");
+}
+
+.expiredCouponCard::before {
+  width: 450px; /* Increased size */
+  height: 450px; /* Increased size */
+  background-image: url("/images/myAccount/expired.png");
+}
+
+.spCouponCard::before {
+  content: "";
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  background-size: contain; /* Ensures full image is visible */
+  background-repeat: no-repeat;
+  background-position: center;
+  z-index: 2; /* Ensures it's on top */
+  opacity: 1;
+  pointer-events: none; /* Prevents interaction */
+}
+
+.spCouponCard .content {
+  position: relative;
+  z-index: 1;
+}
+

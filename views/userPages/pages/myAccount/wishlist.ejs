@@ -1,0 +1,211 @@
+<!DOCTYPE html>
+<html lang="zxx">
+  <meta http-equiv="content-type" content="text/html;charset=UTF-8" />
+
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="content-type" content="text/html;charset=UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+    <title>wishlist</title>
+
+    <!-- ::::::::::::::Favicon icon::::::::::::::-->
+    <link rel="shortcut icon" href="" type="image/png" />
+
+    <!-- minified version files -->
+    <link rel="stylesheet" href="/css/plugins/plugins.min.css" />
+    <link rel="stylesheet" href="/css/style.min.css" />
+    <link rel="stylesheet" href="/css/customBreadCrumb.css" />
+    <link rel="stylesheet" href="/css/custom/cart.css" />
+    <link rel="stylesheet" href="/css/custom/offerTag.css" />
+
+    <!-- FontAwesome CDN for version 4.7.0 -->
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/simple-line-icons/2.4.1/css/simple-line-icons.min.css"
+    />
+  </head>
+
+  <body>
+    <%- include('../../partials/navbar.ejs') %>
+
+    <!-- breadcrumb start -->
+    <br />
+    <div>
+      <ul class="breadcrumb">
+        <li><a href="/home">Home</a></li>
+        <li><a href="/myAccount">My Account</a></li>
+        <li class="active">wishlist</li>
+      </ul>
+    </div>
+    <br />
+    <!-- breadcrumb end -->
+
+    <%- include('../../partials/alert.ejs') %>
+    <input type="hidden" id="message" value="<%= message %>" />
+
+    <!-- model alert start -->
+    <button
+      type="button"
+      class="btn btn-primary d-none"
+      id="modalButton"
+      data-bs-toggle="modal"
+      data-bs-target="#modalcart"
+    >
+      Open Modal
+    </button>
+    <%- include('../../partials/modal.ejs') %>
+    <!-- model alert end -->
+
+    <!-- ...:::: Start cart Section:::... -->
+    <% if(wishlistItems.length === 0 ){ %>
+
+    <!-- empty cart section Start -->
+    <div class="empty-cart-section section-fluid">
+      <div class="emptycart-wrapper">
+        <div class="container">
+          <div class="row">
+            <div class="col-12 col-md-10 offset-md-1 col-xl-6 offset-xl-3">
+              <div class="emptycart-content text-center">
+                <div class="image">
+                  <img
+                    class="img-fluid"
+                    src="/images/cart/empty-cart.png"
+                    alt=""
+                  />
+                </div>
+                <h4 class="title">Your Wishlist is Empty</h4>
+                <h6 class="sub-title">
+                  Sorry Mate... No item Found inside your Wishlist!
+                </h6>
+                <a href="/home" class="btn btn-lg btn-golden"
+                  >Continue Shopping</a
+                >
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <!-- empty cart section end -->
+
+    <% }else{ %>
+
+    <!-- cart section Start -->
+    <div class="container">
+      <div class="row justify-content-center">
+        <div class="col-md-10 text-capitalize">
+          <h3 class="pb-2"><strong>my wishlist </strong></h3>
+          <button class="btn text-white btn-danger" id="removeAllItems">
+            Remove All Items
+          </button>
+          |
+          <button class="btn text-white btn-secondary" id="moveAllItemsToCart">
+            Move All Items to Cart
+          </button>
+          <br /><br />
+          <!-- cart card start -->
+
+          <% wishlistItems.forEach(item =>{ %>
+          <div class="card">
+            <div class="card-body row m-2">
+              <div class="col-md-3">
+                <a
+                  href="/productDetails/<%= item.productId %>/<%= item.variantId %>"
+                >
+                  <img
+                    src="<%= item.images[0].path %>"
+                    alt="product image"
+                    class="img-fluid1"
+                /></a>
+                <% if(item.finalDiscountPercentage != 0){ %>
+                <div class="ribbon-wrap">
+                  <div class="ribbon">
+                    <%= item.finalDiscountPercentage %>% OFF
+                  </div>
+                </div>
+                <% } %>
+              </div>
+              <div
+                class="col-md-9 d-flex flex-column justify-content-between"
+                style="font-size: 13px"
+              >
+                <div>
+                  <h5 class="mb-3">
+                    <strong>
+                      <%= item.productName %> - <%= item.variantName %>
+                    </strong>
+                  </h5>
+                  <p class="m-0"><%= item.variantDescription %></p>
+                  <br />
+                  <p class="m-0"><strong>Color: <%= item.color %></strong></p>
+                  <p class="m-0">
+                    <% if(item.stock>3){ %> <%= item.stock %> In Stock <% }else
+                    if (item.stock>0 && item.stock <=3){ %>
+                    <strong class="text-danger" style="font-size: 16px"
+                      >Only <%= item.stock %> left</strong
+                    >
+                    <% }else{ %>
+                    <strong class="text-danger" style="font-size: 25px"
+                      >Out of Stock</strong
+                    >
+                    <% } %>
+                  </p>
+                  <div class="mb-2 mt-2">
+                    <span class="h3 text-black mr-2"
+                      ><strong> ₹<%= item.finalPrice %>.00 </strong></span
+                    >
+                    <% if(item.finalDiscountPercentage != 0){ %>
+                    <span class="h5"><del>₹<%= item.price %>.00</del></span>
+                    <% } %>
+                  </div>
+                </div>
+                <div style="font-size: 12px">
+                  <button
+                    class="text-primary txhover removeItemFromWishlist"
+                    data-id="<%= item._id %>"
+                  >
+                    Remove
+                  </button>
+                  <% if(item.stock > 0){ %> |
+                  <input type="hidden" value="1" id="quantity" />
+                  <input type="hidden" value="true" id="wishlistTrue" />
+                  <button
+                    class="text-primary txhover addToCart"
+                    data-productid="<%= item.productId %>"
+                    data-variantid="<%= item.variantId %>"
+                    data-categoryid="<%= item.categoryId %>"
+                    data-subcategoryid="<%= item.subCategoryId %>"
+                  >
+                    Move to Cart
+                  </button>
+                  <% } %>
+                </div>
+              </div>
+            </div>
+          </div>
+          <% }) %>
+          <!-- cart card end -->
+        </div>
+      </div>
+      <!-- ...:::: End Account Dashboard Section:::... -->
+    </div>
+    <!-- cart section end -->
+    <% } %> <%- include('../../partials/footer.ejs') %>
+
+    <!-- material-scrolltop button -->
+    <button class="material-scrolltop" type="button"></button>
+
+    <script src="/js/pages/commonjs/autoScroll.js"></script>
+
+    <script src="/js/pages/mainPages/myAccount/wishlist.js"></script>
+    <script src="/js/pages/commonjs/addToCart.js"></script>
+
+    <!-- minified version files -->
+    <script src="/js/vendor/vendor.min.js"></script>
+    <script src="/js/plugins/plugins.min.js"></script>
+
+    <!-- Main JS -->
+    <script src="/js/main.js"></script>
+  </body>
+</html>

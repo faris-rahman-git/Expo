@@ -1,0 +1,1463 @@
+<!DOCTYPE html>
+<html lang="zxx">
+  <meta http-equiv="content-type" content="text/html;charset=UTF-8" />
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="content-type" content="text/html;charset=UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+    <title>My Account</title>
+
+    <!-- ::::::::::::::Favicon icon::::::::::::::-->
+    <link rel="shortcut icon" href="" type="image/png" />
+
+    <!-- minified version files -->
+    <link rel="stylesheet" href="/css/plugins/plugins.min.css" />
+    <link rel="stylesheet" href="/css/style.min.css" />
+    <link rel="stylesheet" href="/css/customBreadCrumb.css" />
+    <link rel="stylesheet" href="/css/custom/coupon.css" />
+
+    <!-- FontAwesome CDN for version 4.7.0 -->
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/simple-line-icons/2.4.1/css/simple-line-icons.min.css"
+    />
+  </head>
+
+  <body>
+    <%- include('../../partials/navbar.ejs') %>
+
+    <!-- breadcrumb start -->
+    <br />
+    <div>
+      <ul class="breadcrumb">
+        <li><a href="/home">Home</a></li>
+        <li class="active">My Account</li>
+      </ul>
+    </div>
+    <br />
+    <!-- breadcrumb end -->
+
+    <!-- ...:::: myaccount section start ::::... -->
+    <div class="account-dashboard">
+      <div class="container">
+        <div class="row">
+          <!-- left side start -->
+          <div class="col-sm-12 col-md-3 col-lg-3 position-sticky"
+          style="position: sticky; top: 50px; height: 340px"">
+          <div
+            class="dashboard_tab_button"
+            data-aos="fade-up"
+            data-aos-delay="0"
+          >
+            <ul role="tablist" class="nav flex-column dashboard-list">
+              <li>
+                <a
+                  href="#profile"
+                  data-bs-toggle="tab"
+                  class="nav-link btn btn-block btn-md btn-black-default-hover <%= tab === 'profile' ? 'active' : '' %>"
+                  >Profile</a
+                >
+              </li>
+              <li>
+                <a
+                  href="#address"
+                  data-bs-toggle="tab"
+                  class="nav-link btn btn-block btn-md btn-black-default-hover <%= tab === 'address' ? 'active' : '' %>"
+                  >Addresses</a
+                >
+              </li>
+              <li>
+                <a
+                  href="#orders"
+                  data-bs-toggle="tab"
+                  class="nav-link btn btn-block btn-md btn-black-default-hover <%= tab === 'orders' ? 'active' : '' %>"
+                  >Orders</a
+                >
+              </li>
+              <li>
+                <a
+                  href="#unpaidOnlineOrders"
+                  data-bs-toggle="tab"
+                  class="nav-link btn btn-block btn-md btn-black-default-hover <%= tab === 'unpaidOnlineOrders' ? 'active' : '' %>"
+                  >Unpaid Online Orders</a
+                >
+              </li>
+              <li>
+                <a
+                  href="#cancelledOrders"
+                  data-bs-toggle="tab"
+                  class="nav-link btn btn-block btn-md btn-black-default-hover <%= tab === 'cancelledOrders' ? 'active' : '' %>"
+                  >Cancelled Orders</a
+                >
+              </li>
+              <li>
+                <a
+                  href="#allCoupons"
+                  data-bs-toggle="tab"
+                  class="nav-link btn btn-block btn-md btn-black-default-hover <%= tab === 'allCoupons' ? 'active' : '' %>"
+                  >Coupons</a
+                >
+              </li>
+              <li>
+                <a
+                  href="/cart"
+                  class="nav-link btn btn-block btn-md btn-black-default-hover"
+                  >Cart</a
+                >
+              </li>
+              <li>
+                <a
+                  href="/wishlist"
+                  class="nav-link btn btn-block btn-md btn-black-default-hover"
+                  >Wishlist</a
+                >
+              </li>
+            </ul>
+          </div>
+        </div>
+        <!-- left side end -->
+
+        <!-- right side start -->
+        <div class="col-sm-12 col-md-9 col-lg-9">
+          <div
+            class="tab-content dashboard_content"
+            data-aos="fade-up"
+            data-aos-delay="200"
+          >
+            <!-- Account details start-->
+            <div
+              class="tab-pane fade show <%= tab === 'profile' ? 'active' : '' %>"
+              id="profile"
+            >
+              <h3>Account details</h3>
+              <br />
+              <span id="logMassage" class="text-danger"></span>
+              <div class="login">
+                <div class="login_form_container">
+                  <div class="account_login_form">
+                    <form
+                      action="/myAccount/editAccountDetails/<%= user._id %>?_method=put"
+                      method="post"
+                      onsubmit="return profile()"
+                    >
+                      <div class="default-form-box mb-20">
+                        <label>Name (Required)</label>
+                        <input
+                          type="text"
+                          name="name"
+                          class="text-dark"
+                          value="<%= user.userName %>"
+                          id="name"
+                        />
+                      </div>
+                      <div class="default-form-box mb-20">
+                        <label>Email (Not Editable)</label>
+                        <input type="text" value="<%= user.email %>" disabled />
+                      </div>
+                      <div class="default-form-box mb-20">
+                        <label>Phone Number (Required)</label>
+                        <input
+                          type="text"
+                          name="phoneNumber"
+                          class="text-dark"
+                          value="<%= user.phoneNumber %>"
+                          placeholder="<%= user.phoneNumber == null ? '(Not Available)' : '' %>"
+                          title="Only numbers are allowed"
+                          id="phoneNumber"
+                        />
+                      </div>
+                      <div class="save_button mt-3">
+                        <button class="btn btn-dark text-white" type="submit">
+                          Save changes
+                        </button>
+                        <a
+                          href="/myAccount/changePassword"
+                          class="btn btn-outline-dark"
+                          >Change Password</a
+                        >
+                      </div>
+                    </form>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <!-- Account details end-->
+
+            <!-- address start -->
+            <div
+              class="tab-pane <%= tab === 'address' ? 'active' : '' %>"
+              id="address"
+            >
+              <div
+                class="row d-flex align-items-stretch row-cols-1 row-cols-md-3 g-4"
+              >
+                <!-- Add New Address Card -->
+                <div class="col" style="min-height: 200px">
+                  <a href="/myAccount/addNewAddress/<%= user._id %>">
+                    <div
+                      class="card mb-3 border-dark text-center justify-content-center h-100"
+                      style="
+                        border-style: dashed;
+                        font-size: 24px;
+                        font-weight: bold;
+                      "
+                    >
+                      <p style="font-size: 100px; line-height: 0">+</p>
+                      <br />
+                      Add New Address
+                    </div>
+                  </a>
+                </div>
+
+                <!-- Address Card -->
+                <% user.addresses?.forEach((address,index) =>{ %>
+                <div class="col">
+                  <div class="card border-dark mb-3 h-100">
+                    <div class="card-header">
+                      <%= String(address._id) === String(user.defaultAddress) ?
+                      'Default' : '' %> Address
+                    </div>
+                    <div
+                      class="card-body text-dark d-flex flex-column text-black"
+                    >
+                      <h6 class="card-title">
+                        <strong><%= address.name %></strong>
+                      </h6>
+                      <p class="card-text m-0"><%= address.house %></p>
+                      <p class="card-text m-0"><%= address.street %></p>
+                      <p class="card-text m-0"><%= address.landmark %></p>
+                      <p class="card-text m-0">
+                        <%= address.city %> , KERALA , <%= address.pincode %> ,
+                        INDIA
+                      </p>
+                      <p class="card-text m-0">
+                        Phone number: <%= address.phoneNumber %>
+                      </p>
+                      <div class="mt-auto">
+                        <a
+                          href="/myAccount/editaddress/<%= user._id %>/<%= address._id %>"
+                          class="card-link btn btn-outline-black me-2"
+                          >Edit</a
+                        >
+                        <button
+                          class="card-link btn btn-outline-black"
+                          data-bs-toggle="modal"
+                          data-bs-target="#addressCard<%= index %><%= address._id %>"
+                        >
+                          Remove
+                        </button>
+                        <div
+                          class="modal fade"
+                          id="addressCard<%= index %><%= address._id %>"
+                        >
+                          <div
+                            class="modal-dialog modal-dialog-centered"
+                            role="document"
+                            style="width: 500px"
+                          >
+                            <div class="modal-content">
+                              <div class="modal-body">
+                                <div class="container-fluid">
+                                  <div
+                                    class="row justify-content-between align-items-center mb-3"
+                                  >
+                                    <div class="col-md-10 text-left">
+                                      <h2
+                                        class="m-0 text-danger text-capitalize"
+                                      >
+                                        <strong>Remove Address Alert</strong>
+                                      </h2>
+                                    </div>
+                                    <div class="col-md-2 text-right">
+                                      <button
+                                        type="button"
+                                        class="close modal-close border-0"
+                                        data-bs-dismiss="modal"
+                                        aria-label="Close"
+                                      >
+                                        <span aria-hidden="true">
+                                          <i
+                                            class="icon-close"
+                                            style="font-size: 24px"
+                                          ></i
+                                        ></span>
+                                      </button>
+                                    </div>
+                                  </div>
+                                  <div class="row">
+                                    <div class="col text-left">
+                                      <p>
+                                        Are you sure, you want to remove the
+                                        address with
+                                        <strong><%= address.name %></strong> .
+                                        This action cannot be undone.
+                                      </p>
+                                    </div>
+                                  </div>
+                                  <div class="row justify-content-end">
+                                    <div class="col-md-5">
+                                      <form
+                                        action="/myAccount/removeAddress/<%= user._id %>/<%= address._id %>?_method=delete"
+                                        method="post"
+                                      >
+                                        <button
+                                          type="button"
+                                          class="btn btn-outline-success mt-3"
+                                          data-bs-dismiss="modal"
+                                          aria-label="Close"
+                                        >
+                                          Close
+                                        </button>
+                                        <button
+                                          type="submit"
+                                          class="btn btn-outline-danger mt-3"
+                                        >
+                                          Confirm
+                                        </button>
+                                      </form>
+                                    </div>
+                                  </div>
+                                </div>
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                <% }) %>
+              </div>
+            </div>
+            <!-- address end -->
+
+            <!-- order start -->
+            <div
+              class="tab-pane fade <%= tab === 'orders' ? 'active' : '' %>"
+              id="orders"
+            >
+              <% var orderCount =0 %> 
+              <% orders.forEach(order =>{ %> 
+                <% order.products.forEach((item , index) =>{ %>
+                 <% if(item.status !== "Cancelled"){ %> 
+                  <% orderCount = 1 %> 
+                 <% } %> 
+                <% }) %> 
+              <% }) %> 
+              <% if(!orderCount){ %>
+              <div
+                class="d-flex justify-content-center align-items-center text-capitalize"
+                style="height: 300px; font-size: 50px"
+              >
+                <strong>You haven't placed any orders yet!</strong>
+              </div>
+              <% }else{ %>
+              <h3 class="mb-4"><strong>Orders</strong> </h3>
+              <% orders.forEach(order =>{ %> 
+                <% order.products.forEach((item , index) =>{ %> 
+                  <% if(item.status != "Cancelled" && (order.paymentDetails.onlineTransactionStatus != "Pending" && order.paymentDetails.onlineTransactionStatus != "Failed")){ %>
+              <div class="card mb-4" style="overflow: hidden">
+                <!-- card head section start-->
+                <div class="card-header row pt-4" style="line-height: 5px">
+                  <div class="col-3 text-nowrap">
+                    <p style="font-size: 12px">ORDER PLACED</p>
+                    <p>
+                      <%= new Date(order.orderDate).toLocaleDateString('en-GB',
+                      { day: 'numeric', month: 'long', year: 'numeric' }) %>
+                    </p>
+                  </div>
+                  <div class="col-2">
+                    <p style="font-size: 12px">TOTAL</p>
+                    <p>₹ <%= (item.price*item.quantity)-(item.offerDiscount + item.couponDiscount) + item.shippingCost %>.00</p>
+                  </div>
+                  <div class="col-2">
+                    <p style="font-size: 12px">SHIP TO</p>
+                    <a
+                      href="#"
+                      data-bs-toggle="modal"
+                      class="adlink"
+                      data-bs-target="#addressCard<%= index %><%= item._id %>"
+                      ><%= order.shippingAddress.fullName %></a
+                    >
+
+                    <!-- start address modal -->
+                    <div
+                      class="modal fade"
+                      id="addressCard<%= index %><%= item._id %>"
+                    >
+                      <div
+                        class="modal-dialog modal-dialog-centered"
+                        role="document"
+                        style="width: 500px"
+                      >
+                        <div class="modal-content">
+                          <div class="modal-body">
+                            <div class="container-fluid">
+                              <div
+                                class="row justify-content-between align-items-center m-0 mb-3"
+                              >
+                                <div class="col-md-10 text-left p-0">
+                                  <h2 class="m-0 text-danger text-capitalize">
+                                    <strong
+                                      ><%= order.shippingAddress.fullName
+                                      %></strong
+                                    >
+                                  </h2>
+                                </div>
+                                <div class="col-md-2 text-right">
+                                  <button
+                                    type="button"
+                                    class="close modal-close border-0"
+                                    data-bs-dismiss="modal"
+                                    aria-label="Close"
+                                  >
+                                    <span aria-hidden="true">
+                                      <i
+                                        class="icon-close"
+                                        style="font-size: 24px"
+                                      ></i
+                                    ></span>
+                                  </button>
+                                </div>
+                              </div>
+                              <div class="row m-0 mb-3">
+                                <div class="col text-left p-0">
+                                  <p>
+                                    <strong style="font-size: 20px"> </strong>
+                                  </p>
+                                  <p><%= order.shippingAddress.house %></p>
+                                  <p><%= order.shippingAddress.street %></p>
+                                  <p>
+                                    <%= order.shippingAddress.city %>, KERALA,
+                                    <%= order.shippingAddress.pincode %> , India
+                                  </p>
+                                  <p>
+                                    <%= order.shippingAddress.phoneNumber %>
+                                  </p>
+                                </div>
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                    <!-- End address modal -->
+                  </div>
+                  <div class="col-5 text-right">
+                    <p >ORDER # ORD-<%= item._id %></p>
+                    <% if(item.status === 'Delivered' || item.status ===
+                    'Return' || item.status === 'Refunded') { %>
+                    <a href="/orderInvoice/<%= order._id %>/<%= item._id %>" target="_blank">
+                      <button class="text-primary txhover">Invoice</button>
+                    </a>
+                    <% } %>
+                  </div>
+                </div>
+                <!-- card head section end-->
+
+                <!-- cart body section start -->
+                <% for( let variant of item.productId.variants){ %> <%
+                if(variant._id.toString() == item.variantId.toString()){ %>
+                <div class="card-body">
+                  <div class="row">
+                    <div class="col-md-9">
+                      <div class="row">
+                        <div class="col-md-12">
+                          <h5 class="card-title">
+                            <strong>
+                              <% if(item.status == 'OutForDelivery'){ %> Out Of
+                              Delivery <% }else if(item.returnStatus ==
+                              "Cancelled" || item.status == "Delivered"){ %>
+                              Delivered <%= new
+                              Date(item.deliveredAt).toLocaleDateString('en-GB',
+                              { day: 'numeric', month: 'long', year: 'numeric'
+                              }) %> <% }else if(item.returnStatus ==
+                              "Completed"){ %> Returned At <%= new
+                              Date(item.returnedAt).toLocaleDateString('en-GB',
+                              { day: 'numeric', month: 'long', year: 'numeric'
+                              }) %> <% }else{ %> <%= item.status %> <%=
+                              item.returnStatus %> <% } %>
+                            </strong>
+                          </h5>
+                        </div>
+                        <div class="col-md-12">
+                          <div class="row">
+                            <div class="col-md-3 pr-0">
+                              <p class="card-text">
+                                <a
+                                  href="/productDetails/<%= item.productId._id %>/<%= variant._id %>"
+                                >
+                                  <img
+                                    src="<%= variant.images[0].path %>"
+                                    alt="product image"
+                                    class="img-fluid2"
+                                /></a>
+                              </p>
+                            </div>
+                            <div class="col-md-9 pl-0">
+                              <h5>
+                                <strong>
+                                  <%= item.productId.productName %> - <%=
+                                  variant.variantName %>
+                                </strong>
+                              </h5>
+                              <p class="m-0">
+                                <strong>Color: <%= variant.color %></strong>
+                              </p>
+                              <p class="m-0">
+                                <strong>Total Price: ₹<%= (item.price*item.quantity)-(item.offerDiscount + item.couponDiscount) + item.shippingCost %>.00</strong>
+                              </p>
+                              <p class="m-0">
+                                <strong
+                                  >Payment Type: <%= order.paymentDetails.method
+                                  %></strong
+                                >
+                              </p>
+                              <% if(item.returnStatus){ %>
+                              <p class="m-0">
+                                <strong
+                                  >Return Status: <%= item.returnStatus
+                                  %></strong
+                                >
+                              </p>
+                              <% } %>
+                              <p class="m-0">
+                                <strong
+                                  >Payment Status: <%= item.paymentStatus
+                                  %></strong
+                                >
+                              </p>
+
+                              <% if(item.deliveredAt){ %>
+                              <p class="m-0 mt-3">
+                                Return window closed on <%= new Date(new
+                                Date(item.deliveredAt).setDate(new
+                                Date(item.deliveredAt).getDate() + 7))
+                                .toLocaleDateString('en-GB', { day: 'numeric',
+                                month: 'long', year: 'numeric' }) %>
+                              </p>
+                              <% } %>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                    <div class="col-md-3 align-self-center text-center">
+                      <a
+                        href="/productDetails/<%= item.productId._id %>/<%= item.variantId %>"
+                        class="btn btn-outline-secondary mt-3"
+                        >View Item</a
+                      >
+                      <br />
+                      <a
+                        href="/OrderDetails/<%= order._id %>/<%= item._id %>"
+                        class="btn btn-outline-primary mt-3"
+                        >
+                        View Order Details 
+                      </a><br />
+                      <% if(item.status === 'Delivered' || item.status ===
+                      'Return' || item.status === 'Refunded') { %>
+                      <a href="" class="btn btn-outline-success mt-3">
+                        Write a Product Review
+                      </a>
+
+                      <!-- cancel order start-->
+                      <% } %> <% if(item.status === 'Pending' || item.status ===
+                      'Confirmed' || item.status === 'Shipped') { %>
+
+                      <!-- Start Cancel modal -->
+                      <a
+                        href="#"
+                        data-bs-toggle="modal"
+                        class="btn btn-outline-danger mt-3"
+                        data-bs-target="#cancelModel<%= item._id %>"
+                        >cancel order</a
+                      >
+                      <div class="modal fade" id="cancelModel<%= item._id %>">
+                        <div
+                          class="modal-dialog modal-dialog-centered"
+                          role="document"
+                          style="width: 500px"
+                        >
+                          <div class="modal-content">
+                            <div class="modal-body">
+                              <div class="container-fluid">
+                                <div
+                                  class="row justify-content-between align-items-center mb-3"
+                                >
+                                  <div class="col-md-10 text-left">
+                                    <h2 class="m-0 text-danger text-capitalize">
+                                      <strong>cancel order alert</strong>
+                                    </h2>
+                                  </div>
+                                  <div class="col-md-2 text-right">
+                                    <button
+                                      type="button"
+                                      class="close modal-close border-0"
+                                      data-bs-dismiss="modal"
+                                      aria-label="Close"
+                                    >
+                                      <span aria-hidden="true">
+                                        <i
+                                          class="icon-close"
+                                          style="font-size: 24px"
+                                        ></i
+                                      ></span>
+                                    </button>
+                                  </div>
+                                </div>
+                                <form
+                                action="/cancelOrder/<%= order._id %>/<%= item._id %>?_method=patch"
+                                method="post"
+                                onsubmit="return cancelOrder()"
+                                >
+                                <div class="row">
+                                  <div class="col text-left">
+                                    <p>
+                                      Are you sure you want to cancel the order
+                                      with
+                                      <strong>ID: ORD- <%= item._id %></strong>
+                                      . This action cannot be undone.
+                                    </p>
+                                    <hr>
+                                    <div class="default-form-box mb-20">
+                                      <label id="cancelReasonLabel" class="text-danger text-center text-capitalize">Canellation Reason (at least 20 characters long)</label>
+                                      <textarea name="cancelReason" id="cancelReason"></textarea>
+                                    </div>                                  
+                                  </div>
+                                </div>
+                                <div class="row justify-content-end">
+                                  <div class="col-md-5">
+                                      <input
+                                        type="hidden"
+                                        value="<%= item.productId._id %>"
+                                        name="productId"
+                                      />
+                                      <input
+                                        type="hidden"
+                                        value="<%= item.variantId %>"
+                                        name="variantId"
+                                      />
+                                      <input
+                                        type="hidden"
+                                        value="<%= item.quantity %>"
+                                        name="quantity"
+                                      />
+                                      <input
+                                        type="hidden"
+                                        value="<%= item.price %>"
+                                        name="price"
+                                      />
+                                      <input
+                                      type="hidden"
+                                      value="<%= item.offerDiscount + item.couponDiscount %>"
+                                      name="discount"
+                                    />
+                                      <button
+                                        type="button"
+                                        class="btn btn-outline-success mt-3"
+                                        data-bs-dismiss="modal"
+                                        aria-label="Close"
+                                      >
+                                        Close
+                                      </button>
+                                      <button
+                                        type="submit"
+                                        class="btn btn-outline-danger mt-3"
+                                      >
+                                        Confirm
+                                      </button>
+                                  </div>
+                                </div>
+                                </form>
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                      <!-- End Cancel modal -->
+                      <% } %>
+                      <!-- cancel order end-->
+
+                      <!-- return order start-->
+                      <% var deliveredAt = new Date() - item.deliveredAt ?? 0 %>
+                      <% if(item.status === 'Delivered' || item.returnStatus ==
+                      'Cancelled' && Math.floor(deliveredAt / (1000 * 60 * 60 *
+                      24)) <= 7 ) { %>
+
+                      <!-- Start return order modal -->
+                      <a
+                        href="#"
+                        data-bs-toggle="modal"
+                        class="btn btn-outline-danger mt-3"
+                        data-bs-target="#returnModel<%= item._id %>"
+                        >Return Request</a
+                      >
+                      <div class="modal fade" id="returnModel<%= item._id %>">
+                        <div
+                          class="modal-dialog modal-dialog-centered"
+                          role="document"
+                          style="width: 500px"
+                        >
+                          <div class="modal-content">
+                            <div class="modal-body">
+                              <div class="container-fluid">
+                                <div
+                                  class="row justify-content-between align-items-center mb-3"
+                                >
+                                  <div class="col-md-10 text-left">
+                                    <h2 class="m-0 text-danger text-capitalize">
+                                      <strong>Return order alert</strong>
+                                    </h2>
+                                  </div>
+                                  <div class="col-md-2 text-right">
+                                    <button
+                                      type="button"
+                                      class="close modal-close border-0"
+                                      data-bs-dismiss="modal"
+                                      aria-label="Close"
+                                    >
+                                      <span aria-hidden="true">
+                                        <i
+                                          class="icon-close"
+                                          style="font-size: 24px"
+                                        ></i
+                                      ></span>
+                                    </button>
+                                  </div>
+                                </div>
+                                <form
+                                  action="/returnProduct/<%= item._id %>?_method=patch"
+                                  method="post"
+                                  onsubmit="return returnOrder()">
+                                  <div class="row">
+                                  <div class="col text-left">
+                                    <p>
+                                      Are you sure you want to initiate a return
+                                      for the product with
+                                      <strong>ID: ORD- <%= item._id %></strong>?
+                                      . This action cannot be undone.
+                                    </p>
+                                    <hr>
+                                    <div class="default-form-box mb-20">
+                                      <label id="returnReasonLabel" class="text-danger text-center text-capitalize">return Reason Reason (at least 20 characters long)</label>
+                                      <textarea name="returnReason" id="returnReason"></textarea>
+                                    </div>        
+                                  </div>
+                                  </div>
+                                  <div class="row justify-content-end">
+                                  <div class="col-md-5">
+                                      <button
+                                        type="button"
+                                        class="btn btn-outline-success mt-3"
+                                        data-bs-dismiss="modal"
+                                        aria-label="Close"
+                                      >
+                                        Close
+                                      </button>
+                                      <button
+                                        type="submit"
+                                        class="btn btn-outline-danger mt-3"
+                                      >
+                                        Confirm
+                                      </button>
+                                  </div>
+                                  </div>
+                                </form>
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                      <!-- End return order modal -->
+                      <% } %>
+                      <!-- return order end-->
+
+                      <!--cancel return  start-->
+                      <% if(item.returnStatus == 'Processing' && item.status ==
+                      "Return") { %>
+
+                      <!-- Start cancel return modal -->
+                      <a
+                        href="#"
+                        data-bs-toggle="modal"
+                        class="btn btn-outline-danger mt-3"
+                        data-bs-target="#cancelReturnModel<%= item._id %>"
+                        >Cancel Return Request</a
+                      >
+                      <div
+                        class="modal fade"
+                        id="cancelReturnModel<%= item._id %>"
+                      >
+                        <div
+                          class="modal-dialog modal-dialog-centered"
+                          role="document"
+                          style="width: 500px"
+                        >
+                          <div class="modal-content">
+                            <div class="modal-body">
+                              <div class="container-fluid">
+                                <div
+                                  class="row justify-content-between align-items-center mb-3"
+                                >
+                                  <div class="col-md-10 text-left">
+                                    <h2 class="m-0 text-danger text-capitalize">
+                                      <strong>Cancel Return Request</strong>
+                                    </h2>
+                                  </div>
+                                  <div class="col-md-2 text-right">
+                                    <button
+                                      type="button"
+                                      class="close modal-close border-0"
+                                      data-bs-dismiss="modal"
+                                      aria-label="Close"
+                                    >
+                                      <span aria-hidden="true">
+                                        <i
+                                          class="icon-close"
+                                          style="font-size: 24px"
+                                        ></i
+                                      ></span>
+                                    </button>
+                                  </div>
+                                </div>
+                                <div class="row">
+                                  <div class="col text-left">
+                                    <p>
+                                      Are you sure you want to cancel the return
+                                      request for the product with
+                                      <strong>ID: ORD- <%= item._id %></strong>?
+                                      . This action cannot be undone.
+                                    </p>
+                                  </div>
+                                </div>
+                                <div class="row justify-content-end">
+                                  <div class="col-md-5">
+                                    <form
+                                      action="/cancelReturn/<%= item._id %>?_method=patch"
+                                      method="post"
+                                    >
+                                      <button
+                                        type="button"
+                                        class="btn btn-outline-success mt-3"
+                                        data-bs-dismiss="modal"
+                                        aria-label="Close"
+                                      >
+                                        Close
+                                      </button>
+                                      <button
+                                        type="submit"
+                                        class="btn btn-outline-danger mt-3"
+                                      >
+                                        Confirm
+                                      </button>
+                                    </form>
+                                  </div>
+                                </div>
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                      <!-- End cancel return modal -->
+                      <% } %>
+                      <!-- cancel return  end-->
+                    </div>
+                  </div>
+                </div>
+                <% } %> <% } %>
+                <!-- cart body section end -->
+              </div>
+              <% } %> <% }) %> <% }) %><% } %>
+            </div>
+            <!-- order end -->
+
+            <!-- Unpaid Online Orders start -->
+            <div
+              class="tab-pane fade <%= tab === 'unpaidOnlineOrders' ? 'active' : '' %>"
+              id="unpaidOnlineOrders"
+            >
+              <% var orderCount = 0 %> 
+              <% orders.forEach(order =>{ %> 
+                <% if(order.paymentDetails.onlineTransactionStatus == "Pending" ){ %>
+                    <% orderCount = 1 %>
+                  <% } %>
+              <% }) %>
+              <% if(!orderCount){ %>
+              <div
+                class="d-flex justify-content-center align-items-center text-capitalize"
+                style="height: 300px; font-size: 50px"
+              >
+                <strong>You haven't any Unpaid Online Orders !</strong>
+              </div>
+              <% }else{ %>
+              <h3 class="mb-4"><strong>Unpaid Online Orders</strong> </h3>
+              <% orders.forEach(order =>{ %> 
+                <% if(order.paymentDetails.onlineTransactionStatus == "Pending" ){ %>
+                 <div class="card mb-4" style="overflow: hidden">
+                <!-- card head section start-->
+                <div class="card-header row pt-4" style="line-height: 5px">
+                  <div class="col-2 text-nowrap">
+                    <p style="font-size: 12px">ORDER PLACED</p>
+                    <p>
+                      <%= new Date(order.orderDate).toLocaleDateString('en-GB',
+                      { day: 'numeric', month: 'long', year: 'numeric' }) %>
+                    </p>
+                  </div>
+                  <div class="col-2 text-nowrap">
+                    <p style="font-size: 12px">TOTAL</p>
+                    <p>₹ <%= order.totalPrice + order.TotalShippingCost %>.00</p>
+                  </div>
+                  <div class="col-1 text-nowrap">
+                    <p style="font-size: 12px">Wallet</p>
+                    <p>₹ <%= order.paymentDetails.walletUsedAmount %>.00</p>
+                  </div>
+                  <div class="col-2 text-nowrap">
+                    <p style="font-size: 12px">Pending</p>
+                    <p>₹ <%= (order.totalPrice + order.TotalShippingCost) - order.paymentDetails.walletUsedAmount %>.00</p>
+                  </div>
+                  <div class="col-2 text-nowrap">
+                    <p style="font-size: 12px">SHIP TO</p>
+                    <a
+                      href="#"
+                      data-bs-toggle="modal"
+                      class="adlink"
+                      data-bs-target="#addressCard<%= order._id %>"
+                      ><%= order.shippingAddress.fullName %></a
+                    >
+
+                    <!-- start address card -->
+                    <div class="modal fade" id="addressCard<%= order._id %>">
+                      <div
+                        class="modal-dialog modal-dialog-centered"
+                        role="document"
+                        style="width: 500px"
+                      >
+                        <div class="modal-content">
+                          <div class="modal-body">
+                            <div class="container-fluid">
+                              <div
+                                class="row justify-content-between align-items-center m-0 mb-3"
+                              >
+                                <div class="col-md-10 text-left p-0">
+                                  <h2 class="m-0 text-danger text-capitalize">
+                                    <strong
+                                      ><%= order.shippingAddress.fullName
+                                      %></strong
+                                    >
+                                  </h2>
+                                </div>
+                                <div class="col-md-2 text-right">
+                                  <button
+                                    type="button"
+                                    class="close modal-close border-0"
+                                    data-bs-dismiss="modal"
+                                    aria-label="Close"
+                                  >
+                                    <span aria-hidden="true">
+                                      <i
+                                        class="icon-close"
+                                        style="font-size: 24px"
+                                      ></i
+                                    ></span>
+                                  </button>
+                                </div>
+                              </div>
+                              <div class="row m-0 mb-3">
+                                <div class="col text-left p-0">
+                                  <p>
+                                    <strong style="font-size: 20px"> </strong>
+                                  </p>
+                                  <p><%= order.shippingAddress.house %></p>
+                                  <p><%= order.shippingAddress.street %></p>
+                                  <p>
+                                    <%= order.shippingAddress.city %>, KERALA,
+                                    <%= order.shippingAddress.pincode %> , India
+                                  </p>
+                                  <p>
+                                    <%= order.shippingAddress.phoneNumber %>
+                                  </p>
+                                </div>
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                    <!-- End address card -->
+                  </div>
+                  <div class="col-3 text-nowrap text-right">
+                    <p style="font-size: 12px">PARENT ORDER #</p>
+                    <p>ORD-<%= order._id %></p>
+                  </div>
+                </div>
+                <!-- card head section end-->
+
+                <!-- cart body section start -->
+                <div class="card-body">
+                  <div class="row">
+                    <div class="col-md-9">
+                      <div class="row">
+                        <div class="col-md-12">
+
+                          <% order.products.forEach((item ,index) =>{ %> 
+                            <% for( let variant of item.productId.variants){ %> <%
+                              if(variant._id.toString() == item.variantId.toString()){ %>
+                          <div class="row">
+                            <div class="col-md-3 pr-0">
+                              <p class="card-text">
+                                <a
+                                  href="/productDetails/<%= item.productId._id %>/<%= variant._id %>"
+                                >
+                                  <img
+                                    src="<%= variant.images[0].path %>"
+                                    alt="product image"
+                                    class="img-fluid2 mb-2"
+                                /></a>
+                              </p>
+                            </div>
+                            <div class="col-md-9 pl-0">
+                              <h5>
+                                <strong>
+                                  <%= item.productId.productName %> - <%=
+                                  variant.variantName %>
+                                </strong>
+                              </h5>
+                              <p class="m-0">
+                                <strong>Color: <%= variant.color %></strong>
+                              </p>
+                              <p class="m-0">
+                                <strong>Quantity: <%= item.quantity %></strong>
+                              </p>
+                              <p class="m-0">
+                                <strong>Total Price: ₹<%= (item.price*item.quantity)-(item.offerDiscount + item.couponDiscount)+ item.shippingCost %>.00</strong>
+                              </p>
+                              <p class="m-0">
+                                <strong
+                                  >Payment Type: <%= order.paymentDetails.method
+                                  %></strong
+                                >
+                              </p>
+                              <p class="m-0">
+                                <strong
+                                  >Payment Status: <%= item.paymentStatus
+                                  %></strong
+                                >
+                              </p>
+                            </div>
+                          </div>
+                          <% } %> <% } %><% }) %>
+                        </div>
+                      </div>
+                    </div>
+
+                    <div class="col-md-3 align-self-center text-center">
+                      <% var orderId = order._id %>
+                      <button
+                      class="btn btn-outline-success mb-5"
+                      type="button"
+                      onclick="retryPayment('<%= orderId %>')"
+                    >
+                      Retry Payment
+                    </button>
+                      <button
+                        class="btn btn-outline-danger"
+                        data-bs-toggle="modal"
+                        data-bs-target="#dropOrderModal<%= order._id %>"
+                      >
+                        Drop order
+                      </button>
+                      <div class="modal fade" id="dropOrderModal<%= order._id %>">
+                        <div
+                          class="modal-dialog modal-dialog-centered"
+                          role="document"
+                          style="width: 500px"
+                        >
+                          <div class="modal-content">
+                            <div class="modal-body">
+                              <div class="container-fluid">
+                                <div
+                                  class="row justify-content-between align-items-center mb-3"
+                                >
+                                  <div class="col-md-10 text-left">
+                                    <h2 class="m-0 text-danger text-capitalize">
+                                      <strong>Drop order alert</strong>
+                                    </h2>
+                                  </div>
+                                  <div class="col-md-2 text-right">
+                                    <button
+                                      type="button"
+                                      class="close modal-close border-0"
+                                      data-bs-dismiss="modal"
+                                      aria-label="Close"
+                                    >
+                                      <span aria-hidden="true">
+                                        <i
+                                          class="icon-close"
+                                          style="font-size: 24px"
+                                        ></i
+                                      ></span>
+                                    </button>
+                                  </div>
+                                </div>
+                                <div class="row">
+                                  <div class="col text-left">
+                                    <p>
+                                      Are you sure you want to drop the order
+                                      with
+                                      <strong>ID: ORD- <%= order._id %></strong>
+                                      . This action cannot be undone.
+                                    </p>
+                                  </div>
+                                </div>
+                                <div class="row justify-content-end">
+                                  <div class="col-md-5">
+                                    <form
+                                      action="/dropOrder/<%= order._id %>?_method=patch"
+                                      method="post"
+                                    >
+                                      <button
+                                        type="button"
+                                        class="btn btn-outline-success mt-3"
+                                        data-bs-dismiss="modal"
+                                        aria-label="Close"
+                                      >
+                                        Close
+                                      </button>
+                                      <button
+                                        type="submit"
+                                        class="btn btn-outline-danger mt-3"
+                                      >
+                                        Confirm
+                                      </button>
+                                    </form>
+                                  </div>
+                                </div>
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                <!-- cart body section end -->
+              </div>
+               <% } %>  <% }) %> <% } %>
+            </div>
+            <!-- Unpaid Online Orders end -->
+
+            <!-- Cancelled order start -->
+            <div
+              class="tab-pane fade <%= tab === 'cancelledOrders' ? 'active' : '' %>"
+              id="cancelledOrders"
+            >
+              <% var orderCount = 0 %> <% orders.forEach(order =>{ %> <%
+              order.products.forEach((item , index) =>{ %> <% if(item.status ===
+              "Cancelled"){ %> <% orderCount = 1 %> <% } %> <% }) %> <% }) %> <%
+              if(!orderCount){ %>
+              <div
+                class="d-flex justify-content-center align-items-center text-capitalize"
+                style="height: 300px; font-size: 50px"
+              >
+                <strong>You haven't cancelled any orders yet!</strong>
+              </div>
+              <% }else{ %>
+              <h3 class="mb-4"><strong>Cancelled Orders</strong> </h3>
+              <% orders.forEach(order =>{ %> <% order.products.forEach((item ,
+              index) =>{ %> <% if(item.status === "Cancelled"){ %>
+              <div class="card mb-4" style="overflow: hidden">
+                <!-- card head section start-->
+                <div class="card-header row pt-4" style="line-height: 5px">
+                  <div class="col-3 text-nowrap">
+                    <p style="font-size: 12px">ORDER PLACED</p>
+                    <p>
+                      <%= new Date(order.orderDate).toLocaleDateString('en-GB',
+                      { day: 'numeric', month: 'long', year: 'numeric' }) %>
+                    </p>
+                  </div>
+                  <div class="col-2">
+                    <p style="font-size: 12px">TOTAL</p>
+                    <p>₹ <%= (item.price*item.quantity)-(item.offerDiscount + item.couponDiscount) + item.shippingCost %>.00</p>
+                  </div>
+                  <div class="col-2">
+                    <p style="font-size: 12px">SHIP TO</p>
+                    <a
+                      href="#"
+                      data-bs-toggle="modal"
+                      class="adlink"
+                      data-bs-target="#addressCard<%= item._id %>"
+                      ><%= order.shippingAddress.fullName %></a
+                    >
+
+                    <!-- start address card -->
+                    <div class="modal fade" id="addressCard<%= item._id %>">
+                      <div
+                        class="modal-dialog modal-dialog-centered"
+                        role="document"
+                        style="width: 500px"
+                      >
+                        <div class="modal-content">
+                          <div class="modal-body">
+                            <div class="container-fluid">
+                              <div
+                                class="row justify-content-between align-items-center m-0 mb-3"
+                              >
+                                <div class="col-md-10 text-left p-0">
+                                  <h2 class="m-0 text-danger text-capitalize">
+                                    <strong
+                                      ><%= order.shippingAddress.fullName
+                                      %></strong
+                                    >
+                                  </h2>
+                                </div>
+                                <div class="col-md-2 text-right">
+                                  <button
+                                    type="button"
+                                    class="close modal-close border-0"
+                                    data-bs-dismiss="modal"
+                                    aria-label="Close"
+                                  >
+                                    <span aria-hidden="true">
+                                      <i
+                                        class="icon-close"
+                                        style="font-size: 24px"
+                                      ></i
+                                    ></span>
+                                  </button>
+                                </div>
+                              </div>
+                              <div class="row m-0 mb-3">
+                                <div class="col text-left p-0">
+                                  <p>
+                                    <strong style="font-size: 20px"> </strong>
+                                  </p>
+                                  <p><%= order.shippingAddress.house %></p>
+                                  <p><%= order.shippingAddress.street %></p>
+                                  <p>
+                                    <%= order.shippingAddress.city %>, KERALA,
+                                    <%= order.shippingAddress.pincode %> , India
+                                  </p>
+                                  <p>
+                                    <%= order.shippingAddress.phoneNumber %>
+                                  </p>
+                                </div>
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                    <!-- End address card -->
+                  </div>
+                  <div class="col-5 text-right">
+                    <p style="font-size: 12px">ORDER #</p>
+                    <p>ORD-<%= item._id %></p>
+                  </div>
+                </div>
+                <!-- card head section end-->
+
+                <!-- cart body section start -->
+                <% for( let variant of item.productId.variants){ %> <%
+                if(variant._id.toString() == item.variantId.toString()){ %>
+                <div class="card-body">
+                  <div class="row">
+                    <div class="col-md-9">
+                      <div class="row">
+                        <div class="col-md-12">
+                          <h5 class="card-title">
+                            <strong
+                              ><%= item.status %> <%= order.deliveredAt
+                              %></strong
+                            >
+                          </h5>
+                        </div>
+                        <div class="col-md-12">
+                          <div class="row">
+                            <div class="col-md-3 pr-0">
+                              <p class="card-text">
+                                <a
+                                  href="/productDetails/<%= item.productId._id %>/<%= variant._id %>"
+                                >
+                                  <img
+                                    src="<%= variant.images[0].path %>"
+                                    alt="product image"
+                                    class="img-fluid2"
+                                /></a>
+                              </p>
+                            </div>
+                            <div class="col-md-9 pl-0">
+                              <h5>
+                                <strong>
+                                  <%= item.productId.productName %> - <%=
+                                  variant.variantName %>
+                                </strong>
+                              </h5>
+                              <p class="m-0">
+                                <strong>Color: <%= variant.color %></strong>
+                              </p>
+                              <p class="m-0">
+                                <strong>Total Price: ₹<%= (item.price*item.quantity)-(item.offerDiscount + item.couponDiscount)+ item.shippingCost %>.00</strong>
+                              </p>
+                              <p class="m-0">
+                                <strong
+                                  >Payment Type: <%= order.paymentDetails.method
+                                  %></strong
+                                >
+                              </p>
+                              <p class="m-0">
+                                <strong
+                                  >Payment Status: <%= item.paymentStatus
+                                  %></strong
+                                >
+                              </p>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                    <div class="col-md-3 align-self-center text-center">
+                      <a
+                        href="/productDetails/<%= item.productId._id %>/<%= item.variantId %>"
+                        class="btn btn-outline-secondary mt-3"
+                        >View Item</a
+                      ><br />
+                    </div>
+                  </div>
+                </div>
+                <% } %> <% } %>
+                <!-- cart body section end -->
+              </div>
+              <% } %> <% }) %> <% }) %> <% } %>
+            </div>
+            <!-- Cancelled order end -->
+
+            <!-- coupon start -->
+            <div
+              class="tab-pane <%= tab === 'allCoupons' ? 'active' : '' %>"
+              id="allCoupons"
+            >
+              <div class="row d-flex">
+                <% user.userCoupons.forEach((coupon) => { %>
+                  <% if( !coupon.isUsed &&coupon.couponId.isActive && !coupon.couponId.isDeleted &&   (coupon.couponId.totalUsageLimit > coupon.couponId.currectUsageCount ||coupon.couponId.totalUsageLimit == null ) &&  coupon.couponId.startDate < Date.now() && (coupon.couponId.expiryDate == null || coupon.couponId.expiryDate > Date.now())){ %>
+                <div
+                  class="col-md-4 d-flex mb-6"
+                >
+                  <div class="d-flex card couponCard text-center" <% if(coupon.couponId.color){ %> style = "background-color:<%= coupon.couponId.color %>;color:<%= coupon.couponId.textColor %>" <% } %> >
+                    <div class="dicountImage">
+                      <img src="https://i.imgur.com/DC94rZe.png" width="150" />
+                    </div>
+                    <div class="dicountImage2">
+                      <img src="https://i.imgur.com/DC94rZe.png" width="150" />
+                    </div>
+                    
+                    <p class="couponHead"><%= coupon.couponId.discountValue %><%= coupon.couponId.discountType == 'Fixed' ? "₹" : "%" %> OFF</p>
+                    <span class="d-block"><%= coupon.couponId.couponName  %></span>
+                    <div>
+                      <p class="mb-1"><%= coupon.couponId.maxDiscount ?  'Save Upto ₹' + coupon.couponId.maxDiscount : '' %></p>
+                      <p class="mb-1">Minimum Purchase : ₹<%= coupon.couponId.minPurchase %></p>
+                      <small>Expiry : <%= coupon.couponId.expiryDate  ? new Date(coupon.couponId.expiryDate).toLocaleDateString("en-GB" , {day :"numeric" , month:"short" , year:"numeric"}) : "No Expiry" %></small>
+                    </div>
+                    <div class="mt-4">
+                      <div>
+                        <p class="m-0"><strong>CODE: <%= coupon.couponId.couponCode %></strong></p>
+                      </div>
+                      <sl-copy-button 
+                        value="<%= coupon.couponId.couponCode %>" 
+                        style="font-size: 1.2rem; padding: 10px 16px;">
+                      </sl-copy-button>
+                  </div>
+                  </div>
+                </div>
+                  <% } %>
+                <% }) %>
+                <% user.userCoupons.forEach((coupon) => { %>
+                  <% if( coupon.isUsed ){ %>
+                <div
+                  class="col-md-4 d-flex mb-6"
+                >
+                  <div class="d-flex card couponCard spCouponCard usedCouponCard text-center" <% if(coupon.couponId.color){ %> style = "background-color:<%= coupon.couponId.color %>;color:<%= coupon.couponId.textColor %>" <% } %> >
+                    <div class="dicountImage">
+                      <img src="https://i.imgur.com/DC94rZe.png" width="150" />
+                    </div>
+                    <div class="dicountImage2">
+                      <img src="https://i.imgur.com/DC94rZe.png" width="150" />
+                    </div>
+                    
+                    <p class="couponHead"><%= coupon.couponId.discountValue %><%= coupon.couponId.discountType == 'Fixed' ? "₹" : "%" %> OFF</p>
+                    <span class="d-block"><%= coupon.couponId.couponName  %></span>
+                    <div>
+                      <p class="mb-1"><%= coupon.couponId.maxDiscount ?  'Save Upto ₹' + coupon.couponId.maxDiscount : '' %></p>
+                      <p class="mb-1">Minimum Purchase : ₹<%= coupon.couponId.minPurchase %></p>
+                      <small>Expiry : <%= coupon.couponId.expiryDate  ? new Date(coupon.couponId.expiryDate).toLocaleDateString("en-GB" , {day :"numeric" , month:"short" , year:"numeric"}) : "No Expiry" %></small>
+                    </div>
+                    <div class="mt-4">
+                      <div>
+                        <p class="m-0"><strong>CODE: <%= coupon.couponId.couponCode %></strong></p>
+                      </div>
+                  </div>
+                  </div>
+                </div>
+                  <% } %>
+                <% }) %>
+                <% user.userCoupons.forEach((coupon) => { %>
+                  <% if(!coupon.isUsed && (coupon.couponId.totalUsageLimit < coupon.couponId.currectUsageCount && coupon.couponId.totalUsageLimit != null ) || (coupon.couponId.expiryDate != null && coupon.couponId.expiryDate < Date.now())){ %>
+                  <div
+                  class="col-md-4 d-flex mb-6"
+                >
+                  <div class="d-flex card couponCard spCouponCard expiredCouponCard text-center" <% if(coupon.couponId.color){ %> style = "background-color:<%= coupon.couponId.color %>;color:<%= coupon.couponId.textColor %>" <% } %> >
+                    <div class="dicountImage">
+                      <img src="https://i.imgur.com/DC94rZe.png" width="150" />
+                    </div>
+                    <div class="dicountImage2">
+                      <img src="https://i.imgur.com/DC94rZe.png" width="150" />
+                    </div>
+                    
+                    <p class="couponHead"><%= coupon.couponId.discountValue %><%= coupon.couponId.discountType == 'Fixed' ? "₹" : "%" %> OFF</p>
+                    <span class="d-block"><%= coupon.couponId.couponName  %></span>
+                    <div>
+                      <p class="mb-1"><%= coupon.couponId.maxDiscount ?  'Save Upto ₹' + coupon.couponId.maxDiscount : '' %></p>
+                      <p class="mb-1">Minimum Purchase : ₹<%= coupon.couponId.minPurchase %></p>
+                      <small>Expiry : <%= coupon.couponId.expiryDate  ? new Date(coupon.couponId.expiryDate).toLocaleDateString("en-GB" , {day :"numeric" , month:"short" , year:"numeric"}) : "No Expiry" %></small>
+                    </div>
+                    <div class="mt-4">
+                      <div>
+                        <p class="m-0"><strong>CODE: <%= coupon.couponId.couponCode %></strong></p>
+                      </div>
+                  </div>
+                  </div>
+                </div>
+                  <% } %>
+                <% }) %>
+              </div>
+              <div
+                class="row d-flex align-items-stretch row-cols-1 row-cols-md-3 g-4"
+              ></div>
+            </div>
+            <!-- coupon end -->
+          </div>
+        </div>
+        <!-- right side end -->
+      </div>
+    </div>
+    <!-- ...:::: myaccount section end ::::... -->
+
+    <%- include('../../partials/footer.ejs') %>
+
+    <!-- material-scrolltop button -->
+    <button class="material-scrolltop" type="button"></button>
+
+    <script src="https://checkout.razorpay.com/v1/checkout.js"></script>
+
+    <script src="/js/pages/mainPages/myAccount/myAccount.js"></script>
+
+    <script type="module" src="https://cdn.jsdelivr.net/npm/@shoelace-style/shoelace@2.19.1/cdn/components/copy-button/copy-button.js"></script>
+
+    <!-- minified version files -->
+    <script src="/js/vendor/vendor.min.js"></script>
+    <script src="/js/plugins/plugins.min.js"></script>
+    <!-- Main JS -->
+    <script src="/js/main.js"></script>
+  </body>
+</html>

@@ -1,0 +1,202 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta
+      content="width=device-width, initial-scale=1, maximum-scale=1, shrink-to-fit=no"
+      name="viewport"
+    />
+    <title>Xpo - Add New Product</title>
+    <!-- General CSS Files -->
+    <link rel="stylesheet" href="/assets/css/app.min.css" />
+    <!-- Template CSS -->
+    <link rel="stylesheet" href="/assets/css/style.css" />
+    <link
+      rel="shortcut icon"
+      type="image/x-icon"
+      href="/assets/img/favicon.ico"
+    />
+  </head>
+
+  <body>
+    <div class="loader"></div>
+    <div id="app">
+      <div class="main-wrapper main-wrapper-1">
+        <%- include('../partials/navbar') %> <%- include('../partials/sidebar')
+        %>
+        <input type="hidden" id="productId" value="<%= product._id %>" />
+
+        <!-- Main Content start-->
+        <div class="main-content">
+          <section class="section">
+            <form>
+              <div class="section-body">
+                <div class="row justify-content-center">
+                  <div class="col-12 col-lg-6">
+                    <div class="card">
+                      <div class="card-header justify-content-between">
+                        <h4>Edit Product</h4>
+                        <a
+                          href="/admin/allProducts"
+                          class="btn btn-dark text-white"
+                        >
+                          <i data-feather="chevrons-left"></i> Back to Products
+                          Page
+                        </a>
+                      </div>
+                      <div class="card-body">
+                        <div class="text-center text-danger">
+                          <label id="logErrorMessage"
+                            >Edit Product Details</label
+                          >
+                        </div>
+                        <div class="form-row">
+                          <div class="form-group col-md-8">
+                            <label for="productName">Product Name</label>
+                            <input
+                              type="text"
+                              class="form-control"
+                              id="productName"
+                              value="<%= product.productName %>"
+                              name="productName"
+                            />
+                          </div>
+                          <div class="form-group col-md-4">
+                            <label for="inputStatus">Status</label>
+                            <select
+                              id="inputStatus"
+                              class="form-control"
+                              name="status"
+                            >
+                              <option selected>
+                                <%= product.isInactive? 'Inactive' : 'Active' %>
+                              </option>
+                              <option>
+                                <%= product.isInactive? 'Active' : 'Inactive' %>
+                              </option>
+                            </select>
+                          </div>
+                          <div class="form-group col-md-6">
+                            <label for="productCategory"
+                              >Product Category</label
+                            >
+                            <select
+                              id="productCategory"
+                              class="form-control"
+                              name="categoryId"
+                            >
+                              <option
+                                value="<%= product.categoryId._id %>"
+                                selected
+                              >
+                                <%= product.categoryId.categoryName %>
+                              </option>
+                              <% categories.forEach(category => { %> <%
+                              if(category.categoryName !=
+                              product.categoryId.categoryName){ %>
+                              <option value="<%= category._id %>">
+                                <%= category.categoryName %>
+                              </option>
+                              <% } %> <% }) %>
+                            </select>
+                          </div>
+                          <div class="form-group col-md-6">
+                            <label for="productSubCategory"
+                              >Product SubCategory</label
+                            >
+                            <select
+                              id="productSubCategory"
+                              class="form-control"
+                              name="subCategoryId"
+                            >
+                              <option
+                                value="<%= product.subCategoryId._id %>"
+                                selected
+                              >
+                                <%= product.subCategoryId.subCategoryName %>
+                              </option>
+                              <% subCategories.forEach(subCategory => { %> <%
+                              if(subCategory.subCategoryName !=
+                              product.subCategoryId.subCategoryName){ %>
+                              <option value="<%= subCategory._id %>">
+                                <%= subCategory.subCategoryName %>
+                              </option>
+                              <% } %> <% }) %>
+                            </select>
+                          </div>
+                          <div class="form-group col-md-6">
+                            <label for="inputOfferStatus">Offer Status</label>
+                            <select
+                              id="inputOfferStatus"
+                              class="form-control"
+                              name="offerStatus"
+                            >
+                              <option selected>
+                                <%= product.offerStatus === false ? "Inactive" :
+                                "Active" %>
+                              </option>
+                              <option>
+                                <%= product.offerStatus === false ? "Active" :
+                                "Inactive" %>
+                              </option>
+                            </select>
+                          </div>
+                          <div class="form-group col-md-6">
+                            <label for="offerPercentage"
+                              >Offer Percentage (Empty/0)</label
+                            >
+                            <input
+                              type="number"
+                              class="form-control"
+                              id="offerPercentage"
+                              placeholder="Offer Percentage"
+                              name="offerPercentage"
+                              value="<%= product.offerPercentage %>"
+                            />
+                          </div>
+                          <div class="form-group col-md-6">
+                            <label for="price">Start Date</label>
+                            <input type="date" class="form-control"
+                            id="startDate" placeholder="Start Date"
+                            name="startDate" value="<%= product.offerStartDate ?
+                            product.offerStartDate.toISOString().split('T')[0] :
+                            '' %>"" />
+                          </div>
+                          <div class="form-group col-md-6">
+                            <label for="price">Expiry Date</label>
+                            <input
+                              type="date"
+                              class="form-control"
+                              id="expiryDate"
+                              placeholder="Expiry Date"
+                              name="expiryDate"
+                              value="<%= product.offerEndDate ? product.offerEndDate.toISOString().split('T')[0] : '' %>"
+                            />
+                          </div>
+                        </div>
+                      </div>
+                      <div class="card-footer align-center">
+                        <button class="btn btn-primary" id="editProductBtn">
+                          <i data-feather="save"> </i> Save Changes
+                        </button>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </form>
+          </section>
+        </div>
+        <!-- Main Content end-->
+      </div>
+    </div>
+
+    <script src="/js/adminPages/productManagement/common/addEditProduct.js"></script>
+    <script src="/js/adminPages/productManagement/editProducts.js"></script>
+
+    <!-- General JS Scripts -->
+    <script src="/assets/js/app.min.js"></script>
+    <!-- Template JS File -->
+    <script src="/assets/js/scripts.js"></script>
+  </body>
+</html>

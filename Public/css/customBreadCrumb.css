@@ -1,0 +1,45 @@
+/* Breadcrumb Container */
+.breadcrumb {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  list-style: none;
+  padding: 10px 170px;
+  /* background-color: #f8f9fa; */
+  border-radius: 5px;
+}
+
+/* Breadcrumb Items */
+.breadcrumb li {
+  margin: 0 5px;
+  font-size: 14px;
+
+}
+
+/* Links */
+.breadcrumb a {
+  text-decoration: none;
+  color: rgb(15, 4, 39);
+  transition: color 0.2s ease-in-out;
+  box-sizing: content-box;
+}
+
+/* Separator */
+.breadcrumb li + li:before {
+  content: "/";
+  margin: 0 5px;
+  color: #6c757d;
+}
+
+/* Active Item */
+.breadcrumb .active {
+  color: #6c757d;
+  font-weight: bold;
+  pointer-events: none;
+}
+
+/* Hover Effect */
+.breadcrumb a:hover {
+  color: red;
+  text-decoration: underline;
+}

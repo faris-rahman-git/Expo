@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html lang="en">
+  <!-- basic-form.html  21 Nov 2019 03:54:41 GMT -->
+  <head>
+    <meta charset="UTF-8" />
+    <meta
+      content="width=device-width, initial-scale=1, maximum-scale=1, shrink-to-fit=no"
+      name="viewport"
+    />
+    <title>Xpo - Edit Category</title>
+    <!-- General CSS Files -->
+    <link rel="stylesheet" href="/assets/css/app.min.css" />
+    <!-- Template CSS -->
+    <link rel="stylesheet" href="/assets/css/style.css" />
+    <link rel="stylesheet" href="/assets/css/components.css" />
+    <!-- Custom style CSS -->
+    <link rel="stylesheet" href="/assets/css/custom.css" />
+    <link
+      rel="shortcut icon"
+      type="image/x-icon"
+      href="/assets/img/favicon.ico"
+    />
+  </head>
+
+  <body>
+    <div class="loader"></div>
+    <div id="app">
+      <div class="main-wrapper main-wrapper-1">
+        <%- include('../partials/navbar') %> <%- include('../partials/sidebar')
+        %>
+        <input type="hidden" id="categoryId" value="<%= category._id %>"">
+
+        <!-- Main Content start-->
+        <div class="main-content">
+          <section class="section">
+            <form
+              action="/admin/editCategory/<%= category._id %>?_method=put"
+              method="post"
+              onsubmit="return validateForm()"
+            >
+              <div class="section-body">
+                <div class="row justify-content-center">
+                  <div class="col-12 col-lg-6">
+                    <div class="card">
+                      <div class="card-header justify-content-between">
+                        <h4>Edit Category</h4>
+                        <a
+                          href="/admin/allCategory"
+                          class="btn btn-dark text-white"
+                        >
+                          <i data-feather="chevrons-left"></i> Back to
+                          Categories
+                        </a>
+                      </div>
+                      <div class="card-body">
+                        <div class="text-center text-danger">
+                          <label id="logErrorMessage"
+                            >Edit Category Details</label
+                          >
+                        </div>
+                        <div class="form-row">
+                          <div class="form-group col-md-8">
+                            <label for="categoryName">Category Name</label>
+                            <input
+                              type="text"
+                              class="form-control"
+                              id="categoryName"
+                              placeholder="Category Name"
+                              name="categoryName"
+                              value="<%= category.categoryName %>"
+                            />
+                          </div>
+                          <div class="form-group col-md-4">
+                            <label for="inputStatus">Status</label>
+                            <select
+                              id="inputStatus"
+                              class="form-control"
+                              name="status"
+                            >
+                              <option selected>
+                                <%= category.isInactive === false ? "Active" :
+                                "Inactive" %>
+                              </option>
+                              <option>
+                                <%= category.isInactive === false ? "Inactive" :
+                                "Active" %>
+                              </option>
+                            </select>
+                          </div>
+                          <div class="form-group col-md-6">
+                            <label for="inputOfferStatus">Offer Status</label>
+                            <select
+                              id="inputOfferStatus"
+                              class="form-control"
+                              name="offerStatus"
+                            >
+                              <option selected>
+                                <%= category.offerStatus === false ? "Inactive"
+                                : "Active" %>
+                              </option>
+                              <option>
+                                <%= category.offerStatus === false ? "Active" :
+                                "Inactive" %>
+                              </option>
+                            </select>
+                          </div>
+                          <div class="form-group col-md-6">
+                            <label for="offerPercentage"
+                              >Offer Percentage (Empty/0)</label
+                            >
+                            <input
+                              type="number"
+                              class="form-control"
+                              id="offerPercentage"
+                              placeholder="Offer Percentage"
+                              name="offerPercentage"
+                              value="<%= category.offerPercentage %>"
+                            />
+                          </div>
+                          <div class="form-group col-md-6">
+                            <label for="price">Start Date</label>
+                            <input type="date" class="form-control"
+                            id="startDate" placeholder="Start Date"
+                            name="startDate" value="<%= category.offerStartDate
+                            ?
+                            category.offerStartDate.toISOString().split('T')[0]
+                            : '' %>" />
+                          </div>
+                          <div class="form-group col-md-6">
+                            <label for="price">Expiry Date</label>
+                            <input
+                              type="date"
+                              class="form-control"
+                              id="expiryDate"
+                              placeholder="Expiry Date"
+                              name="expiryDate"
+                              value="<%= category.offerEndDate ? category.offerEndDate.toISOString().split('T')[0] : '' %>"
+                            />
+                          </div>
+                        </div>
+                      </div>
+                      <div class="card-footer align-center">
+                        <button class="btn btn-primary" id="editCategoryBtn">
+                          <i data-feather="save"> </i> Save Changes
+                        </button>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </form>
+          </section>
+        </div>
+        <!-- Main Content end-->
+      </div>
+    </div>
+
+    <script src="/js/adminPages/categoryManagement/editCategory.js"></script>
+
+    <!-- General JS Scripts -->
+    <script src="/assets/js/app.min.js"></script>
+    <!-- Template JS File -->
+    <script src="/assets/js/scripts.js"></script>
+  </body>
+
+  <!-- basic-form.html  21 Nov 2019 03:54:41 GMT -->
+</html>

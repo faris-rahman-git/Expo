@@ -1,0 +1,235 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta
+      content="width=device-width, initial-scale=1, maximum-scale=1, shrink-to-fit=no"
+      name="viewport"
+    />
+    <title>Xpo - Add New Product Variant</title>
+    <!-- General CSS Files -->
+    <link rel="stylesheet" href="/assets/css/app.min.css" />
+    <!-- Template CSS -->
+    <link rel="stylesheet" href="/assets/css/style.css" />
+    <!-- Custom style CSS -->
+    <link rel="stylesheet" href="/assets/css/custom.css" />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.5.13/cropper.min.css"
+    />
+    <link
+      rel="shortcut icon"
+      type="image/x-icon"
+      href="/assets/img/favicon.ico"
+    />
+  </head>
+
+  <body>
+    <div class="loader"></div>
+    <div id="app">
+      <div class="main-wrapper main-wrapper-1">
+        <%- include('../partials/navbar') %> <%- include('../partials/sidebar')
+        %>
+
+        <!-- Main Content start -->
+        <div class="main-content">
+          <section class="section">
+            <form
+              action="/admin/addNewProductVariant/<%= productId %>"
+              method="POST"
+              enctype="multipart/form-data"
+              onsubmit="return validateForm()"
+            >
+              <div class="section-body">
+                <div class="row justify-content-center">
+                  <div class="col-12 col-lg-9">
+                    <div class="card">
+                      <div class="card-header justify-content-between">
+                        <h4>Add New Product Variant</h4>
+                        <div>
+                          <a
+                            href="/admin/productVariants/<%= productId %>"
+                            class="btn btn-dark text-white"
+                          >
+                            <i data-feather="chevrons-left" class="mr-2"></i
+                            >Back to Variants Page
+                          </a>
+                        </div>
+                      </div>
+                      <div class="card-body">
+                        <div class="text-center text-danger">
+                          <label id="logErrorMessage"><%= message %></label>
+                        </div>
+                        <div class="form-row">
+                          <div class="form-group col-md-6">
+                            <label for="productVariantName"
+                              >Product Variant Name</label
+                            >
+                            <input
+                              type="text"
+                              class="form-control"
+                              id="productVariantName"
+                              placeholder="Product Variant Name"
+                              name="productVariantName"
+                            />
+                          </div>
+                          <div class="form-group col-md-6">
+                            <label for="productVariantDescription"
+                              >Product Variant Description</label
+                            >
+                            <textarea
+                              class="form-control"
+                              id="productVariantDescription"
+                              placeholder="Product Variant Description"
+                              name="productVariantDescription"
+                            ></textarea>
+                          </div>
+                          <div class="form-group col-md-6">
+                            <label for="color">Color</label>
+                            <input
+                              type="text"
+                              class="form-control"
+                              id="color"
+                              placeholder="Color"
+                              name="color"
+                            />
+                          </div>
+                          <div class="form-group col-md-6">
+                            <label for="price">Price</label>
+                            <input
+                              type="number"
+                              class="form-control"
+                              id="price"
+                              placeholder="Price Amount"
+                              name="price"
+                            />
+                          </div>
+                          <div class="form-group col-md-3">
+                            <label for="inputOfferStatus">Offer Status</label>
+                            <select
+                              id="inputOfferStatus"
+                              class="form-control"
+                              name="offerStatus"
+                            >
+                              <option selected>Inactive</option>
+                              <option>Active</option>
+                            </select>
+                          </div>
+                          <div class="form-group col-md-3">
+                            <label for="offerPercentage"
+                              >Offer Percentage (Empty/0)</label
+                            >
+                            <input
+                              type="number"
+                              class="form-control"
+                              id="offerPercentage"
+                              placeholder="Offer Percentage"
+                              name="offerPercentage"
+                            />
+                          </div>
+                          <div class="form-group col-md-3">
+                            <label for="price">Start Date</label>
+                            <input
+                              type="date"
+                              class="form-control"
+                              id="startDate"
+                              placeholder="Start Date"
+                              name="startDate"
+                            />
+                          </div>
+                          <div class="form-group col-md-3">
+                            <label for="price">Expiry Date</label>
+                            <input
+                              type="date"
+                              class="form-control"
+                              id="expiryDate"
+                              placeholder="Expiry Date"
+                              name="expiryDate"
+                            />
+                          </div>
+                          <div class="form-group col-md-4">
+                            <label for="stock">Quantity</label>
+                            <input
+                              type="number"
+                              class="form-control"
+                              id="stock"
+                              placeholder="Stock Count"
+                              name="stock"
+                            />
+                          </div>
+                          <div class="form-group col-md-4">
+                            <label for="status">Status</label>
+                            <select
+                              id="status"
+                              class="form-control"
+                              name="status"
+                            >
+                              <option selected>Active</option>
+                              <option>Inactive</option>
+                            </select>
+                          </div>
+                          <div class="form-group col-md-3">
+                            <div class="section-title mt-1 m-0 text-">
+                              File Browser
+                            </div>
+                            <div class="custom-file">
+                              <input
+                                type="file"
+                                class="custom-file-input"
+                                name="croppedImages"
+                                id="customFile"
+                                accept="image/*"
+                                multiple
+                              />
+                              <label
+                                class="custom-file-label"
+                                for="customFile"
+                                id="customFileLabel"
+                                >Choose file</label
+                              >
+                            </div>
+                            <div id="cropContainer" style="display: none">
+                              <img id="imageToCrop" style="max-width: 100%" />
+                              <button id="cropButton" type="button">
+                                Crop
+                              </button>
+                            </div>
+                            <canvas
+                              id="croppedCanvas"
+                              style="display: none"
+                            ></canvas>
+                          </div>
+                          <!-- Preview Container -->
+                          <div
+                            id="imagePreviewContainer"
+                            class="d-flex flex-wrap mt-3"
+                          ></div>
+                        </div>
+                      </div>
+                      <div class="card-footer align-center">
+                        <button class="btn btn-primary" type="submit">
+                          <i data-feather="plus-square" class="mr-2"></i>Save
+                          New Variant
+                        </button>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </form>
+          </section>
+        </div>
+        <!-- Main Content end -->
+      </div>
+    </div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.5.13/cropper.min.js"></script>
+    <script src="/js/adminPages/productManagement/common/image.js"></script>
+    <script src="/js/adminPages/productManagement/addNewProductVariant.js"></script>
+
+    <!-- General JS Scripts -->
+    <script src="/assets/js/app.min.js"></script>
+    <!-- Template JS File -->
+    <script src="/assets/js/scripts.js"></script>
+  </body>
+</html>

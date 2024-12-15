@@ -3,80 +3,73 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+    <link rel="stylesheet" href="/css/loginAndSignup.css" />
     <link
       rel="stylesheet"
       href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css"
     />
-    <link rel="stylesheet" href="/css/loginAndSignup.css" />
+
     <title>SignIn Page</title>
   </head>
 
   <body>
     <div class="container" id="container">
-      <form action="/login" method="get">
-      <div class="toggle-container toggle-left">
-        <div class="toggle">
-          <div class="toggle-panel">
-            <h1>Welcome Back!</h1>
-            <p>Enter your personal details to use all of site features</p>
-            <button class="hidden" id="login">login</button>
+      <form action="/login" class="form-hidden" method="get">
+        <div class="toggle-container toggle-left">
+          <div class="toggle">
+            <div class="toggle-panel">
+              <h1>Welcome Back!</h1>
+              <p>Enter your personal details to use all of site features</p>
+              <button class="hidden" id="login">login</button>
+            </div>
           </div>
         </div>
-      </div>
-    </form>
+      </form>
       <div class="form-container sign-up">
         <!-- form -->
-        <form action="/otp" method="post" onsubmit="return validateForm()">
+        <form action="/otp">
           <h1>Create Account</h1>
           <div class="social-icons">
             <a href="/auth/google" class="icon"
               ><i class="fa-brands fa-google-plus-g"></i
             ></a>
-            <a href="/auth/facebook" class="icon"><i class="fa-brands fa-facebook-f"></i></a>
-            <a href="/auth/github" class="icon"><i class="fa-brands fa-github"></i></a>
+            <a href="/auth/facebook" class="icon"
+              ><i class="fa-brands fa-facebook-f"></i
+            ></a>
+            <a href="/auth/github" class="icon"
+              ><i class="fa-brands fa-github"></i
+            ></a>
             <a href="/auth/microsoft" class="icon"
               ><i class="fa-brands fa-microsoft"></i>
             </a>
           </div>
-          <span id="logErrorMessage"><%= message %></span>
+          <span id="logErrorMessage" class="text-danger">Enter Details</span>
 
           <!-- first -->
           <div id="detailsWrapper">
-            <input type="text" placeholder="Name" id="name" name="userName"/>
-            <input type="email" placeholder="Email" id="email" name="email"/>
+            <input type="text" placeholder="Name" id="name" name="userName" />
+            <input type="email" placeholder="Email" id="email" name="email" />
             <div class="phone-input">
               <input type="tel" id="countryCode" value="+91" readonly />
-              <input type="tel" id="phone" placeholder="Phone number" name="phoneNumber"/>
+              <input
+                type="tel"
+                id="phone"
+                placeholder="Phone number"
+                name="phoneNumber"
+              />
             </div>
-            <button type="submit">Send OTP</button>
+            <center>
+              <a href="/login" class="">Already Have an Account ?</a>
+            </center>
+
+            <button type="button" id="sendOtpButton">Send OTP</button>
           </div>
         </form>
         <!-- first end-->
-
-        <!-- form end-->
       </div>
     </div>
 
-    <script>
-      function validateForm() {
-        const name = document.getElementById("name").value.trim();
-        const email = document.getElementById("email").value.trim();
-        const phone = document.getElementById("phone").value.trim();
-
-        if (!name || !email || !phone) {
-          logErrorMessage.textContent = "All fields are required";
-          return false;
-        }
-
-        const phoneRegex = /^[789]\d{9}$/;
-
-        // Check if phone number matches the regular expression
-        if (!phoneRegex.test(phone)) {
-          logErrorMessage.textContent = "Invalid Phone Number";
-          return false;
-        }
-        return true;
-      }
-    </script>
+    <script src="/js/pages/signup/signup.js"></script>
   </body>
 </html>

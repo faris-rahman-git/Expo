@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html lang="en">
+  <!-- basic-form.html  21 Nov 2019 03:54:41 GMT -->
+  <head>
+    <meta charset="UTF-8" />
+    <meta
+      content="width=device-width, initial-scale=1, maximum-scale=1, shrink-to-fit=no"
+      name="viewport"
+    />
+    <title>Xpo - Edit User</title>
+    <!-- General CSS Files -->
+    <link rel="stylesheet" href="/assets/css/app.min.css" />
+    <!-- Template CSS -->
+    <link rel="stylesheet" href="/assets/css/style.css" />
+    <link rel="stylesheet" href="/assets/css/components.css" />
+    <!-- Custom style CSS -->
+    <link rel="stylesheet" href="/assets/css/custom.css" />
+    <link
+      rel="shortcut icon"
+      type="image/x-icon"
+      href="/assets/img/favicon.ico"
+    />
+  </head>
+
+  <body>
+    <div class="loader"></div>
+    <div id="app">
+      <div class="main-wrapper main-wrapper-1">
+        <%- include('../partials/navbar') %> <%- include('../partials/sidebar')
+        %>
+        <input type="hidden" id="userId" value="<%= user._id %>" />
+
+        <!-- Main Content start-->
+        <div class="main-content">
+          <section class="section">
+            <form>
+              <div class="section-body">
+                <div class="row justify-content-center">
+                  <div class="col-12 col-lg-9">
+                    <div class="card">
+                      <div class="card-header justify-content-between">
+                        <h4>Edit User</h4>
+                        <a
+                          href="/admin/allUsers"
+                          class="btn btn-dark text-white"
+                          ><i data-feather="chevrons-left" class="mr-2"></i>Back
+                          to User Table</a
+                        >
+                      </div>
+                      <div class="card-body">
+                        <div class="text-center text-danger">
+                          <label id="logErrorMessage"
+                            >Update User Details</label
+                          >
+                        </div>
+                        <div class="form-row">
+                          <div class="form-group col-md-6">
+                            <label for="userName">User Name</label>
+                            <input
+                              type="text"
+                              class="form-control"
+                              id="userName"
+                              placeholder="User Name"
+                              name="userName"
+                              value="<%= user.userName %>"
+                            />
+                          </div>
+                          <div class="form-group col-md-6">
+                            <label for="email">Email</label>
+                            <input
+                              type="email"
+                              class="form-control"
+                              id="email"
+                              placeholder="Email"
+                              name="email"
+                              value="<%= user.email %>"
+                            />
+                          </div>
+                          <div class="form-group col-md-6">
+                            <label for="password">Password</label>
+                            <input
+                              type="password"
+                              class="form-control"
+                              id="password"
+                              placeholder="Enter New Password"
+                              name="password"
+                            />
+                          </div>
+                          <div class="form-group col-md-6">
+                            <label for="confirmPassword"
+                              >Confirm Password</label
+                            >
+                            <input
+                              type="password"
+                              class="form-control"
+                              id="confirmPassword"
+                              placeholder="Enter confirm password"
+                              name="confirmPassword"
+                            />
+                          </div>
+                        </div>
+                        <div class="form-row">
+                          <div class="form-group col-md-6">
+                            <label for="phoneNumber"
+                              >Phone Number(Optional)</label
+                            >
+                            <input
+                              type="tel"
+                              class="form-control"
+                              placeholder="Enter Phone Number"
+                              id="phoneNumber"
+                              name="phoneNumber"
+                              value="<%= user.phoneNumber %>"
+                            />
+                          </div>
+                          <div class="form-group col-md-6">
+                            <label for="inputBlocked">Block Status</label>
+                            <select
+                              id="inputBlocked"
+                              class="form-control"
+                              name="blockStatus"
+                            >
+                              <option selected><%= user.isBlock %></option>
+                              <option>
+                                <%= user.isBlock ? 'false' : 'true' %>
+                              </option>
+                            </select>
+                          </div>
+                        </div>
+                      </div>
+                      <div class="card-footer align-center">
+                        <button
+                          class="btn btn-primary"
+                          type="button"
+                          id="editUserBtn"
+                        >
+                          <i data-feather="save" class="mr-2"></i>Save Changes
+                        </button>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </form>
+          </section>
+        </div>
+        <!-- Main Content end-->
+      </div>
+    </div>
+
+    <script src="/js/adminPages/userManagement/editUser.js"></script>
+
+    <!-- General JS Scripts -->
+    <script src="/assets/js/app.min.js"></script>
+    <!-- Template JS File -->
+    <script src="/assets/js/scripts.js"></script>
+  </body>
+
+  <!-- basic-form.html  21 Nov 2019 03:54:41 GMT -->
+</html>

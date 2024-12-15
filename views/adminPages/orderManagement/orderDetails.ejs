@@ -1,0 +1,247 @@
+<!DOCTYPE html>
+<html lang="en">
+  <!-- index.html  21 Nov 2019 03:44:50 GMT -->
+  <head>
+    <meta charset="UTF-8" />
+    <meta
+      content="width=device-width, initial-scale=1, maximum-scale=1, shrink-to-fit=no"
+      name="viewport"
+    />
+    <title>Xpo - All Product Details</title>
+    <!-- General CSS Files -->
+    <link rel="stylesheet" href="/assets/css/app.min.css" />
+
+    <!-- Template CSS -->
+    <link rel="stylesheet" href="/assets/css/style.css" />
+    <link rel="stylesheet" href="/assets/css/components.css" />
+    <link
+      rel="shortcut icon"
+      type="image/x-icon"
+      href="/assets/img/favicon.ico"
+    />
+  </head>
+
+  <body>
+    <div class="loader"></div>
+    <div id="app">
+      <div class="main-wrapper main-wrapper-1">
+        <%- include('../partials/navbar') %> <%- include('../partials/sidebar')
+        %>
+
+        <!-- Main Content start-->
+        <div class="main-content">
+          <section class="section">
+            <div class="section-body">
+              <!-- table start -->
+              <div class="row">
+                <div class="col-12">
+                  <div class="card">
+                    <div class="row d-flex justify-content-center">
+                      <div class="col-md-10 mt-5 mb-4">
+                        <% for(let item of order.products){ %> <%
+                        if(item._id.toString() == orderId.toString() ){ %>
+
+                        <!-- top section start-->
+                        <h3><strong>Order Details</strong></h3>
+                        <p class="text-black">
+                          Ordered on <%= new
+                          Date(order.orderDate).toLocaleDateString('en-GB', {
+                          day: 'numeric', month: 'long', year: 'numeric' }) %> |
+                          ORDER# ORD-<%= orderId %>
+                        </p>
+                        <!-- top section end-->
+
+                        <!-- middle section start-->
+                        <div class="card">
+                          <div class="card-body row m-2">
+                            <div class="col-md-4" style="color: black">
+                              <h6><strong>Shipping Address</strong></h6>
+                              <p class="m-0">
+                                <%= order.shippingAddress.fullName %>
+                              </p>
+                              <p class="m-0">
+                                <%= order.shippingAddress.house %>
+                              </p>
+                              <p class="m-0">
+                                <%= order.shippingAddress.landmark %>
+                              </p>
+                              <p class="m-0">
+                                <%= order.shippingAddress.street %>
+                              </p>
+                              <p class="m-0">
+                                <%= order.shippingAddress.city %>, KERALA ,<%=
+                                order.shippingAddress.pinCode %>
+                              </p>
+                              <p class="m-0">India</p>
+                            </div>
+                            <div class="col-md-4" style="color: black">
+                              <h6><strong>Payment Methods </strong></h6>
+                              <p class="m-0">
+                                <%= order.paymentDetails.method %>
+                              </p>
+                            </div>
+                            <div class="col-md-4" style="color: black">
+                              <h6><strong>Order Summary </strong></h6>
+                              <div class="row">
+                                <div class="col-md-8">
+                                  <p class="m-0">Price:</p>
+                                  <p class="m-0">quantity:</p>
+                                  <p class="m-0">Item(s) Subtotal:</p>
+                                  <p class="m-0">Shipping:</p>
+                                  <p class="m-0">Total:</p>
+                                  <p class="m-0">Discounts:</p>
+                                  <p class="m-0">
+                                    <strong>Grand Total:</strong>
+                                  </p>
+                                </div>
+                                <div class="col-md-4 text-right">
+                                  <p class="m-0">₹<%= item.price %>.00</p>
+                                  <p class="m-0"><%= item.quantity %></p>
+                                  <p class="m-0">
+                                    ₹<%= item.price*item.quantity %>.00
+                                  </p>
+                                  <p class="m-0">
+                                    ₹<%= item.shippingCost || 0 %>.00
+                                  </p>
+                                  <p class="m-0">
+                                    ₹<%= (item.price*item.quantity) +
+                                    item.shippingCost %>.00
+                                  </p>
+                                  <p class="m-0">
+                                    ₹<%= (item.couponDiscount +
+                                    item.offerDiscount) %>.00
+                                  </p>
+                                  <p class="m-0">
+                                    <strong
+                                      >₹<%=
+                                      (item.price*item.quantity)-(item.couponDiscount
+                                      + item.offerDiscount ) + item.shippingCost
+                                      %>.00</strong
+                                    >
+                                  </p>
+                                </div>
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                        <!-- middle section end-->
+
+                        <!-- last section start-->
+                        <% item.productId.variants.forEach(variant => { %> <%
+                        if(variant._id.toString() == item.variantId.toString()){
+                        %>
+                        <br />
+                        <div class="card">
+                          <div class="card-body row m-2">
+                            <div class="col-md-9" style="color: black">
+                              <div class="row">
+                                <div class="col-12 mb-2">
+                                  <h4>
+                                    <strong
+                                      ><%= item.status %> <%
+                                      if(item.deliveredDate){ %><%= new
+                                      Date(item.deliveredDate).toLocaleDateString('en-GB',
+                                      { day: 'numeric', month: 'long', year:
+                                      'numeric' }) %><% } %>
+                                    </strong>
+                                  </h4>
+                                </div>
+                                <div class="col-12">
+                                  <div class="row">
+                                    <div class="col-md-3 pr-0">
+                                      <p class="card-text">
+                                        <a
+                                          href="/productDetails/<%= item.productId._id %>/<%= variant._id %>"
+                                        >
+                                          <img
+                                            src="<%= variant.images[0].path %>"
+                                            alt="product image"
+                                            class="img-fluid"
+                                        /></a>
+                                      </p>
+                                    </div>
+                                    <div class="col-md-9 pl-3">
+                                      <h5>
+                                        <strong>
+                                          <%= item.productId.productName %> -
+                                          <%= variant.variantName %>
+                                        </strong>
+                                      </h5>
+                                      <p class="m-0">
+                                        <strong
+                                          >Color: <%= variant.color %></strong
+                                        >
+                                      </p>
+                                      <p class="m-0">
+                                        <strong
+                                          >Total Price: ₹<%=
+                                          (item.price*item.quantity)-(item.couponDiscount
+                                          + item.offerDiscount ) +
+                                          item.shippingCost %>.00</strong
+                                        >
+                                      </p>
+                                    </div>
+                                  </div>
+                                </div>
+                              </div>
+                            </div>
+                            <div
+                              class="col-md-3 align-self-center text-center"
+                              style="color: black"
+                            ></div>
+                          </div>
+                        </div>
+                        <% } %> <% }) %>
+                        <!-- last section end-->
+
+
+                        <!-- last reason section start-->
+                        <% if(item.status == 'Cancelled' || (item.status == 'Return' && item.returnStatus != 'Cancelled')){ %>
+                         <div class="card">
+                          <div class="card-body row m-2">
+                            <div class="col-md-9" style="color: black">
+                              <div class="row">
+                                <div class="col-12 mb-2">
+                                  <h4>
+                                    <strong>
+                                      <%= item.status %> Reason
+                                    </strong>
+                                  </h4>
+                                </div>
+                                <div class="col-12 ml-3">
+                                  <div class="row">
+                                    <p><%= item.cancelReason || item.returnReason %></p>
+                                  </div>
+                                </div>
+                              </div>
+                            </div>
+                            <div
+                              class="col-md-3 align-self-center text-center"
+                              style="color: black"
+                            ></div>
+                          </div>
+                        </div>
+                        <% } %>
+                        <!-- last reason section end-->
+
+                        <% } %> <% } %>
+
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <!-- table end -->
+            </div>
+          </section>
+        </div>
+        <!-- Main Content end-->
+      </div>
+    </div>
+    <!-- General JS Scripts -->
+
+    <script src="/assets/js/app.min.js"></script>
+    <!-- Template JS File -->
+    <script src="/assets/js/scripts.js"></script>
+  </body>
+</html>

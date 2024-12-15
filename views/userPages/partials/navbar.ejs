@@ -1,0 +1,173 @@
+<!-- Start Header Area -->
+<header class="header-section d-none d-xl-block">
+  <div class="header-wrapper">
+    <div
+      class="header-bottom header-bottom-color--golden section-fluid sticky-header sticky-color--golden"
+    >
+      <div class="container-fluid">
+        <div class="row">
+          <div class="col-12 d-flex align-items-center justify-content-between">
+            <!-- Start Header Logo -->
+            <div class="header-logo">
+              <div class="logo">
+                <a href="/home">
+                  <h1 class="text-nowrap">
+                    <strong>Xpo</strong>
+                  </h1>
+                </a>
+              </div>
+            </div>
+            <!-- End Header Logo -->
+
+            <!-- Start Header Main Menu -->
+            <div class="main-menu menu-color--black menu-hover-color--pink">
+              <nav>
+                <ul>
+                  <li>
+                    <a href="/home">Home</a>
+                  </li>
+                  <li class="has-dropdown has-megaitem">
+                    <a
+                      href="/search?searchData=&selectedCategory=all&selectedBrand=all&sortType=Featured&outOfStockStatus=hide&currentPage=1"
+                      >Shop</a
+                    >
+                  </li>
+                </ul>
+              </nav>
+            </div>
+            <!-- End Header Main Menu Start -->
+
+            <!-- Start Header Action Link -->
+            <ul
+              class="header-action-link action-color--black action-hover-color--pink"
+            >
+              <!-- search start -->
+              <li>
+                <form
+                  action="/search?page=1"
+                  method="post"
+                  class="form-inline"
+                  style="width: 300px; position: relative"
+                >
+                  <div class="search-element">
+                    <input class="form-control" type="search"
+                    placeholder="Search" name="search" <% var searchData =
+                    searchData ?? '' %> value="<%= searchData %>"
+                    style="padding-right: 45px;" />
+                    <input type="hidden" name="selectedCategory" value="all" />
+                    <input type="hidden" name="selectedBrand" value="all" />
+                    <input type="hidden" name="outOfStockStatus" value="hide" />
+                    <input type="hidden" name="sortType" value="Featured" />
+                    <button
+                      class="btn searchBtn"
+                      type="submit"
+                      style="
+                        position: absolute;
+                        top: -3px;
+                        right: 2px;
+                        font-size: 20px;
+                        text-shadow: 0px 0px 1px black;
+                      "
+                    >
+                      <i class="icon-magnifier bold-icon"></i>
+                    </button>
+                  </div>
+                </form>
+              </li>
+              <!-- search end -->
+              <li class="ml-2">
+                <a href="/wallet?currentPage=1">
+                  <i class="icon-wallet"></i>
+                </a>
+              </li>
+              <li class="ml-2">
+                <a href="/wishlist">
+                  <i class="icon-heart"></i>
+                  <span class="item-count" id="wishlistCount"></span>
+                </a>
+              </li>
+              <li>
+                <a href="/cart">
+                  <i class="icon-bag"></i>
+                  <span class="item-count" id="cartCount"></span>
+                </a>
+              </li>
+              <li>
+                <a href="/myAccount" class="offside-about">
+                  <i class="icon-user"></i>
+                </a>
+              </li>
+              <li>
+                <a href="/logout" class="btn">
+                  <i class="icon-logout"></i>
+                </a>
+              </li>
+            </ul>
+            <!-- End Header Action Link -->
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</header>
+<!-- Start Header Area -->
+
+<!-- Start Mobile Header -->
+<div
+  class="mobile-header mobile-header-bg-color--golden section-fluid d-lg-block d-xl-none"
+>
+  <div class="container">
+    <div class="row">
+      <div class="col-12 d-flex align-items-center justify-content-between">
+        <!-- Start Mobile Left Side -->
+        <div class="mobile-header-left">
+          <ul class="mobile-menu-logo">
+            <li>
+              <a href="index.html">
+                <div class="logo">Xpo</div>
+              </a>
+            </li>
+          </ul>
+        </div>
+        <!-- End Mobile Left Side -->
+
+        <!-- Start Mobile Right Side -->
+        <div class="mobile-right-side">
+          <ul
+            class="header-action-link action-color--black action-hover-color--pink"
+          >
+            <li>
+              <a href="#search">
+                <i class="icon-magnifier"></i>
+              </a>
+            </li>
+            <li>
+              <a href="#offcanvas-wishlish" class="offcanvas-toggle">
+                <i class="icon-heart"></i>
+                <span class="item-count">3</span>
+              </a>
+            </li>
+            <li>
+              <a href="#offcanvas-add-cart" class="offcanvas-toggle">
+                <i class="icon-bag"></i>
+                <span class="item-count">3</span>
+              </a>
+            </li>
+            <li>
+              <a
+                href="#mobile-menu-offcanvas"
+                class="offcanvas-toggle offside-menu offside-menu-color--black"
+              >
+                <i class="icon-menu"></i>
+              </a>
+            </li>
+          </ul>
+        </div>
+        <!-- End Mobile Right Side -->
+      </div>
+    </div>
+  </div>
+</div>
+<!-- End Mobile Header -->
+
+<script src="/js/pages/partials/navbar.js"></script>

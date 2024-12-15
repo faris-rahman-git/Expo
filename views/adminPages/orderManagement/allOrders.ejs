@@ -1,0 +1,354 @@
+<!DOCTYPE html>
+<html lang="en">
+  <!-- index.html  21 Nov 2019 03:44:50 GMT -->
+  <head>
+    <meta charset="UTF-8" />
+    <meta
+    content="width=device-width, initial-scale=1, maximum-scale=1, shrink-to-fit=no"
+    name="viewport"
+    />
+    <title>Xpo - All Product Details</title>
+    <!-- General CSS Files -->
+    <link rel="stylesheet" href="/assets/css/app.min.css" />
+    <link
+    rel="stylesheet"
+    href="/assets/bundles/datatables/DataTables-1.10.16/css/dataTables.bootstrap4.min.css"
+  />
+    <link
+      rel="stylesheet"
+      href="/assets/bundles/datatables/datatables.min.css"
+    />
+   
+    <!-- Template CSS -->
+    <link rel="stylesheet" href="/assets/css/style.css" />
+    <link rel="stylesheet" href="/assets/css/components.css" />
+    <link
+      rel="shortcut icon"
+      type="image/x-icon"
+      href="/assets/img/favicon.ico"
+    />
+  </head>
+
+  <body>
+    <div class="loader"></div>
+    <div id="app">
+      <div class="main-wrapper main-wrapper-1">
+
+        <%- include('../partials/navbar') %>
+
+        <%- include('../partials/sidebar') %>
+
+        <!-- Main Content start-->
+        <div class="main-content">
+          <section class="section">
+            <div class="section-body">
+              <!-- table start -->
+              <div class="row">
+                <div class="col-12">
+                  <div class="card">
+                    <div class="card-header d-flex justify-content-between">
+                      <h4>All Order's List</h4>
+                      <div class="d-flex flex-row">
+                        <label class="mr-2 mt-2">Filter By:</label>
+                      <div class="form-group mb-0">
+                        <form action="/admin/filterRequest" method="post" id="formSubmit" >
+                          <select name="filterContent" class="form-control" onchange="getSeletedValue()" style="border-radius: 0;">
+                            <option <%= filterContent == 'all' ? 'selected' : '' %> value="all">All Orders</option>
+                            <option <%= filterContent == 'Pending' ? 'selected' : '' %> value="Pending">Pending</option>
+                            <option <%= filterContent == 'Confirmed' ? 'selected' : '' %> value="Confirmed">Confirmed</option>
+                            <option <%= filterContent == 'Shipped' ? 'selected' : '' %> value="Shipped">Shipped</option>
+                            <option <%= filterContent == 'OutForDelivery' ? 'selected' : '' %> value="OutForDelivery">Out of Delivery</option>
+                            <option <%= filterContent == 'Delivered' ? 'selected' : '' %> value="Delivered">Delivered</option>
+                            <option <%= filterContent == 'Cancelled' ? 'selected' : '' %> value="Cancelled">Cancelled</option>
+                            <option <%= filterContent == 'Return' ? 'selected' : '' %> value="Return">Return</option>
+                          </select>
+                        </form>
+                      </div>
+                    <% if(filterContent == 'Return'){ %>
+                    <div class="form-group mb-0 ml-3">
+                      <form action="/admin/filterRequest" method="post" id="returnFormSubmit" >
+                        <select name="filterReturnContent" class="form-control" onchange="getSeletedReturnValue()" style="border-radius: 0;">
+                          <option <%= filterReturnContent == 'all' ? 'selected' : '' %> value="all">All Types</option>
+                          <option <%= filterReturnContent == 'Processing' ? 'selected' : '' %> value="Processing">Request</option>
+                          <option <%= filterReturnContent == 'Initiated' ? 'selected' : '' %> value="Initiated">Initiated</option>
+                          <option <%= filterReturnContent == 'Completed' ? 'selected' : '' %> value="Completed">Completed</option>
+                          <option <%= filterReturnContent == 'Cancelled' ? 'selected' : '' %> value="Cancelled">Cancelled</option>
+                          <input type="hidden" name="filterContent" value="<%= filterContent %>">
+                        </select>
+                      </form>
+                    </div>
+                    <% } %>
+                      </div>
+                    </div>
+                    <div class="card-body">
+                      <div class="table-responsive">
+                        <table class="table table-striped" id="table-3">
+                          <thead>
+                            <tr>
+                              <th>#</th>
+                              <th>Order ID</th>
+                              <th>Email</th>
+                              <th>Total Amount</th>
+                              <th class="text-center">Payment Status</th>
+                              <th>Method</th>
+                              <th class="text-center">Order Status</th>
+                              <th class="text-center">Action</th>
+                            </tr>
+                          </thead>
+
+                          <tbody>
+                            <% orders.forEach((order , index)=>{%>
+                            <tr>
+                              <td><%= index+1 %></td>
+                              <td><%= order.orderId %></td>
+                              <td><%= order.userEmail %></td>
+                              <td>₹<%= (order.price*order.quantity)-(order.couponDiscount + order.offerDiscount ) + order.shippingCost %>.00</td>
+                              <td class="text-center">
+                                <div
+                                  class="badge <%= order.paymentStatus %> badge-shadow"
+                                >
+                                <%= order.paymentStatus %>
+                                </div>
+                              </td>
+                              <td><%= order.method %></td>
+                              <td class="text-center">
+                                <div
+                                  class="badge <%= order.status %> badge-shadow"
+                                >
+                                <%= order.status %>
+                                <%= order.returnStatus %>
+                                </div>
+                              </td>
+                              <td class="text-center " style="min-width: 200px">
+                                <% if( (order.status != "Cancelled" &&  order.returnStatus != "Completed") && ((order.method != "Online" || order.method != "Wallet-Online")&& order.onlineTransactionStatus != "Pending")){ %>
+                                <button
+                                    type="button"
+                                    class="btn btn-primary text-white mt-1 mb-1"
+                                    data-toggle="modal"
+                                    data-target="#changeStatus<%= index %>"
+                                >
+                                Change Status
+                                </button>
+                                <% } %>
+
+                                <% if((order.status == "Pending" || order.status == "Confirmed" || order.status == "Shipped") && ((order.method != "Online" || order.method != "Wallet-Online")&& order.onlineTransactionStatus != "Pending")){ %>
+                                <button
+                                  type="button"
+                                  class="btn btn-danger text-white mt-1 mb-1"
+                                  data-toggle="modal"
+                                  data-target="#cancelOrder<%= index %>"
+                                >
+                                  Cancel Order
+                                </button>
+                                <% } %>
+                                <a
+                                  href="/admin/orderDetails/<%= order._id %>/<%= order.orderId %>"
+                                  class="btn btn-success text-white mt-1 mb-1" 
+                                  > View Details</a
+                                >
+                              </td>
+                            </tr>
+
+                            <!-- change status start -->
+                            <div
+                              class="modal fade"
+                              id="changeStatus<%= index %>"
+                              tabindex="-1"
+                              role="dialog"
+                            >
+                              <div
+                                class="modal-dialog modal-dialog-centered"
+                                role="document"
+                              >
+                                <div class="modal-content">
+                                  <div class="modal-header">
+                                    <h5
+                                      class="modal-title text-danger"
+                                      id="exampleModalCenterTitle"
+                                    >
+                                    Change Status
+                                    </h5>
+                                    <button
+                                      type="button"
+                                      class="close"
+                                      data-dismiss="modal"
+                                      aria-label="Close"
+                                    >
+                                      <span aria-hidden="true">&times;</span>
+                                    </button>
+                                  </div>
+                                  <form 
+                                    action="/admin/changeOrderStatus/<%= order._id %>/<%= order.orderId %>?_method=patch"
+                                    method="post"
+                                  >
+                                  <div class="row modal-body text-dark d-flex justify-content-center">
+                                    <div class="form-group w-75">
+                                      <label for="productCategory"
+                                        >Select Order Status</label
+                                      >
+                                      <input type="hidden" name="productId" value="<%= order.productId %>">
+                                      <input type="hidden" name="variantId" value="<%= order.variantId %>">
+                                      <input type="hidden" name="quantity" value="<%= order.quantity %>">
+                                      <input type="hidden" name="price" value="<%= order.price %>">
+                                      <input type="hidden" name="discount" value="<%= order.couponDiscount + order.offerDiscount  %>">
+                                      <input type="hidden" name="userId" value="<%= order.userId %>">
+
+
+                                      <select
+                                        class="form-control"
+                                        name="orderStatus"
+                                        id = "orderStatus"
+                                      >
+                                      <% const statuses = [ "Pending","Confirmed","Shipped","Out of Delivery","Delivered","Return"]; %>
+                                      <% const orderStatus = order.status == "OutForDelivery" ? "Out of Delivery" : order.status; %>
+                                      <% statuses.forEach((status) => { %>
+                                        <% if(statuses.indexOf(status) == statuses.indexOf(orderStatus)){ %>
+                                          <option value="<%= orderStatus == "Out of Delivery" ? "OutForDelivery" : orderStatus %>" selected><%= orderStatus %></option>
+                                          <% } %>
+                                          <% if(statuses.indexOf(status) > statuses.indexOf(orderStatus)){ %>
+                                          <option value="<%= status == "Out of Delivery" ? "OutForDelivery" : status %>"><%= status %></option>
+                                          <% } %>
+                                      <% }) %>
+                                      </select>
+                                    </div>
+                                    <% if(orderStatus == 'Return'){ %>
+                                    <div class="form-group w-75">
+                                      <label for="productCategory"
+                                        >Select Return Status</label
+                                      >
+                                      <select
+                                        class="form-control"
+                                        name="orderReturnStatus"
+                                      >
+                                      <% const statuses1 = [ "Processing","Initiated","Completed","Cancelled"]; %>
+                                      <% const orderStatus1 = order.returnStatus %>
+                                      <% statuses1.forEach((status) => { %>
+                                        <% if(statuses1.indexOf(status) == statuses1.indexOf(orderStatus1)){ %>
+                                          <option value="<%= orderStatus1  %>" selected><%= orderStatus1 %></option>
+                                          <% } %>
+                                          <% if(statuses1.indexOf(status) != statuses1.indexOf(orderStatus1)){ %>
+                                          <option value="<%= status %>"><%= status %></option>
+                                          <% } %>
+                                      <% }) %>
+                                      </select>
+                                    </div>
+                                    <% } %>
+                                  </div>
+                                  <div class="modal-footer bg-whitesmoke br">
+                                    <button
+                                      type="button"
+                                      class="btn btn-primary"
+                                      data-dismiss="modal"
+                                    >
+                                      Cancel
+                                    </button>
+                                      <button
+                                        type="submit"
+                                        class="btn btn-success"
+                                      >
+                                      Confirm
+                                      </button>
+                                  </div>
+                                </form>
+                                </div>
+                              </div>
+                            </div>
+                            <!-- change status end -->
+
+                            <!-- Cancel Order start -->
+                            <div
+                              class="modal fade"
+                              id="cancelOrder<%= index %>"
+                              tabindex="-1"
+                              role="dialog"
+                            >
+                              <div
+                                class="modal-dialog modal-dialog-centered"
+                                role="document"
+                              >
+                                <div class="modal-content">
+                                  <div class="modal-header">
+                                    <h5
+                                      class="modal-title text-danger"
+                                      id="exampleModalCenterTitle"
+                                    >
+                                    Cancel Order
+                                    </h5>
+                                    <button
+                                      type="button"
+                                      class="close"
+                                      data-dismiss="modal"
+                                      aria-label="Close"
+                                    >
+                                      <span aria-hidden="true">&times;</span>
+                                    </button>
+                                  </div>
+                                  <form 
+                                    action="/admin/changeOrderStatus/<%= order._id %>/<%= order.orderId %>?_method=patch"
+                                    method="post"
+                                  >
+                                  <div class="modal-body text-dark d-flex justify-content-center">
+                                      <input type="hidden" name="orderStatus" value="Cancelled">
+                                      <input type="hidden" name="productId" value="<%= order.productId %>">
+                                      <input type="hidden" name="variantId" value="<%= order.variantId %>">
+                                      <input type="hidden" name="quantity" value="<%= order.quantity %>">
+                                      <input type="hidden" name="price" value="<%= order.price %>">
+                                      <input type="hidden" name="discount" value="<%= order.couponDiscount + order.offerDiscount  %>">
+                                      <input type="hidden" name="userId" value="<%= order.userId %>">
+
+                                      <p>
+                                        Are you sure you want to cancel this order?. <strong>Order ID: <%= order.orderId %>.</strong>  This action cannot be undone
+                                      </p>
+                                  </div>
+                                  <div class="modal-footer bg-whitesmoke br">
+                                    <button
+                                      type="button"
+                                      class="btn btn-primary"
+                                      data-dismiss="modal"
+                                    >
+                                      Cancel
+                                    </button>
+                                      <button
+                                        type="submit"
+                                        class="btn btn-success"
+                                      >
+                                      Confirm
+                                      </button>
+                                  </div>
+                                </form>
+                                </div>
+                              </div>
+                            </div>
+                            <!-- Cancel Order end -->
+
+                            <% }) %>
+                          </tbody>
+                        </table>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <!-- table end -->
+            </div>
+          </section>
+        </div>
+        <!-- Main Content end-->
+      </div>
+    </div>
+    <!-- General JS Scripts -->
+    
+    <script src="/js/adminPages/orderManagement/allOrders.js"></script>
+
+    <script src="/assets/js/app.min.js"></script>
+    <!-- JS Libraies -->
+    <script src="/assets/bundles/datatables/datatables.min.js"></script>
+    <script src="/assets/bundles/datatables/DataTables-1.10.16/js/dataTables.bootstrap4.min.js"></script>
+    <script src="/assets/bundles/jquery-ui/jquery-ui.min.js"></script>
+    <!-- Page Specific JS File -->
+    <script src="/assets/js/page/datatables.js"></script>
+    <!-- Template JS File -->
+    <script src="/assets/js/scripts.js"></script>
+    
+  </body>
+</html>

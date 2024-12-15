@@ -1,0 +1,186 @@
+<!DOCTYPE html>
+<html lang="zxx">
+  <meta http-equiv="content-type" content="text/html;charset=UTF-8" />
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="content-type" content="text/html;charset=UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+    <title>Checkout - Change Address</title>
+
+    <!-- ::::::::::::::Favicon icon::::::::::::::-->
+    <link rel="shortcut icon" href="" type="image/png" />
+
+    <!-- minified version files -->
+    <link rel="stylesheet" href="/css/plugins/plugins.min.css" />
+    <link rel="stylesheet" href="/css/style.min.css" />
+
+    <!-- FontAwesome CDN for version 4.7.0 -->
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/simple-line-icons/2.4.1/css/simple-line-icons.min.css"
+    />
+  </head>
+
+  <body>
+    <%- include('../../partials/navbar.ejs') %>
+    <br />
+
+    <!-- ...:::: Start change address Section:::... -->
+    <div class="container">
+      <div class="row justify-content-center">
+        <div class="col-md-12">
+          <div class="row justify-content-center">
+            <div class="col-md-8">
+              <h2><strong>Secure Checkout </strong></h2>
+
+              <form action="/checkOut/changeAddress" method="post">
+                <div class="row">
+                  <div
+                    class="card mt-5 col-md-12 border-0"
+                    style="background-color: #fef5ef"
+                  >
+                    <h4 class="mt-3 mb-1">
+                      <strong> Select a delivery address </strong>
+                    </h4>
+                    <div class="card-body card row m-2">
+
+                      <!-- defaultAddress start -->
+                      <% if(defaultAddress){ %>
+                      <div
+                        class="card-body col-md-12 row m-0 p-0 pt-2 pb-2 flex-row"
+                      >
+                        <div
+                          class="col-md-1 d-flex justify-content-center"
+                          style="width: auto"
+                        >
+                          <input
+                            type="radio"
+                            name="address"
+                            value="<%= defaultAddress._id %>"
+                            checked
+                            style="cursor: pointer"
+                          />
+                        </div>
+                        <div class="col-md-9">
+                          <div>
+                            <h5>
+                              <strong> <%= defaultAddress.name %> </strong>
+                            </h5>
+                            <p class="m-0"><%= defaultAddress.house %></p>
+                            <p class="m-0"><%= defaultAddress.street %></p>
+                            <p class="m-0">
+                              <%= defaultAddress.city %>, KERALA, <%=
+                              defaultAddress.pincode %> , India
+                            </p>
+                            <p class="m-0">
+                              Phone Number : <%= defaultAddress.phoneNumber %>
+                            </p>
+
+                            <div class="mt-2">
+                              <a
+                                href="/myAccount/editaddress/<%= userId %>/<%= defaultAddress._id %>"
+                                class="text-primary txhover"
+                                >Edit Address</a
+                              >
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                      <hr />
+                      <% } %> 
+                      <!-- defaultAddress end -->
+                      
+                      <!-- address start -->
+                      <% address.forEach(item =>{ %>
+                      <div
+                        class="card-body col-md-12 row m-0 p-0 pt-2 flex-row"
+                      >
+                        <div
+                          class="col-md-1 d-flex justify-content-center"
+                          style="width: auto"
+                        >
+                          <input
+                            type="radio"
+                            name="address"
+                            value="<%= item._id %>"
+                            style="cursor: pointer"
+                          />
+                        </div>
+                        <div class="col-md-9">
+                          <div>
+                            <h5>
+                              <strong> <%= item.name %> </strong>
+                            </h5>
+                            <p class="m-0"><%= item.house %></p>
+                            <p class="m-0"><%= item.street %></p>
+                            <p class="m-0">
+                              <%= item.city %>, KERALA, <%= item.pincode %> ,
+                              India
+                            </p>
+                            <p class="m-0">
+                              Phone Number : <%= item.phoneNumber %>
+                            </p>
+                            <div class="mt-2">
+                              <a
+                                href="/myAccount/editaddress/<%= userId %>/<%= item._id %>"
+                                class="text-primary txhover"
+                                >Edit Address</a
+                              >
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                      <hr />
+                      <% }) %>
+                      <!-- address end -->
+
+                      <!-- add new address start -->
+                      <a href="/myAccount/addNewAddress/<%= userId %>">
+                        <div
+                          class="card-body col-md-12 row m-0 p-0 pt-2 pb-2 flex-row"
+                        >
+                          <div class="col-md-12 d-flex justify-content-center">
+                            <div>
+                              <h5 class="text-primary txhover">
+                                <strong style="font-size: 20px">
+                                  + Add New Address
+                                </strong>
+                              </h5>
+                            </div>
+                          </div>
+                        </div>
+                      </a>
+                      <!-- add new address end -->
+
+                    </div>
+
+                    <div class="mb-5 mt-2 ml-2">
+                      <button type="submit" class="btn btn-yellow">
+                        Use this Address
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              </form>
+            </div>
+          </div>
+        </div>
+      </div>
+      <!-- ...:::: End Account Dashboard Section:::... -->
+    </div>
+    <!-- ...:::: end change address Section:::... -->
+
+    <%- include('../../partials/footer.ejs') %>
+
+    <!-- material-scrolltop button -->
+    <button class="material-scrolltop" type="button"></button>
+
+    <!-- minified version files -->
+    <script src="/js/vendor/vendor.min.js"></script>
+    <script src="/js/plugins/plugins.min.js"></script>
+
+    <!-- Main JS -->
+    <script src="/js/main.js"></script>
+  </body>
+</html>
