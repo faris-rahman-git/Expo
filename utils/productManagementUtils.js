@@ -153,9 +153,11 @@ const deleteAllImages = async (id, identity) => {
   }
 };
 
-const deleteImage = async (imagePath) => {
+const deleteImage = async (fullPath, check = false) => {
   try {
-    const fullPath = path.join("D:\\brototype\\project\\project1", imagePath);
+    if (!check) {
+      fullPath = path.join(__dirname, "../public", fullPath);
+    }
     if (fs.existsSync(fullPath)) {
       // Delete the file
       await fs.promises.unlink(fullPath);

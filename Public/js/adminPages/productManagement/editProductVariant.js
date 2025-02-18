@@ -12,6 +12,9 @@ function validateForm() {
   const productVariantDescription = document.getElementById(
     "productVariantDescription"
   ).value;
+  const previewImages = document.querySelectorAll(
+    "#imagePreviewContainer .image-preview"
+  );
   const logErrorMessage = document.getElementById("logErrorMessage");
 
   // Reset error message
@@ -38,28 +41,29 @@ function validateForm() {
     logErrorMessage.textContent = "Price must be a positive number.";
     return false;
   }
+  if (previewImages.length < 3) {
+    logErrorMessage.textContent = "Please upload at least Three images.";
+    return false;
+  }
 
   return true;
 }
 
-function removeFunction(button) {
+async function removeFunction(button) {
   const imagePreview = button.closest(".image-preview");
   const index = imagePreview.getAttribute("data-index");
 
-  const url = `/admin/removeImage/${index}`;
+  const url = "/admin/removeImage/" + index;
 
-  fetch(url, {
+  const response = await fetch(url, {
     method: "PATCH",
-  })
-    .then((response) => {
-      if (response.ok) {
-        // Remove the image preview from the DOM
-        imagePreview.remove();
-      } else {
-        console.error("Failed to remove image");
-      }
-    })
-    .catch((error) => {
-      console.error("Error:", error);
-    });
+  });
+
+  const responseData = await response.json();
+  if (responseData.success) {
+    // Remove the image preview from the DOM
+    imagePreview.remove();
+  } else {
+    console.error("Failed to remove image");
+  }
 }

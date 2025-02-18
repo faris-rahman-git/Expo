@@ -656,10 +656,10 @@ const editProductVariantPage = async (req, res, next) => {
 };
 
 // removeVariantImage
-const removeVariantImage = (req, res) => {
+const removeVariantImage = async (req, res) => {
   const { imageIndex } = req.params;
   req.session.removeImages.push(Number(imageIndex));
-  return res.status(200).json({ message: "Image removed successfully." });
+  return res.status(200).json({ success: true });
 };
 
 //edit Product Variant request
@@ -736,6 +736,7 @@ const editProductVariantRequest = async (req, res, next) => {
       const images = req.session?.removeImages.sort((a, b) => b - a);
       if (images.length !== 0) {
         for (let i = 0; i < images.length; i++) {
+          await deleteImage(variant.images[images[i]].path);
           variant.images.splice(images[i], 1);
         }
       }
@@ -765,12 +766,11 @@ const editProductVariantRequest = async (req, res, next) => {
 
         // Add the processed image details to the array (relative path with backslashes for public access)
         variant.images.push({
-          path: `\\productImages\\${outputFileName}`, // Using backslashes for file path
+          path: path.join("/productImages", outputFileName),
           originalName: file.originalname,
         });
-
         // Optionally delete the original image uploaded by multer
-        await deleteImage(file.path);
+        await deleteImage(file.path, true);
       }
 
       // Update the variant fields
