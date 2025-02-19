@@ -50,7 +50,7 @@ app.use(passport.initialize());
 app.use(passport.session());
 
 //public files
-app.use(express.static("public"));
+app.use(express.static("Public"));
 
 //routes
 app.use("/", userRoute);
