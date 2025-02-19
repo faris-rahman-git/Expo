@@ -9,7 +9,7 @@ const couponModels = require("../../models/couponModels");
 //signupPage
 const signupPage = (req, res) => {
   //redirect to signup page
-  res.status(200).render("userPages/signup/signUp");
+  res.status(200).render("userPages/signup/signup");
 };
 
 //otpRequest

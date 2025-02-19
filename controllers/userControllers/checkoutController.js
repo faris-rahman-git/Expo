@@ -780,7 +780,7 @@ const thankYouPage = (req, res) => {
 const sorryPage = (req, res) => {
   if (req.session.sorryCheckout) {
     delete req.session.sorryCheckout;
-    res.status(200).render("userPages/pages/checkout/sorry");
+    res.status(200).render("userPages/pages/checkout/Sorry");
   } else {
     const url = req.get("Referer") || "/home";
     res.status(200).redirect(url);
