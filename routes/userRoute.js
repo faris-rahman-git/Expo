@@ -185,6 +185,8 @@ router.post("/login/forgotLogin", forgotLoginRequest);
 //home
 router.get("/home", homePage);
 
+router.get("/", homePage);
+
 //cartCount
 router.get("/navCount", navCount);
 
