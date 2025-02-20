@@ -123,8 +123,8 @@
         <div class="mobile-header-left">
           <ul class="mobile-menu-logo">
             <li>
-              <a href="index.html">
-                <div class="logo">Xpo</div>
+              <a href="/home">
+                <div class="h2">Xpo</div>
               </a>
             </li>
           </ul>
@@ -132,36 +132,80 @@
         <!-- End Mobile Left Side -->
 
         <!-- Start Mobile Right Side -->
-        <div class="mobile-right-side">
-          <ul
-            class="header-action-link action-color--black action-hover-color--pink"
+        <div class="mobile-right-side d-flex align-items-center">
+          <!-- Search Bar (Stays Outside Dropdown) -->
+          <form
+            action="/search?page=1"
+            method="post"
+            class="form-inline"
+            style="position: relative"
           >
-            <li>
-              <a href="#search">
-                <i class="icon-magnifier"></i>
-              </a>
-            </li>
-            <li>
-              <a href="#offcanvas-wishlish" class="offcanvas-toggle">
-                <i class="icon-heart"></i>
-                <span class="item-count">3</span>
-              </a>
-            </li>
-            <li>
-              <a href="#offcanvas-add-cart" class="offcanvas-toggle">
-                <i class="icon-bag"></i>
-                <span class="item-count">3</span>
-              </a>
-            </li>
-            <li>
-              <a
-                href="#mobile-menu-offcanvas"
-                class="offcanvas-toggle offside-menu offside-menu-color--black"
+            <div class="search-element">
+              <input class="form-control" type="search" placeholder="Search"
+              name="search" <% var searchData = searchData ?? '' %> value="<%=
+              searchData %>" style="width: 150px;" />
+              <input type="hidden" name="selectedCategory" value="all" />
+              <input type="hidden" name="selectedBrand" value="all" />
+              <input type="hidden" name="outOfStockStatus" value="hide" />
+              <input type="hidden" name="sortType" value="Featured" />
+              <button
+                class="btn searchBtn"
+                type="submit"
+                style="
+                  position: absolute;
+                  top: -3px;
+                  right: 0px;
+                  font-size: 20px;
+                  text-shadow: 0px 0px 1px black;
+                "
               >
-                <i class="icon-menu"></i>
-              </a>
-            </li>
-          </ul>
+                <i class="icon-magnifier bold-icon"></i>
+              </button>
+            </div>
+          </form>
+
+          <!-- Dropdown for Wishlist, Cart, and Menu -->
+          <div class="dropdown">
+            <button
+              class="btn dropdown-toggle"
+              type="button"
+              id="dropdownMenuButton"
+              data-bs-toggle="dropdown"
+              aria-expanded="false"
+            >
+              <i class="icon-menu"></i>
+            </button>
+            <ul
+              class="dropdown-menu dropdown-menu-end"
+              aria-labelledby="dropdownMenuButton"
+            >
+              <li>
+                <a class="dropdown-item" href="/wishlist">
+                  <i class="icon-heart"></i> Wishlist
+                </a>
+              </li>
+              <li>
+                <a class="dropdown-item" href="/cart">
+                  <i class="icon-bag"></i> Cart
+                </a>
+              </li>
+              <li>
+                <a class="dropdown-item" href="/wallet?currentPage=1">
+                  <i class="icon-wallet"></i> Wallet
+                </a>
+              </li>
+              <li>
+                <a class="dropdown-item" href="/myAccount">
+                  <i class="icon-user"></i> My Account
+                </a>
+              </li>
+              <li>
+                <a class="dropdown-item" href="/logout">
+                  <i class="icon-logout"></i> Logout
+                </a>
+              </li>
+            </ul>
+          </div>
         </div>
         <!-- End Mobile Right Side -->
       </div>
