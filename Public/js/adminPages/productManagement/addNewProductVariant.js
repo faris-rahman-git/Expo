@@ -5,10 +5,12 @@ function validateForm() {
   const productVariantName = document
     .getElementById("productVariantName")
     .value.trim();
-  const status = document.getElementById("status").value;
   const stock = document.getElementById("stock").value.trim();
   const price = document.getElementById("price").value.trim();
   const color = document.getElementById("color").value.trim();
+  const startDate = document.getElementById("startDate");
+  const expiryDate = document.getElementById("expiryDate");
+
   const offerPercentage = document
     .getElementById("offerPercentage")
     .value.trim();
@@ -55,6 +57,10 @@ function validateForm() {
   }
   if (offerPercentage > 100) {
     logErrorMessage.textContent = "Offer Percentage cannot be greater than 100";
+    return false;
+  }
+  if (startDate.value > expiryDate.value && expiryDate.value) {
+    logErrorMessage.textContent = "Start Date Must be Less Than Expiry Date.";
     return false;
   }
   return true;

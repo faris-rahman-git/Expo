@@ -4,6 +4,8 @@ document
     e.preventDefault();
     const logErrorMessage = document.getElementById("logErrorMessage");
     const productName = document.getElementById("productName").value.trim();
+    const startDate = document.getElementById("startDate");
+    const expiryDate = document.getElementById("expiryDate");
     const productCategory = document
       .getElementById("productCategory")
       .value.trim();
@@ -33,13 +35,15 @@ document
       logErrorMessage.textContent = "Offer Percentage cannot be negative";
       return false;
     }
-    if (offerPercentage > 100) {
+    if (offerPercentage >= 100) {
       logErrorMessage.textContent =
-        "Offer Percentage cannot be greater than 100";
+        "Offer Percentage cannot be greater than 99";
       return false;
     }
-
-    console.log(productName, productCategory, productSubCategory);
+    if (startDate.value > expiryDate.value && expiryDate.value) {
+      logErrorMessage.textContent = "Start Date Must be Less Than Expiry Date.";
+      return false;
+    }
 
     try {
       const productId = document.getElementById("productId").value;

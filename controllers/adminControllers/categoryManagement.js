@@ -7,6 +7,7 @@ const {
 } = require("../../utils/categoryManagementUtils");
 const { deleteAllImages } = require("../../utils/productManagementUtils");
 const { removeCartAndWishlistItems } = require("../../utils/stockManagement");
+const { updateOffers } = require("../../utils/discountHelper");
 
 // all Category page
 const allCategoryPage = async (req, res, next) => {
@@ -131,7 +132,10 @@ const editCategoryRequest = async (req, res, next) => {
     } = req.body;
     const category = await categoryModels.findById(categoryId);
 
-    if (!category) return res.status(404).json({ success: false , redirectUrl: "/admin/allCategory"});
+    if (!category)
+      return res
+        .status(404)
+        .json({ success: false, redirectUrl: "/admin/allCategory" });
 
     const normalizedcategoryName = categoryName
       .replace(/\s+/g, "")
@@ -207,6 +211,8 @@ const editCategoryRequest = async (req, res, next) => {
       { _id: categoryId },
       { $set: updateCategory }
     );
+
+    await updateOffers("category", categoryId);
 
     return res
       .status(200)
@@ -562,6 +568,7 @@ const editSubCategoryRequest = async (req, res, next) => {
       { _id: subCategoryId },
       { $set: updateSubCategory }
     );
+    await updateOffers("subcategory", subCategoryId);
 
     res
       .status(200)

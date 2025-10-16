@@ -5,10 +5,12 @@ function validateForm() {
   const productVariantName = document
     .getElementById("productVariantName")
     .value.trim();
-  const status = document.getElementById("status").value;
   const stock = document.getElementById("stock").value.trim();
   const price = document.getElementById("price").value.trim();
   const color = document.getElementById("color").value.trim();
+  const offerPercentage = document.getElementById("offerPercentage");
+  const startDate = document.getElementById("startDate");
+  const expiryDate = document.getElementById("expiryDate");
   const productVariantDescription = document.getElementById(
     "productVariantDescription"
   ).value;
@@ -29,6 +31,16 @@ function validateForm() {
     !productVariantDescription
   ) {
     logErrorMessage.textContent = "All fields are required.";
+    return false;
+  }
+
+  if (startDate.value > expiryDate.value && expiryDate.value) {
+    logErrorMessage.textContent = "Start Date Must be Less Than Expiry Date.";
+    return false;
+  }
+  if (offerPercentage.value >= 100 || offerPercentage.value <= 0) {
+    logErrorMessage.textContent =
+      "Offer Percentage Must Be In Percentage(1-99%).";
     return false;
   }
 

@@ -18,6 +18,8 @@ const {
   decNoOfSubCategory,
 } = require("../../utils/categoryManagementUtils");
 const { removeCartAndWishlistItems } = require("../../utils/stockManagement");
+const { updateOffers } = require("../../utils/discountHelper");
+const { default: mongoose } = require("mongoose");
 
 // all Products page
 const allProductsPage = async (req, res, next) => {
@@ -317,6 +319,8 @@ const editProductRequest = async (req, res, next) => {
       { $set: updateProduct }
     );
 
+    await updateOffers("product", productId);
+
     return res.status(200).json({
       success: true,
       redirectUrl: "/admin/allProducts",
@@ -487,7 +491,6 @@ const addNewProductVariantRequest = async (req, res, next) => {
   try {
     upload(req, res, async (err) => {
       if (err) {
-        console.log(err);
         req.session.message =
           err.message === "Only image files are allowed!"
             ? "Only image files are allowed"
@@ -531,6 +534,16 @@ const addNewProductVariantRequest = async (req, res, next) => {
           .status(400)
           .redirect(`/admin/addNewProductVariant/${productId}`);
       }
+      if (
+        isNaN(offerPercentage) ||
+        offerPercentage < 0 ||
+        offerPercentage > 99
+      ) {
+        req.session.message = "Offer percentage must be between 0 and 99.";
+        return res
+          .status(400)
+          .redirect(`/admin/addNewProductVariant/${productId}`);
+      }
 
       const normalizedProductVariantName = productVariantName
         .replace(/\s+/g, "")
@@ -563,7 +576,10 @@ const addNewProductVariantRequest = async (req, res, next) => {
       offerStatus = offerStatus === "Active";
       offerPercentage = offerPercentage || 0;
 
+      const variantId = new mongoose.Types.ObjectId();
+
       const newVariant = {
+        _id: variantId,
         variantName: productVariantName.trim(),
         variantDescription: productVariantDescription.trim(),
         color: color.trim(),
@@ -581,6 +597,7 @@ const addNewProductVariantRequest = async (req, res, next) => {
         { _id: productId },
         { $push: { variants: newVariant } }
       );
+      await updateOffers("variant", { productId, variantId });
       await updateNoOfVariants(productId);
       await updateTotalStock(productId);
 
@@ -668,7 +685,6 @@ const editProductVariantRequest = async (req, res, next) => {
   try {
     upload(req, res, async (err) => {
       if (err) {
-        console.error(err);
         req.session.message = "Only 5 Images Can Upload";
         return res
           .status(400)
@@ -695,7 +711,6 @@ const editProductVariantRequest = async (req, res, next) => {
       const normalizedColor = color.replace(/\s+/g, "").toLowerCase();
 
       const product = await productModels.findById(productId);
-
       if (!product) {
         return res.status(400).redirect("/admin/productVariants/" + productId);
       }
@@ -742,7 +757,6 @@ const editProductVariantRequest = async (req, res, next) => {
       }
 
       // Process uploaded images using sharp
-      const processedImages = [];
       const processedImagesDir = path.join(
         __dirname,
         "../../Public/productImages/"
@@ -813,7 +827,9 @@ const editProductVariantRequest = async (req, res, next) => {
       variant.updatedAt = Date.now();
 
       // Save the updated product document
-      await product.save(); // Save the changes to the database
+      await product.save();
+
+      await updateOffers("variant", { productId, variantId });
 
       await updateTotalStock(productId);
 

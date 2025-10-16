@@ -10,6 +10,8 @@ document
       .getElementById("offerPercentage")
       .value.trim();
     const logErrorMessage = document.getElementById("logErrorMessage");
+    const startDate = document.getElementById("startDate");
+    const expiryDate = document.getElementById("expiryDate");
 
     // Check required field
     if (!subCategoryName) {
@@ -20,12 +22,15 @@ document
       logErrorMessage.textContent = "Offer Percentage cannot be negative";
       return false;
     }
-    if (offerPercentage > 100) {
+    if (offerPercentage >= 99) {
       logErrorMessage.textContent =
-        "Offer Percentage cannot be greater than 100";
+        "Offer Percentage cannot be greater than 99";
       return false;
     }
-
+    if (startDate.value > expiryDate.value && expiryDate.value) {
+      logErrorMessage.textContent = "Start Date Must be Less Than Expiry Date.";
+      return false;
+    }
     const categoryId = document.getElementById("categoryId").value;
     const subCategoryId = document.getElementById("subCategoryId").value;
     const url = `/admin/editSubCategory/${categoryId}/${subCategoryId}`;
