@@ -5,17 +5,19 @@ const bcrypt = require("bcrypt");
 const walletModels = require("../../models/walletModels");
 const wishlistModels = require("../../models/wishlistModels");
 const couponModels = require("../../models/couponModels");
+const StatusCode = require("../../constants/statusCode");
+const User = require("../../constants/admin/user");
 
 //all users page
 const allUsersPage = async (req, res, next) => {
   try {
     const users = await userModels.find({ isDeleted: false, role: "User" });
-    res.status(200).render("adminPages/userManagement/allUsers", {
+    res.status(StatusCode.OK).render("adminPages/userManagement/allUsers", {
       users,
       activeSidebar: { main: "userManagement", sub: "allUsers" },
     });
   } catch (err) {
-    err.status = 500;
+    err.status = StatusCode.INTERNAL_SERVER_ERROR;
     err.redirectUrl = "/login";
     next(err);
   }
@@ -29,16 +31,16 @@ const editUserPage = async (req, res, next) => {
 
     //check user is exist or not
     if (!user) {
-      return res.status(404).redirect("/admin/allUsers");
+      return res.status(StatusCode.NOT_FOUND).redirect("/admin/allUsers");
     }
 
     //redirect to edit user page
-    return res.status(200).render("adminPages/userManagement/editUser", {
+    return res.status(StatusCode.OK).render("adminPages/userManagement/editUser", {
       user,
       activeSidebar: { main: "userManagement" },
     });
   } catch (err) {
-    err.status = 500;
+    err.status = StatusCode.INTERNAL_SERVER_ERROR;
     err.redirectUrl = "/admin/allUsers";
     next(err);
   }
@@ -62,7 +64,7 @@ const editUserRequest = async (req, res, next) => {
     //check user is exist or not
     if (!user) {
       return res
-        .status(409)
+        .status(StatusCode.CONFLICT)
         .json({ success: false, redirectUrl: "/admin/allUsers" });
     }
 
@@ -70,15 +72,15 @@ const editUserRequest = async (req, res, next) => {
     const userExist = await userModels.findOne({ email });
     if (userExist && userExist._id.toString() !== id) {
       return res
-        .status(409)
-        .json({ success: false, message: "Email Address is Already Taken" });
+        .status(StatusCode.CONFLICT)
+        .json({ success: false, message: User.EMAIL_ALREADY_TAKEN });
     }
 
     //check password is match or not
     if (password !== confirmPassword) {
-      return res.status(409).json({
+      return res.status(StatusCode.CONFLICT).json({
         success: false,
-        message: "password and confirm password is not match",
+        message: User.PASSWORD_NOT_MATCH,
       });
     }
 
@@ -122,10 +124,10 @@ const editUserRequest = async (req, res, next) => {
 
     //redirect to all users page
     return res
-      .status(200)
+      .status(StatusCode.OK)
       .json({ success: true, redirectUrl: "/admin/allUsers" });
   } catch (err) {
-    err.status = 500;
+    err.status = StatusCode.INTERNAL_SERVER_ERROR;
     err.redirectUrl = "/admin/allUsers";
     next(err);
   }
@@ -144,9 +146,9 @@ const softDeleteUserRequest = async (req, res, next) => {
     //check if user exists
     if (!user) {
       if (page === "blockedUsers") {
-        return res.status(404).redirect("/admin/blockedUsers");
+        return res.status(StatusCode.NOT_FOUND).redirect("/admin/blockedUsers");
       }
-      return res.status(404).redirect("/admin/allUsers");
+      return res.status(StatusCode.NOT_FOUND).redirect("/admin/allUsers");
     }
 
     await sessionModels.deleteMany({ "session.user.email": user.email });
@@ -162,11 +164,11 @@ const softDeleteUserRequest = async (req, res, next) => {
 
     //redirect to all users page or blocked users page
     if (page === "blockedUsers") {
-      return res.status(200).redirect("/admin/blockedUsers");
+      return res.status(StatusCode.OK).redirect("/admin/blockedUsers");
     }
-    return res.status(200).redirect("/admin/allUsers");
+    return res.status(StatusCode.OK).redirect("/admin/allUsers");
   } catch (err) {
-    err.status = 500;
+    err.status = StatusCode.INTERNAL_SERVER_ERROR;
     err.redirectUrl = "/admin/allUsers";
     next(err);
   }
@@ -175,7 +177,7 @@ const softDeleteUserRequest = async (req, res, next) => {
 //add new user page
 const addNewUserPage = (req, res) => {
   //render add new user page
-  res.status(200).render("adminPages/userManagement/addNewUser", {
+  res.status(StatusCode.OK).render("adminPages/userManagement/addNewUser", {
     activeSidebar: { main: "userManagement", sub: "addNewUser" },
   });
 };
@@ -195,14 +197,14 @@ const addNewUserRequest = async (req, res, next) => {
     const userExist = await userModels.findOne({ email });
     if (userExist) {
       return res
-        .status(409)
-        .json({ success: false, message: "Email Already Taken" });
+        .status(StatusCode.CONFLICT)
+        .json({ success: false, message: User.EMAIL_ALREADY_TAKEN });
     }
 
     if (password !== confirmPassword) {
-      return res.status(409).json({
+      return res.status(StatusCode.CONFLICT).json({
         success: false,
-        message: "Password and Confirm Password do not match",
+        message: User.PASSWORD_NOT_MATCH,
       });
     }
 
@@ -256,10 +258,10 @@ const addNewUserRequest = async (req, res, next) => {
     await newWallet.save();
 
     return res
-      .status(200)
+      .status(StatusCode.OK)
       .json({ success: true, redirectUrl: "/admin/allUsers" });
   } catch (err) {
-    err.status = 500;
+    err.status = StatusCode.INTERNAL_SERVER_ERROR;
     err.redirectUrl = "/admin/addNewUser";
     next(err);
   }
@@ -276,12 +278,12 @@ const blockedUsersPage = async (req, res, next) => {
     });
 
     //render blocked users page
-    res.status(200).render("adminPages/userManagement/blockedUser", {
+    res.status(StatusCode.OK).render("adminPages/userManagement/blockedUser", {
       users,
       activeSidebar: { main: "userManagement", sub: "blockedUsers" },
     });
   } catch (err) {
-    err.status = 500;
+    err.status = StatusCode.INTERNAL_SERVER_ERROR;
     err.redirectUrl = "/admin/allUsers";
     next(err);
   }
@@ -296,7 +298,7 @@ const unblockUserRequest = async (req, res, next) => {
 
     //check if user exist
     if (!user) {
-      return res.status(404).redirect("/admin/blockedUsers");
+      return res.status(StatusCode.NOT_FOUND).redirect("/admin/blockedUsers");
     }
 
     //update user block status to false
@@ -308,9 +310,9 @@ const unblockUserRequest = async (req, res, next) => {
     await userModels.updateOne({ _id: id }, { $set: updateUser });
 
     //redirect to blocked users page
-    return res.status(200).redirect("/admin/blockedUsers");
+    return res.status(StatusCode.OK).redirect("/admin/blockedUsers");
   } catch (err) {
-    err.status = 500;
+    err.status = StatusCode.INTERNAL_SERVER_ERROR;
     err.redirectUrl = "/admin/blockedUsers";
     next(err);
   }
@@ -321,12 +323,12 @@ const deletedUsersPage = async (req, res, next) => {
   try {
     //take deleted users from database and render deleted users page
     const users = await userModels.find({ isDeleted: true, role: "User" });
-    res.status(200).render("adminPages/userManagement/deletedUser", {
+    res.status(StatusCode.OK).render("adminPages/userManagement/deletedUser", {
       users,
       activeSidebar: { main: "userManagement", sub: "deletedUsers" },
     });
   } catch (err) {
-    err.status = 500;
+    err.status = StatusCode.INTERNAL_SERVER_ERROR;
     err.redirectUrl = "/admin/allUsers";
     next(err);
   }
@@ -341,7 +343,7 @@ const restoreUserRequest = async (req, res, next) => {
 
     //check if user exist
     if (!user) {
-      return res.status(404).redirect("/admin/deletedUsers");
+      return res.status(StatusCode.NOT_FOUND).redirect("/admin/deletedUsers");
     }
 
     //update user isDeleted status to false
@@ -354,9 +356,9 @@ const restoreUserRequest = async (req, res, next) => {
     await userModels.updateOne({ _id: id }, { $set: updateUser });
 
     //redirect to delete users page
-    return res.status(200).redirect("/admin/deletedUsers");
+    return res.status(StatusCode.OK).redirect("/admin/deletedUsers");
   } catch (err) {
-    err.status = 500;
+    err.status = StatusCode.INTERNAL_SERVER_ERROR;
     err.redirectUrl = "/admin/deletedUsers";
     next(err);
   }
@@ -371,7 +373,7 @@ const deleteUserRequest = async (req, res, next) => {
 
     //check user is exist
     if (!user) {
-      return res.status(404).redirect("/admin/deletedUsers");
+      return res.status(StatusCode.NOT_FOUND).redirect("/admin/deletedUsers");
     }
 
     //delete user from database
@@ -379,9 +381,9 @@ const deleteUserRequest = async (req, res, next) => {
     await cartModels.deleteOne({ userId: id });
 
     //redirect to delete users page
-    return res.status(200).redirect("/admin/deletedUsers");
+    return res.status(StatusCode.OK).redirect("/admin/deletedUsers");
   } catch (err) {
-    err.status = 500;
+    err.status = StatusCode.INTERNAL_SERVER_ERROR;
     err.redirectUrl = "/admin/deletedUsers";
     next(err);
   }

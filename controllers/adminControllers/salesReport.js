@@ -1,5 +1,6 @@
 const moment = require("moment");
 const orderModels = require("../../models/orderModels");
+const StatusCode = require("../../constants/statusCode");
 
 const salesReportPage = async (req, res, next) => {
   try {
@@ -9,7 +10,6 @@ const salesReportPage = async (req, res, next) => {
 
     let days;
 
-    // ✅ Handle Custom Date Inputs
     if (filter == "Custom") {
       if (
         !startDate ||
@@ -17,13 +17,12 @@ const salesReportPage = async (req, res, next) => {
         !moment(startDate).isValid() ||
         !moment(endDate).isValid()
       ) {
-        return res.status(400).redirect("/admin/salesReport");
+        return res.status(StatusCode.BAD_REQUEST).redirect("/admin/salesReport");
       }
       startDate = moment(startDate).startOf("day");
       endDate = moment(endDate).endOf("day");
       days = endDate.diff(startDate, "days") + 1;
     } else {
-      // ✅ Handle Default Filters
       startDate = moment(startDate).isValid()
         ? moment(startDate).startOf("day")
         : moment().startOf("day");
@@ -124,7 +123,7 @@ const salesReportPage = async (req, res, next) => {
       { $unwind: "$userDetails" },
     ]);
 
-    return res.status(200).render("adminPages/salesReport/salesReport", {
+    return res.status(StatusCode.OK).render("adminPages/salesReport/salesReport", {
       activeSidebar: { main: "salesReport" },
       salesData: salesData.length > 0 ? salesData[0] : {},
       fromDate: startDate,
@@ -133,7 +132,7 @@ const salesReportPage = async (req, res, next) => {
       filter,
     });
   } catch (err) {
-    err.status = 500;
+    err.status = StatusCode.INTERNAL_SERVER_ERROR;
     err.redirectUrl = "/admin/dashboard";
     next(err);
   }
@@ -145,7 +144,7 @@ const salesReportFilterRequest = (req, res) => {
   toDate = toDate || "";
   fromDate = fromDate || "";
   res
-    .status(200)
+    .status(StatusCode.OK)
     .redirect(
       "/admin/salesReport?salesReportFilter=" +
         salesReportFilter +

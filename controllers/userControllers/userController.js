@@ -1,3 +1,4 @@
+const StatusCode = require("../../constants/statusCode");
 const categoryModels = require("../../models/categoryModels");
 const productModels = require("../../models/productModels");
 const subCategoryModels = require("../../models/subCategoryModels");
@@ -25,7 +26,7 @@ const homePage = async (req, res, next) => {
 
     res.render("userPages/pages/home", { validProducts });
   } catch (err) {
-    err.status = 500;
+    err.status = StatusCode.INTERNAL_SERVER_ERROR;
     err.redirectUrl = "/login";
     next(err);
   }
@@ -36,7 +37,7 @@ const navCount = async (req, res) => {
     const userId = req.session?.user?._id;
     const navCartCount = await cartCount(userId);
     const navWishlistCount = await wishlistCount(userId);
-    res.status(200).json({ success: true, navCartCount, navWishlistCount });
+    res.status(StatusCode.OK).json({ success: true, navCartCount, navWishlistCount });
   } catch (err) {
     console.log(err);
   }
@@ -53,7 +54,7 @@ const productDetailsPage = async (req, res, next) => {
 
     if (!result) {
       const url = req.get("Referer") || "/home";
-      return res.status(400).redirect(url);
+      return res.status(StatusCode.BAD_REQUEST).redirect(url);
     }
 
     const product = await productModels
@@ -61,7 +62,7 @@ const productDetailsPage = async (req, res, next) => {
       .populate("categoryId")
       .populate("subCategoryId");
     if (!product) {
-      res.status(404).redirect("/home");
+      res.status(StatusCode.NOT_FOUND).redirect("/home");
     }
 
     const variant = product.variants.find(
@@ -90,14 +91,14 @@ const productDetailsPage = async (req, res, next) => {
       }
     }
 
-    res.status(200).render("userPages/pages/productDetails", {
+    res.status(StatusCode.OK).render("userPages/pages/productDetails", {
       product,
       variant,
       relatedProducts,
       messageFromCheckout,
     });
   } catch (err) {
-    err.status = 500;
+    err.status = StatusCode.INTERNAL_SERVER_ERROR;
     err.redirectUrl = req.get("Referer") || "/home";
     next(err);
   }
@@ -229,7 +230,7 @@ const searchPage = async (req, res, next) => {
 
     req.session.selectedCategory = selectedCategory;
 
-    res.status(200).render("userPages/pages/search", {
+    res.status(StatusCode.OK).render("userPages/pages/search", {
       searchData,
       matchProducts: pageProduct,
       sortType,
@@ -243,7 +244,7 @@ const searchPage = async (req, res, next) => {
       selectedBrand,
     });
   } catch (err) {
-    err.status = 500;
+    err.status = StatusCode.INTERNAL_SERVER_ERROR;
     err.redirectUrl = req.get("Referer") || "/home";
     next(err);
   }
@@ -265,7 +266,7 @@ const searchRequest = (req, res) => {
   // }
 
   res
-    .status(200)
+    .status(StatusCode.OK)
     .redirect(
       "/search?searchData=" +
         search +

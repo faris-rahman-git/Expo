@@ -5,11 +5,13 @@ const cartModels = require("../../models/cartModels");
 const walletModels = require("../../models/walletModels");
 const wishlistModels = require("../../models/wishlistModels");
 const couponModels = require("../../models/couponModels");
+const StatusCode = require("../../constants/statusCode");
+const SignupAndLogin = require("../../constants/user/signupAndLogin");
 
 //signupPage
 const signupPage = (req, res) => {
   //redirect to signup page
-  res.status(200).render("userPages/signup/signup");
+  res.status(StatusCode.OK).render("userPages/signup/signup");
 };
 
 //otpRequest
@@ -21,8 +23,8 @@ const otpRequest = async (req, res, next) => {
     const userExist = await userModels.findOne({ email });
     if (userExist) {
       return res
-        .status(409)
-        .json({ success: false, message: "Email Is Already Exist" });
+        .status(StatusCode.CONFLICT)
+        .json({ success: false, message: SignupAndLogin.EMAIL_ALREADY_TAKEN });
     }
 
     // calling otpGenerator function
@@ -34,10 +36,12 @@ const otpRequest = async (req, res, next) => {
     req.session.signup = req.body;
 
     //redirect to otp page
-    return res.status(200).json({ success: true, redirectUrl: "/otp" });
+    return res
+      .status(StatusCode.OK)
+      .json({ success: true, redirectUrl: "/otp" });
   } catch (err) {
-    req.session.message = "Something Went Wrong! Please Try Again";
-    err.status = 500;
+    req.session.message = SignupAndLogin.SOMETHING_WENT_WRONG;
+    err.status = StatusCode.INTERNAL_SERVER_ERROR;
     err.redirectUrl = "/signUp";
     next(err);
   }
@@ -57,14 +61,14 @@ const resendOtpRequest = async (req, res, next) => {
 
     //redirect to otp page if user is signing up
     if (req.session.signup) {
-      return res.status(200).redirect("/otp");
+      return res.status(StatusCode.OK).redirect("/otp");
     }
 
     //redirect to forgot password page  if user is forgot password
-    return res.status(200).redirect("/login/forgotPasswordOtpPage");
+    return res.status(StatusCode.OK).redirect("/login/forgotPasswordOtpPage");
   } catch (err) {
-    req.session.message = "Something Went Wrong! Please Try Again";
-    err.status = 500;
+    req.session.message = SignupAndLogin.SOMETHING_WENT_WRONG;
+    err.status = StatusCode.INTERNAL_SERVER_ERROR;
 
     //if user is signing up
     if (req.session.signup) {
@@ -79,13 +83,15 @@ const resendOtpRequest = async (req, res, next) => {
 // otpPage
 const otpPage = (req, res) => {
   //check user is not enter deatils
-  if (!req.session.signup) return res.status(400).redirect("/signUp");
+  if (!req.session.signup)
+    return res.status(StatusCode.BAD_REQUEST).redirect("/signUp");
 
   //check user already enter otp
-  if (req.session.isOtp) return res.status(400).redirect("/password");
+  if (req.session.isOtp)
+    return res.status(StatusCode.BAD_REQUEST).redirect("/password");
 
   //redirect to otp page
-  res.status(200).render("userPages/signup/otpPage");
+  res.status(StatusCode.OK).render("userPages/signup/otpPage");
 };
 
 //passwordRequest
@@ -103,18 +109,20 @@ const passwordRequest = async (req, res, next) => {
     //if otp is incorrect
     if (otp !== checkOtp) {
       return res
-        .status(409)
-        .json({ success: false, message: "Incorrect OTP Please Try Again" });
+        .status(StatusCode.CONFLICT)
+        .json({ success: false, message: SignupAndLogin.INCORRECT_OTP });
     }
 
     //set otp is checked
     req.session.isOtp = true;
 
     //redirect to password page
-    return res.status(200).json({ success: true, redirectUrl: "/password" });
+    return res
+      .status(StatusCode.OK)
+      .json({ success: true, redirectUrl: "/password" });
   } catch (err) {
-    req.session.message = "Something Went Wrong! Please Try Again";
-    err.status = 500;
+    req.session.message = SignupAndLogin.SOMETHING_WENT_WRONG;
+    err.status = StatusCode.INTERNAL_SERVER_ERROR;
     err.redirectUrl = "/otp";
     next(err);
   }
@@ -123,9 +131,10 @@ const passwordRequest = async (req, res, next) => {
 //passwordPage
 const passwordPage = (req, res) => {
   //check user is not OTP
-  if (!req.session.isOtp) return res.status(400).redirect("/otp");
+  if (!req.session.isOtp)
+    return res.status(StatusCode.BAD_REQUEST).redirect("/otp");
 
-  res.status(200).render("userPages/signup/passwordPage");
+  res.status(StatusCode.OK).render("userPages/signup/passwordPage");
 };
 
 //signupRequest
@@ -135,9 +144,9 @@ const signupRequest = async (req, res, next) => {
 
     //check if password and confirm password is same
     if (password !== confirmPassword) {
-      return res.status(400).json({
+      return res.status(StatusCode.BAD_REQUEST).json({
         success: false,
-        message: "Password and Confirm Password is not same",
+        message: SignupAndLogin.PASSWORD_NOT_MATCH,
       });
     }
 
@@ -195,11 +204,13 @@ const signupRequest = async (req, res, next) => {
     delete req.session.signup;
 
     //redirect login
-    req.session.message = "Account Created Successfully! Please Login";
-    return res.status(400).json({ success: true, redirectUrl: "/login" });
+    req.session.message = SignupAndLogin.ACCOUNT_CREATED;
+    return res
+      .status(StatusCode.BAD_REQUEST)
+      .json({ success: true, redirectUrl: "/login" });
   } catch (err) {
-    req.session.message = "Something went wrong! Please try again";
-    err.status = 500;
+    req.session.message = SignupAndLogin.SOMETHING_WENT_WRONG;
+    err.status = StatusCode.INTERNAL_SERVER_ERROR;
     err.redirectUrl = "/password";
     next(err);
   }
@@ -207,9 +218,9 @@ const signupRequest = async (req, res, next) => {
 
 //loginPage
 const loginPage = (req, res) => {
-  const message = req.session.message ?? "Enter Your Credentials";
+  const message = req.session.message ?? SignupAndLogin.ENTER_CREDENTIAL;
   req.session.destroy();
-  res.status(200).render("userPages/login/login", { message });
+  res.status(StatusCode.OK).render("userPages/login/login", { message });
 };
 
 //loginRequest
@@ -222,37 +233,40 @@ const loginRequest = async (req, res, next) => {
 
     //if user is not exist
     if (!user) {
-      return res
-        .status(400)
-        .json({ success: false, message: "invaild email or password" });
+      return res.status(StatusCode.BAD_REQUEST).json({
+        success: false,
+        message: SignupAndLogin.INVAILD_EMAIL_OR_PASSWORD,
+      });
     }
 
     //if user don't have password
     if (!user.password) {
-      return res
-        .status(400)
-        .json({ success: false, message: "invaild email or password" });
+      return res.status(StatusCode.BAD_REQUEST).json({
+        success: false,
+        message: SignupAndLogin.INVAILD_EMAIL_OR_PASSWORD,
+      });
     }
 
     //check password is correct
     const isMatch = await bcrypt.compare(password, user.password);
     if (!isMatch) {
-      return res
-        .status(400)
-        .json({ success: false, message: "invaild email or password" });
+      return res.status(StatusCode.BAD_REQUEST).json({
+        success: false,
+        message: SignupAndLogin.INVAILD_EMAIL_OR_PASSWORD,
+      });
     }
 
     if (user) {
       if (user.isDeleted === true) {
-        return res.status(400).json({
+        return res.status(StatusCode.BAD_REQUEST).json({
           success: false,
-          message: "Your Account is Deleted Please Contact Admin",
+          message: SignupAndLogin.ACCOUNT_DELETED,
         });
       }
       if (user.isBlock === true) {
-        return res.status(400).json({
+        return res.status(StatusCode.BAD_REQUEST).json({
           success: false,
-          message: "Your Account is Blocked Please Contact Admin",
+          message: SignupAndLogin.ACCOUNT_BLOCK,
         });
       }
     }
@@ -261,7 +275,7 @@ const loginRequest = async (req, res, next) => {
     req.session.user = user;
     if (user.role === "Admin") {
       return res
-        .status(200)
+        .status(StatusCode.OK)
         .json({ success: true, redirectUrl: "/admin/dashboard" });
     }
 
@@ -273,10 +287,12 @@ const loginRequest = async (req, res, next) => {
         },
       }
     );
-    return res.status(200).json({ success: true, redirectUrl: "/home" });
+    return res
+      .status(StatusCode.OK)
+      .json({ success: true, redirectUrl: "/home" });
   } catch (err) {
-    req.session.message = "Something went wrong! Please try again";
-    err.status = 500;
+    req.session.message = SignupAndLogin.SOMETHING_WENT_WRONG;
+    err.status = StatusCode.INTERNAL_SERVER_ERROR;
     err.redirectUrl = "/login";
     next(err);
   }
@@ -288,8 +304,8 @@ const loginWithSocialMedia = async (req, res, next) => {
     //check email is available
     const email = req.user?.emails?.[0]?.value;
     if (!email) {
-      req.session.message = "Something Went Wrong Try Another Option";
-      return res.status(400).redirect("/login");
+      req.session.message = SignupAndLogin.SOMETHING_WENT_WRONG_TRY_ANOTHER;
+      return res.status(StatusCode.BAD_REQUEST).redirect("/login");
     }
 
     //check user is exist
@@ -297,16 +313,16 @@ const loginWithSocialMedia = async (req, res, next) => {
 
     if (user) {
       if (user.isDeleted === true) {
-        req.session.message = "Your Account is Deleted Please Contact Admin";
-        return res.status(400).redirect("/login");
+        req.session.message = SignupAndLogin.ACCOUNT_DELETED;
+        return res.status(StatusCode.BAD_REQUEST).redirect("/login");
       }
       if (user.isBlock === true) {
-        req.session.message = "Your Account is Blocked Please Contact Admin";
-        return res.status(400).redirect("/login");
+        req.session.message = SignupAndLogin.ACCOUNT_BLOCK;
+        return res.status(StatusCode.BAD_REQUEST).redirect("/login");
       }
       req.session.user = user;
       if (user.role === "Admin") {
-        return res.status(200).redirect("/admin/dashboard");
+        return res.status(StatusCode.OK).redirect("/admin/dashboard");
       }
       await userModels.updateOne(
         { _id: user._id },
@@ -316,7 +332,7 @@ const loginWithSocialMedia = async (req, res, next) => {
           },
         }
       );
-      return res.status(200).redirect("/home");
+      return res.status(StatusCode.OK).redirect("/home");
     }
 
     //add wellcome coupon
@@ -351,10 +367,10 @@ const loginWithSocialMedia = async (req, res, next) => {
     req.session.user = user;
 
     //redirect to home
-    return res.status(200).redirect("/home");
+    return res.status(StatusCode.OK).redirect("/home");
   } catch (err) {
-    req.session.message = "Something Went Wrong! Please try again";
-    err.status = 500;
+    req.session.message = SignupAndLogin.SOMETHING_WENT_WRONG;
+    err.status = StatusCode.INTERNAL_SERVER_ERROR;
     err.redirectUrl = "/login";
     next(err);
   }
@@ -362,10 +378,10 @@ const loginWithSocialMedia = async (req, res, next) => {
 
 //forgot password email page
 const forgotPasswordEmailPage = (req, res) => {
-  const message = req.session.message ?? "Please Enter Your Email";
+  const message = req.session.message ?? SignupAndLogin.ENTER_EMAIL;
   delete req.session.message;
   res
-    .status(200)
+    .status(StatusCode.OK)
     .render("userPages/login/forgotPasswordEmailPage", { message });
 };
 
@@ -377,8 +393,10 @@ const forgotPasswordOtpRequest = async (req, res, next) => {
     //check user is exist
     const user = await userModels.findOne({ email });
     if (!user) {
-      req.session.message = "Email Not Found";
-      return res.status(400).redirect("/login/forgotPasswordEmail");
+      req.session.message = SignupAndLogin.EMAIL_NOT_FOUND;
+      return res
+        .status(StatusCode.BAD_REQUEST)
+        .redirect("/login/forgotPasswordEmail");
     }
 
     // calling otpGenerator function
@@ -390,10 +408,10 @@ const forgotPasswordOtpRequest = async (req, res, next) => {
     req.session.forgotEmail = user.email;
 
     //redirect to forgot password OTP page
-    res.status(200).redirect("/login/forgotPasswordOtp");
+    res.status(StatusCode.OK).redirect("/login/forgotPasswordOtp");
   } catch (err) {
-    req.session.message = "Something Went wrong, Please Try Again";
-    err.status = 500;
+    req.session.message = SignupAndLogin.SOMETHING_WENT_WRONG;
+    err.status = StatusCode.INTERNAL_SERVER_ERROR;
     err.redirectUrl = "/login/forgotPasswordEmail";
     next(err);
   }
@@ -403,16 +421,20 @@ const forgotPasswordOtpRequest = async (req, res, next) => {
 const forgotPasswordOtpPage = (req, res) => {
   //check if user is not enter email
   if (!req.session.forgotEmail) {
-    return res.status(400).redirect("/login/forgotPasswordEmail");
+    return res
+      .status(StatusCode.BAD_REQUEST)
+      .redirect("/login/forgotPasswordEmail");
   }
 
   //check if user is already enter OTP
   if (req.session.isForgotOtp)
-    return res.status(400).redirect("/login/forgotPassword");
+    return res.status(StatusCode.BAD_REQUEST).redirect("/login/forgotPassword");
 
-  const message = req.session.message ?? "Please Check Your Email or SMS";
+  const message = req.session.message ?? SignupAndLogin.CHECK_EMAIL;
   delete req.session.message;
-  res.status(200).render("userPages/login/forgotPasswordOtpPage", { message });
+  res
+    .status(StatusCode.OK)
+    .render("userPages/login/forgotPasswordOtpPage", { message });
 };
 
 //forget password request
@@ -433,18 +455,20 @@ const forgotPasswordRequest = async (req, res, next) => {
 
     //if otp is incorrect
     if (otp !== checkOtp) {
-      req.session.message = "Incorrect OTP Please Try Again";
-      return res.status(400).redirect("/login/forgotPasswordOtp");
+      req.session.message = SignupAndLogin.INCORRECT_OTP;
+      return res
+        .status(StatusCode.BAD_REQUEST)
+        .redirect("/login/forgotPasswordOtp");
     }
 
     //set otp is checked
     req.session.isForgotOtp = true;
 
     //redirect to forgotpassword page
-    res.status(200).redirect("/login/forgotPassword");
+    res.status(StatusCode.OK).redirect("/login/forgotPassword");
   } catch (err) {
-    req.session.message = "Something Went wrong, Please Try Again";
-    err.status = 500;
+    req.session.message = SignupAndLogin.SOMETHING_WENT_WRONG;
+    err.status = StatusCode.INTERNAL_SERVER_ERROR;
     err.redirectUrl = "/login/forgotPasswordEmail";
     next(err);
   }
@@ -454,11 +478,15 @@ const forgotPasswordRequest = async (req, res, next) => {
 const forgotPasswordPage = (req, res) => {
   //check if user is not enter otp
   if (!req.session.isForgotOtp)
-    return res.status(400).redirect("/login/forgotPasswordOtp");
+    return res
+      .status(StatusCode.BAD_REQUEST)
+      .redirect("/login/forgotPasswordOtp");
 
-  const message = req.session.message ?? "Please Enter New Password";
+  const message = req.session.message ?? SignupAndLogin.ENTER_PASSWORD;
   delete req.session.message;
-  res.status(200).render("userPages/login/forgotPasswordPage", { message });
+  res
+    .status(StatusCode.OK)
+    .render("userPages/login/forgotPasswordPage", { message });
 };
 
 // forgotLogin Request
@@ -468,14 +496,18 @@ const forgotLoginRequest = async (req, res, next) => {
 
     //check if password and confirm password are same
     if (password !== confirmPassword) {
-      req.session.message = "Password and Confirm Password Should be Same";
-      return res.status(400).redirect("/login/forgotPassword");
+      req.session.message = SignupAndLogin.PASSWORD_NOT_MATCH;
+      return res
+        .status(StatusCode.BAD_REQUEST)
+        .redirect("/login/forgotPassword");
     }
 
     const user = await userModels.findOne({ email: req.session.forgotEmail });
     if (!user) {
-      req.session.message = "Something Went Wrong! Email Not Found";
-      return res.status(400).redirect("/login/forgotPasswordEmail");
+      req.session.message = SignupAndLogin.SOMETHING_WENT_WRONG_EMAIL_NOT_FOUND;
+      return res
+        .status(StatusCode.BAD_REQUEST)
+        .redirect("/login/forgotPasswordEmail");
     }
     const hashedPassword = await bcrypt.hash(password, 10);
 
@@ -491,11 +523,11 @@ const forgotLoginRequest = async (req, res, next) => {
     delete req.session.fromChangePass;
 
     //redirect to login page
-    req.session.message = "Password Reset Successfully! Please Login";
-    res.status(200).redirect("/login");
+    req.session.message = SignupAndLogin.PASSWORD_RESET;
+    res.status(StatusCode.OK).redirect("/login");
   } catch (err) {
-    req.session.message = "Something Went wrong, Please Try Again";
-    err.status = 500;
+    req.session.message = SignupAndLogin.SOMETHING_WENT_WRONG;
+    err.status = StatusCode.INTERNAL_SERVER_ERROR;
     err.redirectUrl = "/login/forgotPasswordEmail";
     next(err);
   }

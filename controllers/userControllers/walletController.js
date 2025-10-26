@@ -1,3 +1,4 @@
+const StatusCode = require("../../constants/statusCode");
 const walletModels = require("../../models/walletModels");
 
 const walletPage = async (req, res, next) => {
@@ -25,7 +26,7 @@ const walletPage = async (req, res, next) => {
       totalPage,
     });
   } catch (err) {
-    err.status = 500;
+    err.status = StatusCode.INTERNAL_SERVER_ERROR;
     err.redirectUrl = "/home";
     next(err);
   }

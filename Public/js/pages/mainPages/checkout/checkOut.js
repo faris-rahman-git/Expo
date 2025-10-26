@@ -116,7 +116,7 @@ async function placeOrder() {
     const order = responseData.order;
     const user = responseData.user;
     const options = {
-      key: "rzp_test_x5DfH9IhxSrCMD",
+      key: "rzp_test_HdrVnn0iQswq7O",
       amount: order.amount,
       currency: order.currency,
       name: "Xpo Ecom",

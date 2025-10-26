@@ -1,3 +1,5 @@
+const Coupon = require("../../constants/admin/coupon.js");
+const StatusCode = require("../../constants/statusCode.js");
 const couponModels = require("../../models/couponModels");
 const userModels = require("../../models/userModels");
 const { getContrastColor } = require("../../utils/textColorGenerator.js");
@@ -9,7 +11,7 @@ const allCouponPage = async (req, res, next) => {
       .find({ isDeleted: false })
       .sort({ createdAt: 1 });
 
-    res.status(200).render("adminPages/couponManagement/allCoupon", {
+    res.status(StatusCode.OK).render("adminPages/couponManagement/allCoupon", {
       activeSidebar: {
         main: "couponManagement",
         sub: "allCoupon",
@@ -17,7 +19,7 @@ const allCouponPage = async (req, res, next) => {
       allCoupons,
     });
   } catch (err) {
-    err.status = 500;
+    err.status = StatusCode.INTERNAL_SERVER_ERROR;
     err.redirectUrl = "/admin/allUsers";
     next(err);
   }
@@ -27,15 +29,17 @@ const allCouponPage = async (req, res, next) => {
 const addNewCouponPage = async (req, res, next) => {
   try {
     const users = await userModels.find({ isDeleted: false, role: "User" });
-    res.status(200).render("adminPages/couponManagement/addNewCoupon", {
-      activeSidebar: {
-        main: "couponManagement",
-        sub: "addNewCoupon",
-      },
-      users,
-    });
+    res
+      .status(StatusCode.OK)
+      .render("adminPages/couponManagement/addNewCoupon", {
+        activeSidebar: {
+          main: "couponManagement",
+          sub: "addNewCoupon",
+        },
+        users,
+      });
   } catch (err) {
-    err.status = 500;
+    err.status = StatusCode.INTERNAL_SERVER_ERROR;
     err.redirectUrl = "/admin/allCoupon";
     next(err);
   }
@@ -63,9 +67,9 @@ const addNewCouponRequest = async (req, res, next) => {
 
     if (discountType == "Percentage") {
       if (discountValue > 100) {
-        return res.status(400).json({
+        return res.status(StatusCode.BAD_REQUEST).json({
           success: false,
-          message: "Discount Value Is Not In Percentage",
+          message: Coupon.DISCOUNT_VALUE_NOT_PERCENTAGE,
         });
       }
     }
@@ -93,8 +97,8 @@ const addNewCouponRequest = async (req, res, next) => {
 
     if (couponNameExist) {
       return res
-        .status(400)
-        .json({ success: false, message: "Coupon Name Already exists" });
+        .status(StatusCode.BAD_REQUEST)
+        .json({ success: false, message: Coupon.COUPON_NAME_ALREADY_TAKEN });
     }
 
     //check coupon code is already exist
@@ -104,7 +108,7 @@ const addNewCouponRequest = async (req, res, next) => {
 
     if (couponCodeExist) {
       return res
-        .status(400)
+        .status(StatusCode.BAD_REQUEST)
         .json({ success: false, message: "Coupon Code Already exists" });
     }
 
@@ -170,10 +174,10 @@ const addNewCouponRequest = async (req, res, next) => {
     }
 
     return res
-      .status(200)
+      .status(StatusCode.OK)
       .json({ success: true, redirectUrl: "/admin/allCoupon" });
   } catch (err) {
-    err.status = 500;
+    err.status = StatusCode.INTERNAL_SERVER_ERROR;
     err.redirectUrl = "/admin/allCoupon";
     next(err);
   }
@@ -186,16 +190,16 @@ const editCouponPage = async (req, res, next) => {
     const coupon = await couponModels.findById(id);
     const users = await userModels.find({ isDeleted: false, role: "User" });
 
-    const message = req.session.message ?? "Edit Coupon Details";
+    const message = req.session.message ?? Coupon.EDIT_COUPON_DETAILS;
     delete req.session.message;
-    res.status(200).render("adminPages/couponManagement/editCoupon", {
+    res.status(StatusCode.OK).render("adminPages/couponManagement/editCoupon", {
       coupon,
       message,
       users,
       activeSidebar: { main: "couponManagement" },
     });
   } catch (err) {
-    err.status = 500;
+    err.status = StatusCode.INTERNAL_SERVER_ERROR;
     err.redirectUrl = "/admin/allCoupon";
     next(err);
   }
@@ -208,7 +212,7 @@ const editCouponRequest = async (req, res, next) => {
     const coupon = await couponModels.findById(id);
     if (!coupon)
       return res
-        .status(404)
+        .status(StatusCode.NOT_FOUND)
         .json({ success: false, redirectUrl: "/admin/allCoupon" });
 
     const {
@@ -248,8 +252,8 @@ const editCouponRequest = async (req, res, next) => {
     });
     if (couponNameExist && couponNameExist._id.toString() != id) {
       return res
-        .status(400)
-        .json({ success: false, message: "Coupon Name is already Taken" });
+        .status(StatusCode.BAD_REQUEST)
+        .json({ success: false, message: Coupon.COUPON_NAME_ALREADY_TAKEN });
     }
 
     let updateCoupon = {};
@@ -349,10 +353,10 @@ const editCouponRequest = async (req, res, next) => {
     await couponModels.findOneAndUpdate({ _id: id }, { $set: updateCoupon });
 
     return res
-    .status(200)
-    .json({ success: true, redirectUrl: "/admin/allCoupon" });
+      .status(StatusCode.OK)
+      .json({ success: true, redirectUrl: "/admin/allCoupon" });
   } catch (err) {
-    err.status = 500;
+    err.status = StatusCode.INTERNAL_SERVER_ERROR;
     err.redirectUrl = "/admin/allCoupon";
     next(err);
   }
@@ -364,7 +368,7 @@ const softDeleteCouponRequest = async (req, res, next) => {
     const { id } = req.params;
     const coupon = await couponModels.findById(id);
     if (!coupon) {
-      return res.status(404).redirect("/admin/allCoupon");
+      return res.status(StatusCode.NOT_FOUND).redirect("/admin/allCoupon");
     }
 
     //update coupon details
@@ -375,9 +379,9 @@ const softDeleteCouponRequest = async (req, res, next) => {
     };
     await couponModels.findOneAndUpdate({ _id: id }, { $set: updateCoupon });
 
-    res.status(200).redirect("/admin/allCoupon");
+    res.status(StatusCode.OK).redirect("/admin/allCoupon");
   } catch (err) {
-    err.status = 500;
+    err.status = StatusCode.INTERNAL_SERVER_ERROR;
     err.redirectUrl = "/admin/allCoupon";
     next(err);
   }
@@ -387,15 +391,17 @@ const softDeleteCouponRequest = async (req, res, next) => {
 const DeleteCouponPage = async (req, res, next) => {
   try {
     const coupons = await couponModels.find({ isDeleted: true });
-    res.status(200).render("adminPages/couponManagement/deletedCoupon", {
-      coupons,
-      activeSidebar: {
-        main: "couponManagement",
-        sub: "deletedCoupons",
-      },
-    });
+    res
+      .status(StatusCode.OK)
+      .render("adminPages/couponManagement/deletedCoupon", {
+        coupons,
+        activeSidebar: {
+          main: "couponManagement",
+          sub: "deletedCoupons",
+        },
+      });
   } catch (err) {
-    err.status = 500;
+    err.status = StatusCode.INTERNAL_SERVER_ERROR;
     err.redirectUrl = "/admin/allCoupon";
     next(err);
   }
@@ -407,7 +413,7 @@ const restoreCouponRequest = async (req, res, next) => {
     const id = req.params.id;
     const coupon = await couponModels.findById(id);
     if (!coupon) {
-      return res.status(404).redirect("/admin/allCoupon");
+      return res.status(StatusCode.NOT_FOUND).redirect("/admin/allCoupon");
     }
 
     //update coupon details
@@ -419,9 +425,9 @@ const restoreCouponRequest = async (req, res, next) => {
 
     await couponModels.findOneAndUpdate({ _id: id }, { $set: updateCoupon });
 
-    res.status(200).redirect("/admin/deletedCoupon");
+    res.status(StatusCode.OK).redirect("/admin/deletedCoupon");
   } catch (err) {
-    err.status = 500;
+    err.status = StatusCode.INTERNAL_SERVER_ERROR;
     err.redirectUrl = "/admin/deletedCoupon";
     next(err);
   }
@@ -433,7 +439,7 @@ const deletedCouponRequest = async (req, res, next) => {
     const id = req.params.id;
     const coupon = await couponModels.findById(id);
     if (!coupon) {
-      return res.status(404).redirect("/admin/allCoupon");
+      return res.status(StatusCode.NOT_FOUND).redirect("/admin/allCoupon");
     }
 
     await couponModels.deleteOne({ _id: id });
@@ -443,9 +449,9 @@ const deletedCouponRequest = async (req, res, next) => {
       { $pull: { userCoupons: { couponId: id } } }
     );
 
-    return res.status(200).redirect("/admin/deletedCoupon");
+    return res.status(StatusCode.OK).redirect("/admin/deletedCoupon");
   } catch (err) {
-    err.status = 500;
+    err.status = StatusCode.INTERNAL_SERVER_ERROR;
     err.redirectUrl = "/admin/deletedCoupon";
     next(err);
   }

@@ -1,3 +1,4 @@
+const StatusCode = require("../../constants/statusCode");
 const cartModels = require("../../models/cartModels");
 const wishlistModels = require("../../models/wishlistModels");
 const { checkProductValidity } = require("../../utils/stockManagement");
@@ -45,12 +46,12 @@ const wishlistPage = async (req, res, next) => {
       }
     }
 
-    res.status(200).render("userPages/pages/myAccount/wishlist", {
+    res.status(StatusCode.OK).render("userPages/pages/myAccount/wishlist", {
       wishlistItems,
       message,
     });
   } catch (err) {
-    err.status = 500;
+    err.status = StatusCode.INTERNAL_SERVER_ERROR;
     err.redirectUrl = "/login";
     next(err);
   }
@@ -67,7 +68,7 @@ const addToWishlistRequest = async (req, res) => {
     if (!result) {
       const url = "/home";
       return res
-        .status(400)
+        .status(StatusCode.BAD_REQUEST)
         .json({ success: false, message: true, redirectUrl: url });
     }
 
@@ -78,7 +79,7 @@ const addToWishlistRequest = async (req, res) => {
       (item) => item.variantId.toString() === variantId
     );
     if (item) {
-      return res.status(400).json({ success: false });
+      return res.status(StatusCode.BAD_REQUEST).json({ success: false });
     }
 
     //add to wishlist a variant
@@ -99,14 +100,14 @@ const addToWishlistRequest = async (req, res) => {
         { $pull: { items: { variantId } }, updatedAt: Date.now() }
       );
       return res
-        .status(200)
+        .status(StatusCode.OK)
         .json({ success: true, count, redirectUrl: "/cart" });
     }
 
-    res.status(200).json({ success: true, count });
+    res.status(StatusCode.OK).json({ success: true, count });
   } catch (err) {
     console.log(err);
-    res.status(500).json({ success: false });
+    res.status(StatusCode.INTERNAL_SERVER_ERROR).json({ success: false });
   }
 };
 
@@ -121,10 +122,10 @@ const wishlistRemoveItemRequest = async (req, res) => {
       { $pull: { items: { _id: itemId } }, updatedAt: Date.now() }
     );
 
-    res.status(200).json({ success: true, redirectUrl: "/wishlist" });
+    res.status(StatusCode.OK).json({ success: true, redirectUrl: "/wishlist" });
   } catch (err) {
     console.log(err);
-    res.status(500).json({ success: false, message: "Server error" });
+    res.status(StatusCode.INTERNAL_SERVER_ERROR).json({ success: false, message: "Server error" });
   }
 };
 
@@ -133,10 +134,10 @@ const wishlistRemoveAllItemRequest = async (req, res) => {
   try {
     const userId = req.session?.user?._id;
     await wishlistModels.findOneAndUpdate({ userId }, { $set: { items: [] } });
-    res.status(200).json({ success: true, redirectUrl: "/wishlist" });
+    res.status(StatusCode.OK).json({ success: true, redirectUrl: "/wishlist" });
   } catch (err) {
     console.log(err);
-    res.status(500).json({ success: false });
+    res.status(StatusCode.INTERNAL_SERVER_ERROR).json({ success: false });
   }
 };
 
@@ -191,10 +192,10 @@ const moveAllItemsToCartRequest = async (req, res) => {
       }
     }
 
-    res.status(200).json({ success: true, redirectUrl: "/wishlist" });
+    res.status(StatusCode.OK).json({ success: true, redirectUrl: "/wishlist" });
   } catch (err) {
     console.log(err);
-    res.status(500).json({ success: false });
+    res.status(StatusCode.INTERNAL_SERVER_ERROR).json({ success: false });
   }
 };
 

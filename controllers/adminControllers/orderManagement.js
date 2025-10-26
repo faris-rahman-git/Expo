@@ -1,3 +1,4 @@
+const StatusCode = require("../../constants/statusCode");
 const orderModels = require("../../models/orderModels");
 const { updateStockAndSalesCount } = require("../../utils/stockManagement");
 const { walletUpdate } = require("../../utils/walletupdates");
@@ -73,14 +74,14 @@ const allOrdersPage = async (req, res, next) => {
       return b.orderDate - a.orderDate;
     });
 
-    res.status(200).render("adminPages/orderManagement/allOrders", {
+    res.status(StatusCode.OK).render("adminPages/orderManagement/allOrders", {
       orders,
       filterReturnContent,
       activeSidebar: { main: "orderManagement" },
       filterContent,
     });
   } catch (err) {
-    err.status = 500;
+    err.status = StatusCode.INTERNAL_SERVER_ERROR;
     err.redirectUrl = "/admin/allProducts";
     next(err);
   }
@@ -91,7 +92,7 @@ const filterRequest = (req, res) => {
   const { filterContent, filterReturnContent } = req.body;
   req.session.filterContent = filterContent;
   req.session.filterReturnContent = filterReturnContent;
-  res.status(200).redirect("/admin/allOrders");
+  res.status(StatusCode.OK).redirect("/admin/allOrders");
 };
 
 // changeOrderStatusRequest
@@ -210,9 +211,9 @@ const changeOrderStatusRequest = async (req, res, next) => {
       { $set: updateFields }
     );
 
-    res.status(200).redirect("/admin/allOrders");
+    res.status(StatusCode.OK).redirect("/admin/allOrders");
   } catch (err) {
-    err.status = 500;
+    err.status = StatusCode.INTERNAL_SERVER_ERROR;
     err.redirectUrl = "/admin/allOrders";
     next(err);
   }
@@ -224,13 +225,13 @@ const orderDetailsPage = async (req, res) => {
     const { id, orderId } = req.params;
     const order = await orderModels.findById(id).populate("products.productId");
 
-    res.status(200).render("adminPages/orderManagement/orderDetails", {
+    res.status(StatusCode.OK).render("adminPages/orderManagement/orderDetails", {
       activeSidebar: { main: "orderManagement" },
       order,
       orderId,
     });
   } catch (err) {
-    err.status = 500;
+    err.status = StatusCode.INTERNAL_SERVER_ERROR;
     err.redirectUrl = "/admin/allOrders";
     next(err);
   }

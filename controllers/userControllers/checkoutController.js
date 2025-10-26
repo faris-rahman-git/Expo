@@ -14,6 +14,8 @@ const {
 } = require("../../utils/placeOrderToDatabase");
 const { walletUpdate } = require("../../utils/walletupdates");
 const couponModels = require("../../models/couponModels");
+const StatusCode = require("../../constants/statusCode");
+const Checkout = require("../../constants/user/checkout");
 
 //cartCheckoutRequest
 const cartCheckoutRequest = (req, res) => {
@@ -21,7 +23,7 @@ const cartCheckoutRequest = (req, res) => {
   delete req.session.variantId;
   delete req.session.quantity;
   req.session.checkout = true;
-  res.status(200).redirect("/checkOut");
+  res.status(StatusCode.OK).redirect("/checkOut");
 };
 
 // productCheckoutRequest
@@ -32,7 +34,7 @@ const productCheckoutRequest = async (req, res, next) => {
     const result = await checkProductValidity(productId, variantId);
     if (!result) {
       const url = "/home";
-      return res.status(400).redirect(url);
+      return res.status(StatusCode.BAD_REQUEST).redirect(url);
     }
 
     req.session.checkout = true;
@@ -45,9 +47,9 @@ const productCheckoutRequest = async (req, res, next) => {
     } else {
       req.session.quantity = quantity;
     }
-    res.status(200).redirect("/checkOut");
+    res.status(StatusCode.OK).redirect("/checkOut");
   } catch (err) {
-    err.status = 500;
+    err.status = StatusCode.INTERNAL_SERVER_ERROR;
     err.redirectUrl = "/home";
     next(err);
   }
@@ -61,9 +63,9 @@ const checkOutPage = async (req, res, next) => {
         req.get("Referer") == "https://localhost:3000/checkOut" ||
         req.get("Referer") == "http://localhost:3000/checkOut"
       ) {
-        return res.status(200).redirect("/home");
+        return res.status(StatusCode.OK).redirect("/home");
       }
-      return res.status(200).redirect(req.get("Referer") || "/home");
+      return res.status(StatusCode.OK).redirect(req.get("Referer") || "/home");
     }
 
     const userId = req.session?.user?._id;
@@ -94,7 +96,7 @@ const checkOutPage = async (req, res, next) => {
           if (variant._id.toString() == item.variantId.toString()) {
             //check stock
             if (item.quantity > variant.stock) {
-              return res.status(400).redirect("/cart");
+              return res.status(StatusCode.BAD_REQUEST).redirect("/cart");
             }
 
             const clonedVariant = variant.toObject(); // Convert to a plain JS object
@@ -113,7 +115,7 @@ const checkOutPage = async (req, res, next) => {
           if (variant._id.toString() == item.variantId.toString()) {
             //check stock
             if (item.quantity > variant.stock) {
-              return res.status(400).redirect("/cart");
+              return res.status(StatusCode.BAD_REQUEST).redirect("/cart");
             }
 
             //placeOrder details
@@ -154,7 +156,7 @@ const checkOutPage = async (req, res, next) => {
         req.session.variantId
       );
       if (!resultActive) {
-        return res.status(400).redirect("/home");
+        return res.status(StatusCode.BAD_REQUEST).redirect("/home");
       }
 
       const product = await productModels.findOne({
@@ -167,7 +169,7 @@ const checkOutPage = async (req, res, next) => {
             if (variant.stock == 0) {
               req.session.messageFromCheckout = true;
               return res
-                .status(400)
+                .status(StatusCode.BAD_REQUEST)
                 .redirect(
                   "/productDetails/" +
                     req.session.productId +
@@ -200,7 +202,7 @@ const checkOutPage = async (req, res, next) => {
             if (variant.stock == 0) {
               req.session.messageFromCheckout = true;
               return res
-                .status(400)
+                .status(StatusCode.BAD_REQUEST)
                 .redirect(
                   "/productDetails/" +
                     req.session.productId +
@@ -277,7 +279,7 @@ const checkOutPage = async (req, res, next) => {
       orderTotal = subtotal;
     }
 
-    res.status(200).render("userPages/pages/checkout/checkOut", {
+    res.status(StatusCode.OK).render("userPages/pages/checkout/checkOut", {
       defaultAddress,
       subtotal,
       coupon,
@@ -296,7 +298,7 @@ const checkOutPage = async (req, res, next) => {
     } else {
       err.redirectUrl = req.get("Referer") || "/home";
     }
-    err.status = 500;
+    err.status = StatusCode.INTERNAL_SERVER_ERROR;
     next(err);
   }
 };
@@ -306,7 +308,9 @@ const changeAddressPage = async (req, res, next) => {
   try {
     delete req.session.changeAddressPage;
     if (!req.session.checkout) {
-      return res.status(400).redirect(req.get("Referer") || "/home");
+      return res
+        .status(StatusCode.BAD_REQUEST)
+        .redirect(req.get("Referer") || "/home");
     }
 
     const userId = req.session?.user?._id;
@@ -323,13 +327,13 @@ const changeAddressPage = async (req, res, next) => {
     }
 
     req.session.changeAddressPage = true;
-    res.status(200).render("userPages/pages/checkout/changeAddress", {
+    res.status(StatusCode.OK).render("userPages/pages/checkout/changeAddress", {
       defaultAddress,
       address,
       userId,
     });
   } catch (err) {
-    err.status = 500;
+    err.status = StatusCode.INTERNAL_SERVER_ERROR;
     err.redirectUrl = req.get("Referer") || "/home";
     next(err);
   }
@@ -348,9 +352,9 @@ const changeAddressRequest = async (req, res, next) => {
         updatedAt: Date.now(),
       }
     );
-    res.status(200).redirect("/checkOut");
+    res.status(StatusCode.OK).redirect("/checkOut");
   } catch (err) {
-    err.status = 500;
+    err.status = StatusCode.INTERNAL_SERVER_ERROR;
     err.redirectUrl = "/checkOut";
     next(err);
   }
@@ -374,46 +378,46 @@ const applyCouponRequest = async (req, res) => {
         if (item.couponId.couponCode == coupon) {
           if (item.couponId.isDeleted) {
             return res
-              .status(400)
-              .json({ success: false, message: "Coupon Removed" });
+              .status(StatusCode.BAD_REQUEST)
+              .json({ success: false, message: Checkout.COUPON_REMOVED });
           }
           if (!item.couponId.isActive) {
             return res
-              .status(400)
-              .json({ success: false, message: "Coupon Inactive" });
+              .status(StatusCode.BAD_REQUEST)
+              .json({ success: false, message: Checkout.COUPON_INACTIVE });
           }
           if (item.couponId.expiryDate) {
             if (item.couponId.expiryDate < Date.now()) {
               return res
-                .status(400)
+                .status(StatusCode.BAD_REQUEST)
                 .json({ success: false, message: "Coupon Expired" });
             }
           }
           if (item.couponId.startDate > Date.now()) {
             return res
-              .status(400)
-              .json({ success: false, message: "Coupon Not Valid Yet " });
+              .status(StatusCode.BAD_REQUEST)
+              .json({ success: false, message: Checkout.COUPON_NOT_VALID });
           }
           if (item.couponId.minPurchase > subtotal) {
-            return res.status(400).json({
+            return res.status(StatusCode.BAD_REQUEST).json({
               success: false,
-              message: "Minimum Purchase Amount Not Met",
+              message: Checkout.PURCHASE_AMOUNT_NOT_MET,
             });
           }
           if (item.couponId.totalUsageLimit) {
             if (
               item.couponId.totalUsageLimit <= item.couponId.currectUsageCount
             ) {
-              return res.status(400).json({
+              return res.status(StatusCode.BAD_REQUEST).json({
                 success: false,
-                message: "Coupon Usage Limit Exceeded",
+                message: Checkout.COUPON_USAGE_LIMIT_EXCEEDED,
               });
             }
           }
           if (item.isUsed) {
             return res
-              .status(400)
-              .json({ success: false, message: "Coupon is already used" });
+              .status(StatusCode.BAD_REQUEST)
+              .json({ success: false, message: Checkout.COUPON_ALREADY_USED });
           }
           req.session.coupon = {
             _id: item.couponId._id,
@@ -422,25 +426,27 @@ const applyCouponRequest = async (req, res) => {
             discountValue: item.couponId.discountValue,
             maxDiscount: item.couponId.maxDiscount,
           };
-          return res.status(200).json({
+          return res.status(StatusCode.OK).json({
             success: true,
-            message: "Coupon Applied Successfully",
+            message: Checkout.COUPON_APPLIED,
           });
         }
       }
     }
     return res
-      .status(400)
-      .json({ success: false, message: "Coupon Not Found" });
+      .status(StatusCode.BAD_REQUEST)
+      .json({ success: false, message: Checkout.COUPON_NOT_FOUND });
   } catch (err) {
-    res.status(200).json({ success: false, message: "SomeThing Went Wrong" });
+    res
+      .status(StatusCode.OK)
+      .json({ success: false, message: Checkout.SOMETHING_WENT_WRONG });
   }
 };
 
 // removeCouponRequest
 const removeCouponRequest = (req, res) => {
   delete req.session.coupon;
-  res.status(200).json({ success: true });
+  res.status(StatusCode.OK).json({ success: true });
 };
 
 // placeOrderRequest
@@ -461,7 +467,9 @@ const placeOrderRequest = async (req, res, next) => {
     delete req.session.quantity;
 
     if (!defaultAddress) {
-      return res.status(400).json({ success: false, redirectUrl: "/checkOut" });
+      return res
+        .status(StatusCode.BAD_REQUEST)
+        .json({ success: false, redirectUrl: "/checkOut" });
     }
     if (!isWalletPayment && paymentMethod == null) {
       paymentMethod = "COD";
@@ -474,31 +482,31 @@ const placeOrderRequest = async (req, res, next) => {
       {
         if (coupon.isDeleted) {
           return res
-            .status(400)
-            .json({ success: false, message: "Coupon Removed" });
+            .status(StatusCode.BAD_REQUEST)
+            .json({ success: false, message: Checkout.COUPON_REMOVED });
         }
         if (!coupon.isActive) {
           return res
-            .status(400)
-            .json({ success: false, message: "Coupon Inactive" });
+            .status(StatusCode.BAD_REQUEST)
+            .json({ success: false, message: Checkout.COUPON_INACTIVE });
         }
         if (coupon.expiryDate) {
           if (coupon.expiryDate < Date.now()) {
             return res
-              .status(400)
-              .json({ success: false, message: "Coupon Expired" });
+              .status(StatusCode.BAD_REQUEST)
+              .json({ success: false, message: Checkout.COUPON_EXPIRED });
           }
         }
         if (coupon.startDate > Date.now()) {
           return res
-            .status(400)
-            .json({ success: false, message: "Coupon Not Valid Yet " });
+            .status(StatusCode.BAD_REQUEST)
+            .json({ success: false, message: Checkout.COUPON_NOT_VALID });
         }
         if (coupon.totalUsageLimit) {
           if (coupon.totalUsageLimit <= coupon.currectUsageCount) {
-            return res.status(400).json({
+            return res.status(StatusCode.BAD_REQUEST).json({
               success: false,
-              message: "Coupon Usage Limit Exceeded",
+              message: Checkout.COUPON_USAGE_LIMIT_EXCEEDED,
             });
           }
         }
@@ -513,7 +521,6 @@ const placeOrderRequest = async (req, res, next) => {
       email: 1,
       phoneNumber: 1,
     });
-
     for (let item of orderItems) {
       //check product is active
       const activeResult = await checkProductValidity(
@@ -528,7 +535,7 @@ const placeOrderRequest = async (req, res, next) => {
       if (!activeResult || checkStockResult) {
         req.session.sorryCheckout = true;
         return res
-          .status(400)
+          .status(StatusCode.BAD_REQUEST)
           .json({ success: false, redirectUrl: "/checkOut/sorry" });
       }
       totalPrice += item.quantity * item.finalPrice - item.discount;
@@ -560,7 +567,7 @@ const placeOrderRequest = async (req, res, next) => {
         if (!result2) {
           req.session.sorryCheckout = true;
           return res
-            .status(400)
+            .status(StatusCode.BAD_REQUEST)
             .json({ success: false, redirectUrl: "/checkOut/sorry" });
         }
 
@@ -591,12 +598,12 @@ const placeOrderRequest = async (req, res, next) => {
         if (!result1) {
           req.session.sorryCheckout = true;
           return res
-            .status(400)
+            .status(StatusCode.BAD_REQUEST)
             .json({ success: false, redirectUrl: "/checkOut/sorry" });
         }
 
         req.session.thankyou = true;
-        return res.status(200).json({
+        return res.status(StatusCode.OK).json({
           success: true,
           paymentMethod: "Wallet",
           redirectUrl: "/checkOut/thankYou",
@@ -627,7 +634,7 @@ const placeOrderRequest = async (req, res, next) => {
       if (!result) {
         req.session.sorryCheckout = true;
         return res
-          .status(400)
+          .status(StatusCode.BAD_REQUEST)
           .json({ success: false, redirectUrl: "/checkOut/sorry" });
       }
 
@@ -661,7 +668,7 @@ const placeOrderRequest = async (req, res, next) => {
         if (!result1) {
           req.session.sorryCheckout = true;
           return res
-            .status(400)
+            .status(StatusCode.BAD_REQUEST)
             .json({ success: false, redirectUrl: "/checkOut/sorry" });
         }
       }
@@ -682,10 +689,10 @@ const placeOrderRequest = async (req, res, next) => {
           req.session.sorryCheckout = true;
 
           res
-            .status(500)
+            .status(StatusCode.INTERNAL_SERVER_ERROR)
             .json({ success: false, redirectUrl: "/checkOut/sorry" });
         } else {
-          return res.status(200).json({
+          return res.status(StatusCode.OK).json({
             success: true,
             paymentMethod,
             order,
@@ -711,12 +718,12 @@ const placeOrderRequest = async (req, res, next) => {
       if (!result) {
         req.session.sorryCheckout = true;
         return res
-          .status(400)
+          .status(StatusCode.BAD_REQUEST)
           .json({ success: false, redirectUrl: "/checkOut/sorry" });
       }
 
       req.session.thankyou = true;
-      return res.status(200).json({
+      return res.status(StatusCode.OK).json({
         success: true,
         paymentMethod,
         redirectUrl: "/checkOut/thankYou",
@@ -724,7 +731,9 @@ const placeOrderRequest = async (req, res, next) => {
     }
   } catch (err) {
     req.session.sorryCheckout = true;
-    res.status(500).json({ success: false, redirectUrl: "/checkOut/sorry" });
+    res
+      .status(StatusCode.INTERNAL_SERVER_ERROR)
+      .json({ success: false, redirectUrl: "/checkOut/sorry" });
   }
 };
 
@@ -748,14 +757,14 @@ const placeOrderPaymentRequest = async (req, res) => {
 
       if (result) {
         req.session.thankyou = true;
-        return res.status(200).json({
+        return res.status(StatusCode.OK).json({
           success: true,
           redirectUrl: "/checkOut/thankYou",
         });
       }
     } else {
       req.session.sorryCheckout = true;
-      return res.status(400).json({
+      return res.status(StatusCode.BAD_REQUEST).json({
         success: false,
         redirectUrl: "/checkOut/sorry",
       });
@@ -769,10 +778,10 @@ const placeOrderPaymentRequest = async (req, res) => {
 const thankYouPage = (req, res) => {
   if (req.session.thankyou) {
     delete req.session.thankyou;
-    res.status(200).render("userPages/pages/checkout/thankYou");
+    res.status(StatusCode.OK).render("userPages/pages/checkout/thankYou");
   } else {
     const url = req.get("Referer") || "/home";
-    res.status(200).redirect(url);
+    res.status(StatusCode.OK).redirect(url);
   }
 };
 
@@ -780,10 +789,10 @@ const thankYouPage = (req, res) => {
 const sorryPage = (req, res) => {
   if (req.session.sorryCheckout) {
     delete req.session.sorryCheckout;
-    res.status(200).render("userPages/pages/checkout/Sorry");
+    res.status(StatusCode.OK).render("userPages/pages/checkout/Sorry");
   } else {
     const url = req.get("Referer") || "/home";
-    res.status(200).redirect(url);
+    res.status(StatusCode.OK).redirect(url);
   }
 };
 

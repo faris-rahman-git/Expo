@@ -1,3 +1,5 @@
+const Dashboard = require("../../constants/admin/dashboard");
+const StatusCode = require("../../constants/statusCode");
 const categoryModels = require("../../models/categoryModels");
 const orderModels = require("../../models/orderModels");
 const productModels = require("../../models/productModels");
@@ -262,7 +264,7 @@ const dashboardPage = async (req, res, next) => {
       .sort({ salesCount: -1 })
       .limit(10);
 
-    res.status(200).render("adminPages/dashboard/dashboard", {
+    res.status(StatusCode.OK).render("adminPages/dashboard/dashboard", {
       activeSidebar: { main: "dashboard" },
       userCount,
       activeuserCount: activeuserCount[0]?.totalUsers || 0,
@@ -276,10 +278,10 @@ const dashboardPage = async (req, res, next) => {
       completedOrdersRevenue: completedOrdersRevenue[0]?.totalRevenue || 0,
       top10Category,
       top10Product,
-      top10Brand
+      top10Brand,
     });
   } catch (err) {
-    err.status = 500;
+    err.status = StatusCode.INTERNAL_SERVER_ERROR;
     err.redirectUrl = "/admin/dashboard";
     next(err);
   }
@@ -395,7 +397,7 @@ const dashboardUserFilterRequest = async (req, res, next) => {
       newUsersArr.push(item.newUsers);
     });
 
-    res.status(200).json({
+    res.status(StatusCode.OK).json({
       success: true,
       dateArr,
       totalUsersArr,
@@ -404,7 +406,7 @@ const dashboardUserFilterRequest = async (req, res, next) => {
       newUsers: newUsers[0]?.totalNewUser || 0,
     });
   } catch (err) {
-    err.status = 500;
+    err.status = StatusCode.INTERNAL_SERVER_ERROR;
     err.redirectUrl = "/admin/dashboard";
     next(err);
   }
@@ -417,12 +419,11 @@ const dashboardSalesFilterRequest = async (req, res, next) => {
 
     let days, dateFormat, groupBy, timeUnit;
 
-    // ✅ Handle Custom Date Inputs
     if (filter === "Custom") {
       if (!startDate || !endDate) {
-        return res.status(400).json({
+        return res.status(StatusCode.BAD_REQUEST).json({
           success: false,
-          message: "Start date and end date are required for custom filtering.",
+          message: Dashboard.CUSTOM_FILTERING_REQUIRED,
         });
       }
       startDate = moment(startDate).startOf("day");
@@ -432,7 +433,6 @@ const dashboardSalesFilterRequest = async (req, res, next) => {
       groupBy = { $dateToString: { format: "%Y-%m-%d", date: "$createdAt" } };
       timeUnit = "days";
     } else {
-      // ✅ Handle Default Filters
       if (!startDate || !endDate) {
         startDate = moment().startOf("day");
         endDate = moment().endOf("day");
@@ -467,7 +467,6 @@ const dashboardSalesFilterRequest = async (req, res, next) => {
       }
     }
 
-    // ✅ Sales Data Aggregation Query
     const salesData = await orderModels.aggregate([
       {
         $match: {
@@ -527,7 +526,7 @@ const dashboardSalesFilterRequest = async (req, res, next) => {
       { $sort: { _id: 1 } },
     ]);
 
-    // ✅ Fill Missing Dates in Dataset
+    //  Fill Missing Dates in Dataset
     let dateArr = [];
     let totalOrdersArr = [];
     let totalRevenueArr = [];
@@ -549,7 +548,7 @@ const dashboardSalesFilterRequest = async (req, res, next) => {
       digitalAmountArr.push(foundData ? foundData.digitalAmount : 0);
     }
 
-    return res.status(200).json({
+    return res.status(StatusCode.OK).json({
       success: true,
       filter,
       totalOrders: totalOrdersArr.reduce((a, b) => a + b, 0),
@@ -567,7 +566,7 @@ const dashboardSalesFilterRequest = async (req, res, next) => {
       digitalAmountArr,
     });
   } catch (err) {
-    err.status = 500;
+    err.status = StatusCode.INTERNAL_SERVER_ERROR;
     err.redirectUrl = "/admin/dashboard";
     next(err);
   }

@@ -8,17 +8,19 @@ const {
 const { deleteAllImages } = require("../../utils/productManagementUtils");
 const { removeCartAndWishlistItems } = require("../../utils/stockManagement");
 const { updateOffers } = require("../../utils/discountHelper");
+const StatusCode = require("../../constants/statusCode");
+const Category = require("../../constants/admin/category");
 
 // all Category page
 const allCategoryPage = async (req, res, next) => {
   try {
     const categories = await categoryModels.find({ isDeleted: false });
-    res.status(200).render("adminPages/categoryManagement/allCategory", {
+    res.status(StatusCode.OK).render("adminPages/categoryManagement/allCategory", {
       categories,
       activeSidebar: { main: "categoryManagement", sub: "allCategory" },
     });
   } catch (err) {
-    err.status = 500;
+    err.status = StatusCode.INTERNAL_SERVER_ERROR;
     err.redirectUrl = "/admin/allUsers";
     next(err);
   }
@@ -26,7 +28,7 @@ const allCategoryPage = async (req, res, next) => {
 
 // add New Category page
 const addNewCategoryPage = (req, res) => {
-  res.status(200).render("adminPages/categoryManagement/addNewCategory", {
+  res.status(StatusCode.OK).render("adminPages/categoryManagement/addNewCategory", {
     activeSidebar: { main: "categoryManagement", sub: "addNewCategory" },
   });
 };
@@ -63,8 +65,8 @@ const addNewCategoryRequest = async (req, res, next) => {
 
     if (categoryExist) {
       return res
-        .status(400)
-        .json({ success: false, message: "Category Name is Already Taken" });
+        .status(StatusCode.BAD_REQUEST)
+        .json({ success: false, message: Category.CATEGORY_NAME_ALREADY_TAKEN });
     }
 
     const newCategory = new categoryModels({
@@ -94,9 +96,9 @@ const addNewCategoryRequest = async (req, res, next) => {
       newCategory.offerStartDate = new Date(startDate);
     }
     await newCategory.save();
-    res.status(200).json({ success: true, redirectUrl: "/admin/allCategory" });
+    res.status(StatusCode.OK).json({ success: true, redirectUrl: "/admin/allCategory" });
   } catch (err) {
-    err.status = 500;
+    err.status = StatusCode.INTERNAL_SERVER_ERROR;
     err.redirectUrl = "/admin/allCategory";
     next(err);
   }
@@ -107,12 +109,12 @@ const editCategoryPage = async (req, res, next) => {
   try {
     const categoryId = req.params.id;
     const category = await categoryModels.findById(categoryId);
-    res.status(200).render("adminPages/categoryManagement/editCategory", {
+    res.status(StatusCode.OK).render("adminPages/categoryManagement/editCategory", {
       category,
       activeSidebar: { main: "categoryManagement" },
     });
   } catch (err) {
-    err.status = 500;
+    err.status = StatusCode.INTERNAL_SERVER_ERROR;
     err.redirectUrl = "/admin/allCategory";
     next(err);
   }
@@ -134,7 +136,7 @@ const editCategoryRequest = async (req, res, next) => {
 
     if (!category)
       return res
-        .status(404)
+        .status(StatusCode.NOT_FOUND)
         .json({ success: false, redirectUrl: "/admin/allCategory" });
 
     const normalizedcategoryName = categoryName
@@ -161,8 +163,8 @@ const editCategoryRequest = async (req, res, next) => {
 
     if (categoryExist && categoryExist._id.toString() != categoryId) {
       return res
-        .status(400)
-        .json({ success: false, message: "Category Name is already Taken" });
+        .status(StatusCode.BAD_REQUEST)
+        .json({ success: false, message: Category.CATEGORY_NAME_ALREADY_TAKEN });
     }
 
     const updateCategory = {};
@@ -215,10 +217,10 @@ const editCategoryRequest = async (req, res, next) => {
     await updateOffers("category", categoryId);
 
     return res
-      .status(200)
+      .status(StatusCode.OK)
       .json({ success: true, redirectUrl: "/admin/allCategory" });
   } catch (err) {
-    err.status = 500;
+    err.status = StatusCode.INTERNAL_SERVER_ERROR;
     err.redirectUrl = "/admin/editCategory/" + categoryId;
     next(err);
   }
@@ -230,7 +232,7 @@ const softDeleteCategoryRequest = async (req, res, next) => {
     const id = req.params.id;
     const category = await categoryModels.findById(id);
     if (!category) {
-      return res.status(404).redirect("/admin/allCategory");
+      return res.status(StatusCode.NOT_FOUND).redirect("/admin/allCategory");
     }
     //update category details
     const updateCategory = {};
@@ -245,9 +247,9 @@ const softDeleteCategoryRequest = async (req, res, next) => {
     //remove cart items
     await removeCartAndWishlistItems("category", id);
 
-    return res.status(400).redirect(`/admin/allCategory`);
+    return res.status(StatusCode.BAD_REQUEST).redirect(`/admin/allCategory`);
   } catch (err) {
-    err.status = 500;
+    err.status = StatusCode.INTERNAL_SERVER_ERROR;
     err.redirectUrl = "/admin/allCategory";
     next(err);
   }
@@ -257,12 +259,12 @@ const softDeleteCategoryRequest = async (req, res, next) => {
 const deletedCategoryPage = async (req, res, next) => {
   try {
     const category = await categoryModels.find({ isDeleted: true });
-    res.status(200).render("adminPages/categoryManagement/deletedCategory", {
+    res.status(StatusCode.OK).render("adminPages/categoryManagement/deletedCategory", {
       category,
       activeSidebar: { main: "categoryManagement", sub: "deletedCategory" },
     });
   } catch (err) {
-    err.status = 500;
+    err.status = StatusCode.INTERNAL_SERVER_ERROR;
     err.redirectUrl = "/admin/allCategory";
     next(err);
   }
@@ -274,7 +276,7 @@ const restoreCategoryRequest = async (req, res, next) => {
     const id = req.params.id;
     const category = await categoryModels.findById(id);
     if (!category) {
-      return res.status(404).redirect("/admin/deletedCategory");
+      return res.status(StatusCode.NOT_FOUND).redirect("/admin/deletedCategory");
     }
 
     //update category details
@@ -287,9 +289,9 @@ const restoreCategoryRequest = async (req, res, next) => {
       { $set: updateCategory }
     );
 
-    res.status(200).redirect("/admin/deletedCategory");
+    res.status(StatusCode.OK).redirect("/admin/deletedCategory");
   } catch (err) {
-    err.status = 500;
+    err.status = StatusCode.INTERNAL_SERVER_ERROR;
     err.redirectUrl = "/admin/deletedCategory";
     next(err);
   }
@@ -301,7 +303,7 @@ const deletedCategoryRequest = async (req, res, next) => {
     const id = req.params.id;
     const category = await categoryModels.findById(id);
     if (!category) {
-      return res.status(404).redirect("/admin/deletedCategory");
+      return res.status(StatusCode.NOT_FOUND).redirect("/admin/deletedCategory");
     }
 
     const identity = false;
@@ -312,9 +314,9 @@ const deletedCategoryRequest = async (req, res, next) => {
       await categoryModels.deleteOne({ _id: category._id });
     }
 
-    return res.status(200).redirect("/admin/deletedCategory");
+    return res.status(StatusCode.OK).redirect("/admin/deletedCategory");
   } catch (err) {
-    err.status = 500;
+    err.status = StatusCode.INTERNAL_SERVER_ERROR;
     err.redirectUrl = "/admin/deletedCategory";
     next(err);
   }
@@ -334,16 +336,16 @@ const subCategoryPage = async (req, res) => {
     );
 
     if (subcategoriesList.length === 0 && subCategory.length > 0) {
-      return res.status(404).redirect("/admin/allCategory");
+      return res.status(StatusCode.NOT_FOUND).redirect("/admin/allCategory");
     }
 
-    res.status(200).render("adminPages/categoryManagement/subCategory", {
+    res.status(StatusCode.OK).render("adminPages/categoryManagement/subCategory", {
       subcategoriesList,
       categoryId,
       activeSidebar: { main: "categoryManagement", sub: "allCategory" },
     });
   } catch (err) {
-    err.status = 500;
+    err.status = StatusCode.INTERNAL_SERVER_ERROR;
     err.redirectUrl = "/admin/allCategory";
     next(err);
   }
@@ -352,9 +354,9 @@ const subCategoryPage = async (req, res) => {
 // add New SubCategory
 const addNewSubCategoryPage = (req, res) => {
   const categoryId = req.params.id;
-  const message = req.session.message ?? "Enter New SubCategory Details ";
+  const message = req.session.message ?? Category.ENTER_NEW_SUBCATEGORY_DETAILS;
   delete req.session.message;
-  res.status(200).render("adminPages/categoryManagement/addNewSubCategory", {
+  res.status(StatusCode.OK).render("adminPages/categoryManagement/addNewSubCategory", {
     message,
     categoryId,
     activeSidebar: { main: "categoryManagement", sub: "allCategory" },
@@ -398,9 +400,9 @@ const addNewSubCategoryRequest = async (req, res, next) => {
     });
 
     if (subCategoryExist) {
-      return res.status(400).json({
+      return res.status(StatusCode.BAD_REQUEST).json({
         success: false,
-        message: "SubCategory Name is Already Taken for this Parent Category",
+        message: Category.SUBCATEGORY_NAME_ALREADY_TAKEN ,
       });
     }
 
@@ -441,10 +443,10 @@ const addNewSubCategoryRequest = async (req, res, next) => {
     await incNoOfCategory(categoryId);
 
     res
-      .status(200)
+      .status(StatusCode.OK)
       .json({ success: true, redirectUrl: "/admin/subCategory/" + categoryId });
   } catch (err) {
-    err.status = 500;
+    err.status = StatusCode.INTERNAL_SERVER_ERROR;
     err.redirectUrl = "/admin/addNewSubCategory/" + categoryId;
     next(err);
   }
@@ -457,16 +459,16 @@ const editSubCategoryPage = async (req, res, next) => {
     //check if the Subcategory exists
     const subCategory = await subCategoryModels.findById(subCategoryId);
     if (!subCategory) {
-      return res.status(400).redirect("/admin/subCategory/" + categoryId);
+      return res.status(StatusCode.BAD_REQUEST).redirect("/admin/subCategory/" + categoryId);
     }
 
-    res.status(200).render("adminPages/categoryManagement/editSubCategory", {
+    res.status(StatusCode.OK).render("adminPages/categoryManagement/editSubCategory", {
       categoryId,
       subCategory,
       activeSidebar: { main: "categoryManagement", sub: "allCategory" },
     });
   } catch (err) {
-    err.status = 500;
+    err.status = StatusCode.INTERNAL_SERVER_ERROR;
     err.redirectUrl = "/admin/subCategory/" + categoryId;
     next(err);
   }
@@ -486,7 +488,7 @@ const editSubCategoryRequest = async (req, res, next) => {
     } = req.body;
     const subCategory = await subCategoryModels.findById(subCategoryId);
     if (!subCategory) {
-      return res.status(400).json({
+      return res.status(StatusCode.BAD_REQUEST).json({
         success: false,
         redirectUrl: "/admin/subCategory/" + categoryId,
       });
@@ -516,9 +518,9 @@ const editSubCategoryRequest = async (req, res, next) => {
     });
 
     if (subCategoryExist && subCategoryExist._id.toString() !== subCategoryId) {
-      return res.status(400).json({
+      return res.status(StatusCode.BAD_REQUEST).json({
         success: false,
-        message: "SubCategory Name is Already Taken for this Parent Category",
+        message: Category.SUBCATEGORY_NAME_ALREADY_TAKEN,
       });
     }
 
@@ -571,11 +573,11 @@ const editSubCategoryRequest = async (req, res, next) => {
     await updateOffers("subcategory", subCategoryId);
 
     res
-      .status(200)
+      .status(StatusCode.OK)
       .json({ success: true, redirectUrl: "/admin/subCategory/" + categoryId });
   } catch (err) {
-    req.session.message = "Something Went Wrong! Please try again.";
-    err.status = 500;
+    req.session.message = Category.SOMETHING_WENT_WRONG;
+    err.status = StatusCode.INTERNAL_SERVER_ERROR;
     err.redirectUrl =
       "/admin/editSubCategory/" + categoryId + "/" + subCategoryId;
     next(err);
@@ -589,7 +591,7 @@ const softDeleteSubCategoryRequest = async (req, res, next) => {
     //check subCategory is exist
     const subCategory = await subCategoryModels.findById(subCategoryId);
     if (!subCategory) {
-      res.status(400).redirect("/admin/subCategory/" + categoryId);
+      res.status(StatusCode.BAD_REQUEST).redirect("/admin/subCategory/" + categoryId);
     }
     //update details to database
     const updateSubCategory = {};
@@ -607,9 +609,9 @@ const softDeleteSubCategoryRequest = async (req, res, next) => {
     await removeCartAndWishlistItems("subCategory", subCategoryId);
 
     //redirect
-    res.status(200).redirect("/admin/subCategory/" + categoryId);
+    res.status(StatusCode.OK).redirect("/admin/subCategory/" + categoryId);
   } catch (err) {
-    err.status = 500;
+    err.status = StatusCode.INTERNAL_SERVER_ERROR;
     err.redirectUrl = "/admin/subCategory/" + categoryId;
     next(err);
   }
@@ -630,7 +632,7 @@ const deletedSubCategoriesPage = async (req, res, next) => {
       activeSidebar: { main: "categoryManagement", sub: "allCategory" },
     });
   } catch (err) {
-    err.status = 500;
+    err.status = StatusCode.INTERNAL_SERVER_ERROR;
     err.redirectUrl = "/admin/subCategory/" + categoryId;
     next(err);
   }
@@ -642,7 +644,7 @@ const deletedSubCategoriesRequest = async (req, res, next) => {
   try {
     const subCategory = await subCategoryModels.findById(subCategoryId);
     if (!subCategory) {
-      res.status(400).redirect("/admin/deletedSubCategories/" + categoryId);
+      res.status(StatusCode.BAD_REQUEST).redirect("/admin/deletedSubCategories/" + categoryId);
     }
 
     //delete details from database
@@ -653,9 +655,9 @@ const deletedSubCategoriesRequest = async (req, res, next) => {
       await subCategoryModels.deleteOne({ _id: subCategoryId });
     }
 
-    res.status(200).redirect("/admin/deletedSubCategories/" + categoryId);
+    res.status(StatusCode.OK).redirect("/admin/deletedSubCategories/" + categoryId);
   } catch (err) {
-    err.status = 500;
+    err.status = StatusCode.INTERNAL_SERVER_ERROR;
     err.redirectUrl = "/admin/deletedSubCategories/" + categoryId;
     next(err);
   }
@@ -667,7 +669,7 @@ const restoreSubCategoryRequest = async (req, res, next) => {
   try {
     const subCategory = await subCategoryModels.findById(subCategoryId);
     if (!subCategory) {
-      res.status(400).redirect("/admin/deletedSubCategories/" + categoryId);
+      res.status(StatusCode.BAD_REQUEST).redirect("/admin/deletedSubCategories/" + categoryId);
     }
 
     //update isDeleted to false
@@ -681,9 +683,9 @@ const restoreSubCategoryRequest = async (req, res, next) => {
     );
 
     await incNoOfCategory(categoryId);
-    res.status(200).redirect("/admin/deletedSubCategories/" + categoryId);
+    res.status(StatusCode.OK).redirect("/admin/deletedSubCategories/" + categoryId);
   } catch (err) {
-    err.status = 500;
+    err.status = StatusCode.INTERNAL_SERVER_ERROR;
     err.redirectUrl = "/admin/deletedSubCategories/" + categoryId;
     next(err);
   }

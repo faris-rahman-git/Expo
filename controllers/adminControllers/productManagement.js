@@ -20,6 +20,8 @@ const {
 const { removeCartAndWishlistItems } = require("../../utils/stockManagement");
 const { updateOffers } = require("../../utils/discountHelper");
 const { default: mongoose } = require("mongoose");
+const StatusCode = require("../../constants/statusCode");
+const Product = require("../../constants/admin/product");
 
 // all Products page
 const allProductsPage = async (req, res, next) => {
@@ -37,12 +39,14 @@ const allProductsPage = async (req, res, next) => {
         !product?.subCategoryId?.isInactive
     );
 
-    res.status(200).render("adminPages/productManagement/allProducts", {
-      validProducts,
-      activeSidebar: { main: "productManagement", sub: "allProducts" },
-    });
+    res
+      .status(StatusCode.OK)
+      .render("adminPages/productManagement/allProducts", {
+        validProducts,
+        activeSidebar: { main: "productManagement", sub: "allProducts" },
+      });
   } catch (err) {
-    err.status = 500;
+    err.status = StatusCode.INTERNAL_SERVER_ERROR;
     err.redirectUrl = "/admin/allCategory";
     next(err);
   }
@@ -52,12 +56,14 @@ const allProductsPage = async (req, res, next) => {
 const addNewProductPage = async (req, res, next) => {
   try {
     const categories = await categoryModels.find({ isDeleted: false });
-    res.status(200).render("adminPages/productManagement/addNewProduct", {
-      categories,
-      activeSidebar: { main: "productManagement", sub: "addNewProducts" },
-    });
+    res
+      .status(StatusCode.OK)
+      .render("adminPages/productManagement/addNewProduct", {
+        categories,
+        activeSidebar: { main: "productManagement", sub: "addNewProducts" },
+      });
   } catch (err) {
-    err.status = 500;
+    err.status = StatusCode.INTERNAL_SERVER_ERROR;
     err.redirectUrl = "/admin/allProducts";
     next(err);
   }
@@ -69,7 +75,9 @@ const addNewProductPageGetSubCategories = async (req, res, next) => {
     const { categoryId } = req.query;
 
     if (!categoryId) {
-      return res.status(400).json({ error: "Category ID is required" });
+      return res
+        .status(StatusCode.BAD_REQUEST)
+        .json({ error: Product.CATEGORY_ID_REQUIRED });
     }
 
     if (categoryId != "Select Product Category") {
@@ -77,10 +85,10 @@ const addNewProductPageGetSubCategories = async (req, res, next) => {
         categoryId,
         isDeleted: false,
       });
-      res.status(200).json(subCategories);
+      res.status(StatusCode.OK).json(subCategories);
     }
   } catch (err) {
-    err.status = 500;
+    err.status = StatusCode.INTERNAL_SERVER_ERROR;
     err.redirectUrl = "/admin/allProducts";
     next(err);
   }
@@ -123,9 +131,9 @@ const addNewProductRequest = async (req, res, next) => {
     });
 
     if (productExist) {
-      return res.status(400).json({
+      return res.status(StatusCode.BAD_REQUEST).json({
         success: false,
-        message: "Product already exists in this Category and SubCategory",
+        message: Product.PRODUCT_ALREADY_EXISTS,
       });
     }
 
@@ -166,10 +174,10 @@ const addNewProductRequest = async (req, res, next) => {
     await incNoOfSubCategory(productSubCategory);
 
     return res
-      .status(200)
+      .status(StatusCode.OK)
       .json({ success: true, redirectUrl: "/admin/allProducts" });
   } catch (err) {
-    err.status = 500;
+    err.status = StatusCode.INTERNAL_SERVER_ERROR;
     err.redirectUrl = "/admin/allProducts";
     next(err);
   }
@@ -189,17 +197,19 @@ const editProductPage = async (req, res, next) => {
       isDeleted: false,
     });
     if (!product) {
-      res.status(400).redirect("/admin/allProducts");
+      res.status(StatusCode.BAD_REQUEST).redirect("/admin/allProducts");
     }
 
-    res.status(200).render("adminPages/productManagement/editProducts", {
-      product,
-      categories,
-      subCategories,
-      activeSidebar: { main: "productManagement" },
-    });
+    res
+      .status(StatusCode.OK)
+      .render("adminPages/productManagement/editProducts", {
+        product,
+        categories,
+        subCategories,
+        activeSidebar: { main: "productManagement" },
+      });
   } catch (err) {
-    err.status = 500;
+    err.status = StatusCode.INTERNAL_SERVER_ERROR;
     err.redirectUrl = "/admin/allProducts";
     next(err);
   }
@@ -223,7 +233,7 @@ const editProductRequest = async (req, res, next) => {
     //find product
     const product = await productModels.findById(productId);
     if (!product) {
-      return res.status(400).json({
+      return res.status(StatusCode.BAD_REQUEST).json({
         success: false,
         redirectUrl: "/admin/allProducts",
       });
@@ -252,9 +262,9 @@ const editProductRequest = async (req, res, next) => {
     });
 
     if (productExist && productExist._id.toString() != productId) {
-      return res.status(400).json({
+      return res.status(StatusCode.BAD_REQUEST).json({
         success: false,
-        message: "Product already exists in this Category and SubCategory",
+        message: Product.PRODUCT_ALREADY_EXISTS,
       });
     }
 
@@ -321,13 +331,13 @@ const editProductRequest = async (req, res, next) => {
 
     await updateOffers("product", productId);
 
-    return res.status(200).json({
+    return res.status(StatusCode.OK).json({
       success: true,
       redirectUrl: "/admin/allProducts",
     });
   } catch (err) {
-    req.session.message = "Something Went Wrong! Please Try Again";
-    err.status = 500;
+    req.session.message = Product.SOMETHING_WENT_WRONG;
+    err.status = StatusCode.INTERNAL_SERVER_ERROR;
     err.redirectUrl = "/admin/editProduct/" + productId;
     next(err);
   }
@@ -341,7 +351,7 @@ const softDeleteProductRequest = async (req, res, next) => {
     //check product
     const product = await productModels.findById(id);
     if (!product) {
-      return res.status(400).redirect("/admin/allProducts");
+      return res.status(StatusCode.BAD_REQUEST).redirect("/admin/allProducts");
     }
 
     //update schema
@@ -356,9 +366,9 @@ const softDeleteProductRequest = async (req, res, next) => {
     await removeCartAndWishlistItems("product", id);
 
     //redirect allProducts page
-    res.status(200).redirect("/admin/allProducts");
+    res.status(StatusCode.OK).redirect("/admin/allProducts");
   } catch (err) {
-    err.status = 500;
+    err.status = StatusCode.INTERNAL_SERVER_ERROR;
     err.redirectUrl = "/admin/allProducts";
     next(err);
   }
@@ -370,12 +380,14 @@ const deletedProductsPage = async (req, res, next) => {
     const products = await productModels
       .find({ isDeleted: true })
       .populate("categoryId subCategoryId");
-    res.status(200).render("adminPages/productManagement/deletedProducts", {
-      products,
-      activeSidebar: { main: "productManagement", sub: "deletedProducts" },
-    });
+    res
+      .status(StatusCode.OK)
+      .render("adminPages/productManagement/deletedProducts", {
+        products,
+        activeSidebar: { main: "productManagement", sub: "deletedProducts" },
+      });
   } catch (err) {
-    err.status = 500;
+    err.status = StatusCode.INTERNAL_SERVER_ERROR;
     err.redirectUrl = "/admin/allProducts";
     next(err);
   }
@@ -389,7 +401,9 @@ const restoreProductRequest = async (req, res, next) => {
     //check product
     const product = await productModels.findById(id);
     if (!product) {
-      return res.status(400).redirect("/admin/deletedProducts");
+      return res
+        .status(StatusCode.BAD_REQUEST)
+        .redirect("/admin/deletedProducts");
     }
 
     //update databse
@@ -401,9 +415,9 @@ const restoreProductRequest = async (req, res, next) => {
     await incNoOfSubCategory(product.subCategoryId);
 
     //redirect deletedProducts page
-    res.status(200).redirect("/admin/deletedProducts");
+    res.status(StatusCode.OK).redirect("/admin/deletedProducts");
   } catch (err) {
-    err.status = 500;
+    err.status = StatusCode.INTERNAL_SERVER_ERROR;
     err.redirectUrl = "/admin/deletedProducts";
     next(err);
   }
@@ -417,7 +431,9 @@ const deleteProductRequest = async (req, res, next) => {
     //check product
     const product = await productModels.findById(id);
     if (!product) {
-      return res.status(400).redirect("/admin/deletedProducts");
+      return res
+        .status(StatusCode.BAD_REQUEST)
+        .redirect("/admin/deletedProducts");
     }
 
     //delete permenently
@@ -426,9 +442,9 @@ const deleteProductRequest = async (req, res, next) => {
       await productModels.deleteOne({ _id: product._id });
     }
 
-    return res.status(200).redirect("/admin/deletedProducts");
+    return res.status(StatusCode.OK).redirect("/admin/deletedProducts");
   } catch (err) {
-    err.status = 500;
+    err.status = StatusCode.INTERNAL_SERVER_ERROR;
     err.redirectUrl = "/admin/deletedProducts";
     next(err);
   }
@@ -459,15 +475,17 @@ const productVariantsPage = async (req, res, next) => {
     );
 
     if (activeVariants.length === 0 && product.variants.length > 0) {
-      return res.status(404).redirect("/admin/allProducts");
+      return res.status(StatusCode.NOT_FOUND).redirect("/admin/allProducts");
     }
-    res.status(200).render("adminPages/productManagement/productVariants", {
-      product,
-      activeVariants,
-      activeSidebar: { main: "productManagement", sub: "allProducts" },
-    });
+    res
+      .status(StatusCode.OK)
+      .render("adminPages/productManagement/productVariants", {
+        product,
+        activeVariants,
+        activeSidebar: { main: "productManagement", sub: "allProducts" },
+      });
   } catch (err) {
-    err.status = 500;
+    err.status = StatusCode.INTERNAL_SERVER_ERROR;
     err.redirectUrl = "/admin/allProducts";
     next(err);
   }
@@ -476,13 +494,15 @@ const productVariantsPage = async (req, res, next) => {
 //add New Product Variant Page
 const addNewProductVariantPage = (req, res) => {
   const productId = req.params.id;
-  const message = req.session.message ?? "Enter product variant details";
+  const message = req.session.message ?? Product.ENTER_PRODUCT_VARIANT_DETAILS;
   delete req.session.message;
-  res.status(200).render("adminPages/productManagement/addNewProductVariant", {
-    message,
-    productId,
-    activeSidebar: { main: "productManagement", sub: "allProducts" },
-  });
+  res
+    .status(StatusCode.OK)
+    .render("adminPages/productManagement/addNewProductVariant", {
+      message,
+      productId,
+      activeSidebar: { main: "productManagement", sub: "allProducts" },
+    });
 };
 
 // add New Product Variant Request
@@ -492,11 +512,11 @@ const addNewProductVariantRequest = async (req, res, next) => {
     upload(req, res, async (err) => {
       if (err) {
         req.session.message =
-          err.message === "Only image files are allowed!"
-            ? "Only image files are allowed"
-            : "Only 5 images can be uploaded.";
+          err.message === Product.ONLY_IMAGE_FILES_ALLOWED
+            ? Product.ONLY_IMAGE_FILES_ALLOWED
+            : Product.ONLY_5_IMAGES_CAN_UPLOAD;
         return res
-          .status(400)
+          .status(StatusCode.BAD_REQUEST)
           .redirect(`/admin/addNewProductVariant/${productId}`);
       }
 
@@ -522,16 +542,16 @@ const addNewProductVariantRequest = async (req, res, next) => {
           productVariantDescription,
         ].every(Boolean)
       ) {
-        req.session.message = "All fields are required";
+        req.session.message = Product.ALL_FIELDS_REQUIRED;
         return res
-          .status(400)
+          .status(StatusCode.BAD_REQUEST)
           .redirect(`/admin/addNewProductVariant/${productId}`);
       }
 
       if (isNaN(stock) || stock < 0 || isNaN(price) || price < 0) {
-        req.session.message = "Stock and price must be positive numbers.";
+        req.session.message = Product.STOCK_AND_PRICE_POSITIVE;
         return res
-          .status(400)
+          .status(StatusCode.BAD_REQUEST)
           .redirect(`/admin/addNewProductVariant/${productId}`);
       }
       if (
@@ -539,9 +559,9 @@ const addNewProductVariantRequest = async (req, res, next) => {
         offerPercentage < 0 ||
         offerPercentage > 99
       ) {
-        req.session.message = "Offer percentage must be between 0 and 99.";
+        req.session.message = Product.OFFER_PERCENTAGE_RANGE;
         return res
-          .status(400)
+          .status(StatusCode.BAD_REQUEST)
           .redirect(`/admin/addNewProductVariant/${productId}`);
       }
 
@@ -560,10 +580,9 @@ const addNewProductVariantRequest = async (req, res, next) => {
 
       if (productVariantExist) {
         deleteUploadedFiles(req.files);
-        req.session.message =
-          "Product variant with the same name and color already exists.";
+        req.session.message = Product.PRODUCT_VARIANT_ALREADY_EXISTS;
         return res
-          .status(400)
+          .status(StatusCode.BAD_REQUEST)
           .redirect(`/admin/addNewProductVariant/${productId}`);
       }
 
@@ -601,7 +620,9 @@ const addNewProductVariantRequest = async (req, res, next) => {
       await updateNoOfVariants(productId);
       await updateTotalStock(productId);
 
-      return res.status(200).redirect(`/admin/productVariants/${productId}`);
+      return res
+        .status(StatusCode.OK)
+        .redirect(`/admin/productVariants/${productId}`);
     });
   } catch (err) {
     next(err);
@@ -624,7 +645,7 @@ const softDeleteProductVariantRequest = async (req, res, next) => {
       }
     );
     if (!result) {
-      return res.status(404).redirect("/admin/allProducts");
+      return res.status(StatusCode.NOT_FOUND).redirect("/admin/allProducts");
     }
 
     // Sum all variant stock for the product
@@ -634,9 +655,11 @@ const softDeleteProductVariantRequest = async (req, res, next) => {
     //remove cart items
     await removeCartAndWishlistItems("variant", variantId);
 
-    return res.status(200).redirect("/admin/productVariants/" + productId);
+    return res
+      .status(StatusCode.OK)
+      .redirect("/admin/productVariants/" + productId);
   } catch (err) {
-    err.status = 500;
+    err.status = StatusCode.INTERNAL_SERVER_ERROR;
     err.redirectUrl = "/admin/productVariants/" + productId;
     next(err);
   }
@@ -652,21 +675,25 @@ const editProductVariantPage = async (req, res, next) => {
       variant._id.equals(variantId)
     );
     if (!variant) {
-      return res.status(400).redirect("/admin/productVariants" + productId);
+      return res
+        .status(StatusCode.BAD_REQUEST)
+        .redirect("/admin/productVariants" + productId);
     }
 
-    const message = req.session.message ?? "Edit product variant";
+    const message = req.session.message ?? Product.EDIT_PRODUCT_VARIANT;
     delete req.session.message;
     delete req.session.removeImages;
     req.session.removeImages = [];
-    res.status(200).render("adminPages/productManagement/editProductVariant", {
-      productId,
-      message,
-      variant,
-      activeSidebar: { main: "productManagement", sub: "allProducts" },
-    });
+    res
+      .status(StatusCode.OK)
+      .render("adminPages/productManagement/editProductVariant", {
+        productId,
+        message,
+        variant,
+        activeSidebar: { main: "productManagement", sub: "allProducts" },
+      });
   } catch (err) {
-    err.status = 500;
+    err.status = StatusCode.INTERNAL_SERVER_ERROR;
     err.redirectUrl = "/admin/productVariants/" + productId;
     next(err);
   }
@@ -676,7 +703,7 @@ const editProductVariantPage = async (req, res, next) => {
 const removeVariantImage = async (req, res) => {
   const { imageIndex } = req.params;
   req.session.removeImages.push(Number(imageIndex));
-  return res.status(200).json({ success: true });
+  return res.status(StatusCode.OK).json({ success: true });
 };
 
 //edit Product Variant request
@@ -685,9 +712,9 @@ const editProductVariantRequest = async (req, res, next) => {
   try {
     upload(req, res, async (err) => {
       if (err) {
-        req.session.message = "Only 5 Images Can Upload";
+        req.session.message = Product.ONLY_5_IMAGES_CAN_UPLOAD;
         return res
-          .status(400)
+          .status(StatusCode.BAD_REQUEST)
           .redirect("/admin/editProductVariant/" + productId + "/" + variantId);
       }
 
@@ -712,7 +739,9 @@ const editProductVariantRequest = async (req, res, next) => {
 
       const product = await productModels.findById(productId);
       if (!product) {
-        return res.status(400).redirect("/admin/productVariants/" + productId);
+        return res
+          .status(StatusCode.BAD_REQUEST)
+          .redirect("/admin/productVariants/" + productId);
       }
 
       // Check if the variant already exists (same name and color combination)
@@ -731,10 +760,9 @@ const editProductVariantRequest = async (req, res, next) => {
         );
       });
       if (variantExist && !variantExist._id.equals(variantId)) {
-        req.session.message =
-          "Product variant with the same name and color already exists";
+        req.session.message = Product.PRODUCT_VARIANT_ALREADY_EXISTS;
         return res
-          .status(400)
+          .status(StatusCode.BAD_REQUEST)
           .redirect("/admin/editProductVariant/" + productId + "/" + variantId);
       }
 
@@ -744,7 +772,9 @@ const editProductVariantRequest = async (req, res, next) => {
       );
 
       if (!variant) {
-        return res.status(400).redirect("/admin/productVariants/" + productId);
+        return res
+          .status(StatusCode.BAD_REQUEST)
+          .redirect("/admin/productVariants/" + productId);
       }
 
       //remove images
@@ -833,10 +863,12 @@ const editProductVariantRequest = async (req, res, next) => {
 
       await updateTotalStock(productId);
 
-      return res.status(200).redirect("/admin/productVariants/" + productId);
+      return res
+        .status(StatusCode.OK)
+        .redirect("/admin/productVariants/" + productId);
     });
   } catch (err) {
-    err.status = 500;
+    err.status = StatusCode.INTERNAL_SERVER_ERROR;
     err.redirectUrl = "/admin/productVariants/" + productId;
     next(err);
   }
@@ -849,19 +881,21 @@ const deletedProductVariantsPage = async (req, res, next) => {
     //take product details from database
     const product = await productModels.findById(productId);
     if (!product) {
-      return res.status(400).redirect("/admin/productVariants/" + productId);
+      return res
+        .status(StatusCode.BAD_REQUEST)
+        .redirect("/admin/productVariants/" + productId);
     }
 
     const variants = product.variants.filter((variant) => variant.isDeleted);
     res
-      .status(200)
+      .status(StatusCode.OK)
       .render("adminPages/productManagement/DeletedProductVariants", {
         variants,
         productId,
         activeSidebar: { main: "productManagement", sub: "allProducts" },
       });
   } catch (err) {
-    err.status = 500;
+    err.status = StatusCode.INTERNAL_SERVER_ERROR;
     err.redirectUrl = "/admin/productVariants/" + productId;
     next(err);
   }
@@ -887,10 +921,10 @@ const restoreProductVariantRequest = async (req, res, next) => {
     await updateTotalStock(productId);
 
     return res
-      .status(200)
+      .status(StatusCode.OK)
       .redirect("/admin/DeletedProductVariants/" + productId);
   } catch (err) {
-    err.status = 500;
+    err.status = StatusCode.INTERNAL_SERVER_ERROR;
     err.redirectUrl = "/admin/DeletedProductVariants/" + productId;
     next(err);
   }
@@ -916,9 +950,11 @@ const deleteProductVariantsRequest = async (req, res, next) => {
       await updateTotalStock(productId);
     }
 
-    res.status(400).redirect("/admin/DeletedProductVariants/" + productId);
+    res
+      .status(StatusCode.BAD_REQUEST)
+      .redirect("/admin/DeletedProductVariants/" + productId);
   } catch (err) {
-    err.status = 500;
+    err.status = StatusCode.INTERNAL_SERVER_ERROR;
     err.redirectUrl = "/admin/DeletedProductVariants/" + productId;
     next(err);
   }

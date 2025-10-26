@@ -1,3 +1,5 @@
+const StatusCode = require("../../constants/statusCode");
+const Cart = require("../../constants/user/Cart");
 const cartModels = require("../../models/cartModels");
 const wishlistModels = require("../../models/wishlistModels");
 const { cartCount } = require("../../utils/cartCount");
@@ -70,13 +72,13 @@ const cartPage = async (req, res, next) => {
 
     req.session.cartLength = cart.items.length;
 
-    res.status(200).render("userPages/pages/myAccount/cart", {
+    res.status(StatusCode.OK).render("userPages/pages/myAccount/cart", {
       cartItems,
       cartSubtotal,
       message,
     });
   } catch (err) {
-    err.status(500);
+    err.status(StatusCode.INTERNAL_SERVER_ERROR);
     err.redirectUrl = req.get("Referer") || "/home";
     next(err);
   }
@@ -94,7 +96,7 @@ const addToCartRequest = async (req, res) => {
     if (!result || checkStockResult === true) {
       const url = "/home";
       return res
-        .status(400)
+        .status(StatusCode.BAD_REQUEST)
         .json({ success: false, message: true, redirectUrl: url });
     }
 
@@ -104,7 +106,7 @@ const addToCartRequest = async (req, res) => {
       (item) => item.variantId.toString() === variantId
     );
     if (item) {
-      return res.status(400).json({ success: false });
+      return res.status(StatusCode.BAD_REQUEST).json({ success: false });
     }
 
     //add to cart a variant
@@ -134,11 +136,11 @@ const addToCartRequest = async (req, res) => {
         { $pull: { items: { variantId } }, updatedAt: Date.now() }
       );
       return res
-        .status(200)
+        .status(StatusCode.OK)
         .json({ success: true, count, redirectUrl: "/wishlist" });
     }
 
-    res.status(200).json({ success: true, count });
+    res.status(StatusCode.OK).json({ success: true, count });
   } catch (err) {
     console.log(err);
   }
@@ -162,10 +164,10 @@ const updateQtyRequest = async (req, res) => {
     }
     const url = req.get("Referer");
 
-    res.status(200).json({ success: true, redirectUrl: url });
+    res.status(StatusCode.OK).json({ success: true, redirectUrl: url });
   } catch (err) {
     console.log(err);
-    res.status(500).json({ success: false });
+    res.status(StatusCode.INTERNAL_SERVER_ERROR).json({ success: false });
   }
 };
 
@@ -205,10 +207,12 @@ const cartRemoveItemRequest = async (req, res) => {
       url = req.get("Referer");
     }
 
-    res.status(200).json({ success: true, redirectUrl: url }); // Redirect to cart page
+    res.status(StatusCode.OK).json({ success: true, redirectUrl: url }); // Redirect to cart page
   } catch (err) {
     console.log(err);
-    res.status(500).json({ success: false, message: "Server error" });
+    res
+      .status(StatusCode.INTERNAL_SERVER_ERROR)
+      .json({ success: false, message: Cart.SERVER_ERROR });
   }
 };
 
@@ -220,10 +224,10 @@ const removeAllItemsRequest = async (req, res) => {
       { userId },
       { $set: { items: [] }, updatedAt: Date.now() }
     );
-    res.status(200).json({ success: true, redirectUrl: "/cart" });
+    res.status(StatusCode.OK).json({ success: true, redirectUrl: "/cart" });
   } catch (err) {
     console.log(err);
-    res.status(500).json({ success: false });
+    res.status(StatusCode.INTERNAL_SERVER_ERROR).json({ success: false });
   }
 };
 
@@ -268,10 +272,10 @@ const moveAllItemsToWishlistRequest = async (req, res) => {
       { $set: { items: [] }, updatedAt: Date.now() }
     );
 
-    res.status(200).json({ success: true, redirectUrl: "/cart" });
+    res.status(StatusCode.OK).json({ success: true, redirectUrl: "/cart" });
   } catch (err) {
     console.log(err);
-    res.status(500).json({ success: false });
+    res.status(StatusCode.INTERNAL_SERVER_ERROR).json({ success: false });
   }
 };
 

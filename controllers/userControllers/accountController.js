@@ -14,6 +14,8 @@ const {
 } = require("../../utils/placeOrderToDatabase");
 const Razorpay = require("razorpay");
 const crypto = require("crypto");
+const StatusCode = require("../../constants/statusCode");
+const Account = require("../../constants/user/account");
 
 // accountPage
 const accountPage = async (req, res, next) => {
@@ -22,7 +24,7 @@ const accountPage = async (req, res, next) => {
     delete req.session.coupon;
     const userId = req.session.user?._id ?? "";
     if (userId == "") {
-      return res.status(400).redirect("/login");
+      return res.status(StatusCode.BAD_REQUEST).redirect("/login");
     }
     const user = await userModels
       .findById(userId)
@@ -36,10 +38,10 @@ const accountPage = async (req, res, next) => {
       .populate("products.productId");
     delete req.session.tab;
     res
-      .status(200)
+      .status(StatusCode.OK)
       .render("userPages/pages/myAccount/myAccount", { user, tab, orders });
   } catch (err) {
-    err.status = 500;
+    err.status = StatusCode.INTERNAL_SERVER_ERROR;
     err.redirectUrl = req.get("Referer") || "/login";
     next(err);
   }
@@ -71,9 +73,9 @@ const editAccountDetailsRequest = async (req, res, next) => {
     //update user details
     await userModels.findOneAndUpdate({ _id: id }, { $set: updateUser });
     req.session.user = await userModels.findById(id);
-    res.status(200).redirect("/myAccount");
+    res.status(StatusCode.OK).redirect("/myAccount");
   } catch (err) {
-    err.status = 500;
+    err.status = StatusCode.INTERNAL_SERVER_ERROR;
     err.redirectUrl = "/myAccount";
     next(err);
   }
@@ -85,13 +87,13 @@ const chnagePasswordPage = async (req, res, next) => {
     req.session.forgotEmail = req.session.user?.email;
     req.session.isForgotOtp = true;
     req.session.fromChangePass = true;
-    const message = req.session.message ?? "Please Enter Your Current Password";
+    const message = req.session.message ?? Account.CURRENT_PASSWORD_REQUIRED;
     delete req.session.message;
     res
-      .status(200)
+      .status(StatusCode.OK)
       .render("userPages/pages/myAccount/changePassword", { message });
   } catch (err) {
-    err.status = 500;
+    err.status = StatusCode.INTERNAL_SERVER_ERROR;
     err.redirectUrl = "/myAccount";
     next(err);
   }
@@ -106,11 +108,13 @@ const newPasswordPageRequest = async (req, res, next) => {
     if (!isMatch) {
       req.session.message =
         "Invaild Password! Please enter your current password";
-      return res.status(400).redirect("/myAccount/changePassword");
+      return res
+        .status(StatusCode.BAD_REQUEST)
+        .redirect("/myAccount/changePassword");
     }
-    res.status(200).redirect("/login/forgotPassword");
+    res.status(StatusCode.OK).redirect("/login/forgotPassword");
   } catch (err) {
-    err.status = 500;
+    err.status = StatusCode.INTERNAL_SERVER_ERROR;
     err.redirectUrl = "/myAccount";
     next(err);
   }
@@ -124,17 +128,17 @@ const addNewAddressPage = async (req, res, next) => {
 
     //check user is exist
     if (id != req.session?.user?._id) {
-      res.status(404).redirect("/myAccount");
+      res.status(StatusCode.NOT_FOUND).redirect("/myAccount");
     }
 
     //render page
     const message = req.session.message ?? "";
     delete req.session.message;
     res
-      .status(200)
+      .status(StatusCode.OK)
       .render("userPages/pages/myAccount/addNewAddress", { id, message });
   } catch (err) {
-    err.status = 500;
+    err.status = StatusCode.INTERNAL_SERVER_ERROR;
     err.redirectUrl = "/myAccount";
     next(err);
   }
@@ -159,12 +163,14 @@ const addNewAddressRequest = async (req, res, next) => {
     const userExist = await userModels.findById(id);
     if (!userExist) {
       delete req.session.user;
-      return res.status(400).redirect("/login");
+      return res.status(StatusCode.BAD_REQUEST).redirect("/login");
     }
 
     if (name.trim() == "") {
-      req.session.message = "Please enter your name";
-      return res.status(400).redirect("/myAccount/addNewAddress/" + id);
+      req.session.message = Account.INVALID_NAME;
+      return res
+        .status(StatusCode.BAD_REQUEST)
+        .redirect("/myAccount/addNewAddress/" + id);
     }
     const phoneRegex = /^[789]\d{9}$/;
     if (
@@ -172,21 +178,28 @@ const addNewAddressRequest = async (req, res, next) => {
       !phoneRegex.test(phoneNumber) ||
       isNaN(phoneNumber)
     ) {
-      req.session.message =
-        "Please enter a valid phone number so we can call if there are any issues with delivery.";
-      return res.status(400).redirect("/myAccount/addNewAddress/" + id);
+      req.session.message = Account.INVALID_PHONE_NUMBER;
+      return res
+        .status(StatusCode.BAD_REQUEST)
+        .redirect("/myAccount/addNewAddress/" + id);
     }
     if (pincode.trim() == "" || pincode.length != 6 || isNaN(pincode)) {
-      req.session.message = "Please enter a valid ZIP or postal code.";
-      return res.status(400).redirect("/myAccount/addNewAddress/" + id);
+      req.session.message = Account.INVALID_ZIP;
+      return res
+        .status(StatusCode.BAD_REQUEST)
+        .redirect("/myAccount/addNewAddress/" + id);
     }
     if (house.trim() == "") {
-      req.session.message = "Please enter Address Line";
-      return res.status(400).redirect("/myAccount/addNewAddress/" + id);
+      req.session.message = Account.INVALID_ADDRESS;
+      return res
+        .status(StatusCode.BAD_REQUEST)
+        .redirect("/myAccount/addNewAddress/" + id);
     }
     if (city.trim() == "") {
-      req.session.message = "Please enter your city";
-      return res.status(400).redirect("/myAccount/addNewAddress/" + id);
+      req.session.message = Account.INVALID_CITY;
+      return res
+        .status(StatusCode.BAD_REQUEST)
+        .redirect("/myAccount/addNewAddress/" + id);
     }
 
     const newAddress = {
@@ -229,11 +242,11 @@ const addNewAddressRequest = async (req, res, next) => {
 
     if (req.session.changeAddressPage) {
       delete req.session.changeAddressPage;
-      return res.status(200).redirect("/checkOut/changeAddress/");
+      return res.status(StatusCode.OK).redirect("/checkOut/changeAddress/");
     }
-    res.status(200).redirect("/myAccount");
+    res.status(StatusCode.OK).redirect("/myAccount");
   } catch (err) {
-    err.status = 500;
+    err.status = StatusCode.INTERNAL_SERVER_ERROR;
     err.redirectUrl = "/myAccount";
     next(err);
   }
@@ -245,20 +258,20 @@ const editAddressPage = async (req, res, next) => {
     const { userId, addressId } = req.params;
     const user = await userModels.findById(userId);
     if (!user) {
-      res.status(400).redirect("/myAccount");
+      res.status(StatusCode.BAD_REQUEST).redirect("/myAccount");
     }
     const address = user.addresses.find(
       (address) => address._id.toString() == addressId
     );
     const message = req.session.message ?? "";
     delete req.session.message;
-    res.status(200).render("userPages/pages/myAccount/editAddress", {
+    res.status(StatusCode.OK).render("userPages/pages/myAccount/editAddress", {
       address,
       user,
       message,
     });
   } catch (err) {
-    err.status = 500;
+    err.status = StatusCode.INTERNAL_SERVER_ERROR;
     err.redirectUrl = "/myAccount";
     next(err);
   }
@@ -281,9 +294,9 @@ const editAddressRequest = async (req, res, next) => {
     const user = await userModels.findById(userId);
 
     if (name.trim() == "") {
-      req.session.message = "Please enter your name";
+      req.session.message = Account.INVALID_NAME;
       return res
-        .status(400)
+        .status(StatusCode.BAD_REQUEST)
         .redirect("/myAccount/editaddress/" + userId + "/" + addressId);
     }
     const phoneRegex = /^[789]\d{9}$/;
@@ -292,28 +305,27 @@ const editAddressRequest = async (req, res, next) => {
       !phoneRegex.test(phoneNumber) ||
       isNaN(phoneNumber)
     ) {
-      req.session.message =
-        "Please enter a valid phone number so we can call if there are any issues with delivery.";
+      req.session.message = Account.INVALID_PHONE_NUMBER;
       return res
-        .status(400)
+        .status(StatusCode.BAD_REQUEST)
         .redirect("/myAccount/editaddress/" + userId + "/" + addressId);
     }
     if (pincode.trim() == "" || pincode.length != 6 || isNaN(pincode)) {
-      req.session.message = "Please enter a valid ZIP or postal code.";
+      req.session.message = Account.INVALID_ZIP;
       return res
-        .status(400)
+        .status(StatusCode.BAD_REQUEST)
         .redirect("/myAccount/editaddress/" + userId + "/" + addressId);
     }
     if (house.trim() == "") {
-      req.session.message = "Please enter Address Line";
+      req.session.message = Account.INVALID_ADDRESS;
       return res
-        .status(400)
+        .status(StatusCode.BAD_REQUEST)
         .redirect("/myAccount/editaddress/" + userId + "/" + addressId);
     }
     if (city.trim() == "") {
-      req.session.message = "Please enter your city";
+      req.session.message = Account.INVALID_CITY;
       return res
-        .status(400)
+        .status(StatusCode.BAD_REQUEST)
         .redirect("/myAccount/editaddress/" + userId + "/" + addressId);
     }
 
@@ -351,12 +363,12 @@ const editAddressRequest = async (req, res, next) => {
 
     if (req.session.changeAddressPage) {
       delete req.session.changeAddressPage;
-      return res.status(200).redirect("/checkOut/changeAddress/");
+      return res.status(StatusCode.OK).redirect("/checkOut/changeAddress/");
     }
 
-    return res.status(200).redirect("/myAccount");
+    return res.status(StatusCode.OK).redirect("/myAccount");
   } catch (err) {
-    err.status = 500;
+    err.status = StatusCode.INTERNAL_SERVER_ERROR;
     err.redirectUrl = "/myAccount";
     next(err);
   }
@@ -392,9 +404,9 @@ const removeAddressRequest = async (req, res, next) => {
     }
 
     req.session.tab = "address";
-    return res.status(200).redirect("/myAccount");
+    return res.status(StatusCode.OK).redirect("/myAccount");
   } catch (err) {
-    err.status = 500;
+    err.status = StatusCode.INTERNAL_SERVER_ERROR;
     err.redirectUrl = "/myAccount";
     next(err);
   }
@@ -414,7 +426,7 @@ const orderInvoicePage = async (req, res, next) => {
     // Generate the invoice and send it as a response
     await generateInvoicePDF(fullOrder, order, res);
   } catch (err) {
-    err.status = 500;
+    err.status = StatusCode.INTERNAL_SERVER_ERROR;
     req.session.tab = "orders";
     err.redirectUrl = "/myAccount";
     next(err);
@@ -432,7 +444,9 @@ const cancelOrderRequest = async (req, res, next) => {
     const orderDetails = await orderModels.findById(id, { paymentDetails: 1 });
 
     if (!orderDetails) {
-      return res.status(404).json({ error: "Order not found" });
+      return res
+        .status(StatusCode.NOT_FOUND)
+        .json({ error: Account.ORDER_NOT_FOUND });
     }
 
     const updateOrder = {
@@ -485,17 +499,17 @@ const cancelOrderRequest = async (req, res, next) => {
     );
 
     if (!updatedOrder) {
-      return res.status(400).redirect("/myAccount");
+      return res.status(StatusCode.BAD_REQUEST).redirect("/myAccount");
     }
 
     // Update variant stock
     await updateStockAndSalesCount(productId, variantId, quantity, "add");
 
     req.session.tab = "cancelledOrders";
-    return res.status(200).redirect("/myAccount");
+    return res.status(StatusCode.OK).redirect("/myAccount");
   } catch (err) {
     console.error("Cancel Order Error:", err);
-    err.status = 500;
+    err.status = StatusCode.INTERNAL_SERVER_ERROR;
     err.redirectUrl = "/myAccount";
     return next(err);
   }
@@ -506,7 +520,7 @@ const returnProductRequest = async (req, res, next) => {
   try {
     const { itemId } = req.params;
 
-    const { fromPage , returnReason } = req.body;
+    const { fromPage, returnReason } = req.body;
 
     const userId = req.session.user?._id;
 
@@ -520,7 +534,7 @@ const returnProductRequest = async (req, res, next) => {
         $set: {
           "products.$.status": "Return",
           "products.$.returnStatus": "Processing",
-          "products.$.returnReason": returnReason
+          "products.$.returnReason": returnReason,
         },
         updatedAt: Date.now(),
       }
@@ -528,14 +542,14 @@ const returnProductRequest = async (req, res, next) => {
 
     if (fromPage == "orderDetails") {
       return res
-        .status(200)
+        .status(StatusCode.OK)
         .redirect("/OrderDetails/" + modeldata._id + "/" + itemId);
     }
 
     req.session.tab = "orders";
-    res.status(200).redirect("/myAccount");
+    res.status(StatusCode.OK).redirect("/myAccount");
   } catch (err) {
-    err.status = 500;
+    err.status = StatusCode.INTERNAL_SERVER_ERROR;
     err.redirectUrl = "/myAccount";
     next(err);
   }
@@ -564,14 +578,14 @@ const cancelReturnRequest = async (req, res, next) => {
 
     if (fromPage == "orderDetails") {
       return res
-        .status(200)
+        .status(StatusCode.OK)
         .redirect("/OrderDetails/" + modeldata._id + "/" + itemId);
     }
 
     req.session.tab = "orders";
-    res.status(200).redirect("/myAccount");
+    res.status(StatusCode.OK).redirect("/myAccount");
   } catch (err) {
-    err.status = 500;
+    err.status = StatusCode.INTERNAL_SERVER_ERROR;
     err.redirectUrl = "/myAccount";
     next(err);
   }
@@ -584,10 +598,10 @@ const OrderDetailsPage = async (req, res, next) => {
     const order = await orderModels.findById(id).populate("products.productId");
     req.session.tab = "orders";
     res
-      .status(200)
+      .status(StatusCode.OK)
       .render("userPages/pages/myAccount/orderDetails", { order, orderId });
   } catch (err) {
-    err.status = 500;
+    err.status = StatusCode.INTERNAL_SERVER_ERROR;
     err.redirectUrl = "/myAccount";
     next(err);
   }
@@ -603,10 +617,10 @@ const dropOrderRequest = async (req, res, next) => {
     const result = await dropOrder(id, userId);
     if (result) {
       req.session.tab = "unpaidOnlineOrders";
-      return res.status(200).redirect("/myAccount");
+      return res.status(StatusCode.OK).redirect("/myAccount");
     }
   } catch (err) {
-    err.status = 500;
+    err.status = StatusCode.INTERNAL_SERVER_ERROR;
     err.redirectUrl = "/myAccount";
     next(err);
   }
@@ -640,7 +654,7 @@ const retryPaymentRequest = async (req, res, next) => {
         await dropOrder(id, userId);
         req.session.sorryCheckout = true;
         return res
-          .status(400)
+          .status(StatusCode.BAD_REQUEST)
           .json({ success: false, redirectUrl: "/checkOut/sorry" });
       }
     }
@@ -665,10 +679,10 @@ const retryPaymentRequest = async (req, res, next) => {
       if (err) {
         req.session.sorryCheckout = true;
         res
-          .status(400)
+          .status(StatusCode.BAD_REQUEST)
           .json({ success: false, redirectUrl: "/checkOut/sorry" });
       } else {
-        return res.status(200).json({
+        return res.status(StatusCode.OK).json({
           success: true,
           order,
           id,
@@ -677,7 +691,7 @@ const retryPaymentRequest = async (req, res, next) => {
       }
     });
   } catch (err) {
-    err.status = 500;
+    err.status = StatusCode.INTERNAL_SERVER_ERROR;
     err.redirectUrl = "/myAccount";
     next(err);
   }
@@ -703,20 +717,20 @@ const paymentGatewayRequest = async (req, res, next) => {
 
       if (result) {
         req.session.tab = "orders";
-        return res.status(200).json({
+        return res.status(StatusCode.OK).json({
           success: true,
           redirectUrl: "/myAccount",
         });
       }
     } else {
       req.session.sorryCheckout = true;
-      return res.status(400).json({
+      return res.status(StatusCode.BAD_REQUEST).json({
         success: false,
         redirectUrl: "/checkOut/sorry",
       });
     }
   } catch (err) {
-    err.status = 500;
+    err.status = StatusCode.INTERNAL_SERVER_ERROR;
     err.redirectUrl = "/myAccount";
     next(err);
   }
